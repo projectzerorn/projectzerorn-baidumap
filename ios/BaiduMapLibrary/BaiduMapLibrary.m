@@ -61,12 +61,28 @@ RCT_CUSTOM_VIEW_PROPERTY(range, int, BaiduMapLibrary){
     self.range = [json intValue];
 }
 
+#pragma mark -------------------------------------------------- 是否显示用户位置标点
+RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
+    Boolean isShowUserLocation = [json boolValue];
+    if(isShowUserLocation){
+        //初始化BMKLocationService
+        _locService = [[BMKLocationService alloc]init];
+        _locService.delegate = self;
+        //启动LocationService
+        [_locService startUserLocationService];
+        mapView_mk.showsUserLocation = NO;//先关闭显示的定位图层
+        mapView_mk.userTrackingMode = BMKUserTrackingModeNone;//设置定位的状态
+        mapView_mk.showsUserLocation = YES;//显示定位图层
+    }
+}
+
 - (dispatch_queue_t)methodQueue {
     return dispatch_get_main_queue();
 }
 
 - (UIView *)view{
     BMKMapView *map = [[BMKMapView alloc] init];
+    mapView_mk = map;
     map.delegate = self;
     [map setMapType:BMKMapTypeStandard];
     map.userTrackingMode = BMKUserTrackingModeFollow;
@@ -140,21 +156,13 @@ RCT_CUSTOM_VIEW_PROPERTY(range, int, BaiduMapLibrary){
 #pragma mark -------------------------------------------------- 实现相关delegate 处理位置信息更新
 - (void)didUpdateUserHeading:(BMKUserLocation *)userLocation
 {
-    //	mapView_mk.showsUserLocation = YES;//显示定位图层
-    //	[mapView_mk updateLocationData:userLocation];
+    [mapView_mk updateLocationData:userLocation];
 }
 
 #pragma mark -------------------------------------------------- 处理位置坐标更新
 - (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation
 {
-    //	if(anno)
-    //		[mapView_mk removeAnnotation:anno];
-    //	anno = [[BMKPointAnnotation alloc] init];
-    //	CLLocationCoordinate2D center = userLocation.location.coordinate;
-    //	anno.coordinate = center;
-    //	anno.title = @"宝贝当前位置";
-    //	[mapView_mk setCenterCoordinate:center animated:NO];
-    //	[mapView_mk addAnnotation:anno];
+    [mapView_mk updateLocationData:userLocation];
 }
 
 
