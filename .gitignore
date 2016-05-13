@@ -26,17 +26,14 @@ project.xcworkspace
 #
 .idea
 .gradle
-*.iml
-build
 local.properties
+*.iml
+
+#project temp
+bin/
 
 # node.js
-
-node_modules/*
-!node_modules/manifest
-
-app/test
+#
+node_modules/
 npm-debug.log
-ios/CustomVariable.h
-ios/bundle
-android/app/src/main/java/com/pet/button
+
