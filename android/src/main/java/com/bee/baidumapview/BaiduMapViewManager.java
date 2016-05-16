@@ -149,22 +149,11 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         MapView mMapView;
 
         public MyLocationListener(MapView mapView){
-            Log.v("jackzhou", "1111-MyLocationListener");
             mMapView = mapView;
         }
 
         @Override
         public void onReceiveLocation(BDLocation location) {
-            Log.v("jackzhou", "1111-onReceiveLocation" + location.getLatitude() + " - " + location.getLongitude());
-
-            try{
-                System.loadLibrary("liblocSDK6a");
-            }catch (UnsatisfiedLinkError e){
-                Log.e("jackzhou","1111-"+e);
-                e.printStackTrace();
-            }
-
-
             // map view 销毁后不在处理新接收的位置
             if (location == null || mMapView == null) {
                 return;
@@ -192,7 +181,6 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     @ReactProp(name="isShowUserLocation", defaultBoolean = false)
     public void setIsShowUserLocation(MapView mapView, boolean isShowUserLocation) {
         if(isShowUserLocation){
-            Log.v("jackzhou", "1111-isShowUserLocation- 1");
             mapView.getMap().setMyLocationEnabled(true);//开启
             mLocClient = new LocationClient(mActivity);
             MyLocationListener myListener = new MyLocationListener(mapView);
