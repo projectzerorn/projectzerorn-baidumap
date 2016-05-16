@@ -30,28 +30,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-//    splits {
-//        abi {
-////            enable enableSeparateBuildPerCPUArchitecture
-//            universalApk false
-//            reset()
-//            include "armeabi-v7a", "x86"
-//        }
-//    }
-//    applicationVariants.all { variant ->
-//        variant.outputs.each { output ->
-//            // For each separate APK per architecture, set a unique version code as described here:
-//            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-//            def versionCodes = ["armeabi-v7a":1, "x86":2]
-//            def abi = output.getFilter(com.android.build.OutputFile.ABI)
-//            if (abi != null) {  // null for the universal-debug, universal-release variants
-//                output.versionCodeOverride =
-//                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-//            }
-//        }
-//    }
-}
 
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+        }
+    }
+}
 
 allprojects {
     repositories {

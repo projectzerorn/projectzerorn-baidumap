@@ -2,6 +2,10 @@ package com.bee.baidumapview;
 
 import android.app.Activity;
 import android.util.Log;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.model.LatLng;
 import com.facebook.react.bridge.Arguments;
@@ -12,7 +16,7 @@ import com.facebook.react.uimanager.LayoutShadowNode;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
-
+import com.baidu.location.LocationClientOption.LocationMode;
 
 public class BaiduMapViewManager extends SimpleViewManager<MapView> implements BaiduMap.OnMapLoadedCallback {
     public static final String RCT_CLASS = "RCTBaiduMap";
@@ -137,4 +141,70 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
                 .emit("MapLoaded", params);
     }
 
+
+    // 定位相关
+    boolean isFirstLoc = true; // 是否首次定位
+    LocationClient mLocClient;
+    public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
+        MapView mMapView;
+
+        public MyLocationListener(MapView mapView){
+            Log.v("jackzhou", "1111-MyLocationListener");
+            mMapView = mapView;
+        }
+
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            Log.v("jackzhou", "1111-onReceiveLocation" + location.getLatitude() + " - " + location.getLongitude());
+
+            try{
+                System.loadLibrary("liblocSDK6a");
+            }catch (UnsatisfiedLinkError e){
+                Log.e("jackzhou","1111-"+e);
+                e.printStackTrace();
+            }
+
+
+            // map view 销毁后不在处理新接收的位置
+            if (location == null || mMapView == null) {
+                return;
+            }
+            MyLocationData locData = new MyLocationData.Builder()
+                    .accuracy(location.getRadius())
+                    // 此处设置开发者获取到的方向信息，顺时针0-360
+                    .direction(100).latitude(location.getLatitude())
+                    .longitude(location.getLongitude()).build();
+            mMapView.getMap().setMyLocationData(locData);
+            if (isFirstLoc) {
+                isFirstLoc = false;
+                LatLng ll = new LatLng(location.getLatitude(),
+                        location.getLongitude());
+                MapStatus.Builder builder = new MapStatus.Builder();
+                builder.target(ll).zoom(18.0f);
+                mMapView.getMap().animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+            }
+        }
+
+        public void onReceivePoi(BDLocation poiLocation) {
+        }
+    }
+
+    @ReactProp(name="isShowUserLocation", defaultBoolean = false)
+    public void setIsShowUserLocation(MapView mapView, boolean isShowUserLocation) {
+        if(isShowUserLocation){
+            Log.v("jackzhou", "1111-isShowUserLocation- 1");
+            mapView.getMap().setMyLocationEnabled(true);//开启
+            mLocClient = new LocationClient(mActivity);
+            MyLocationListener myListener = new MyLocationListener(mapView);
+            mLocClient.registerLocationListener(myListener);
+            LocationClientOption option = new LocationClientOption();
+            option.setOpenGps(true); // 打开gps
+            option.setCoorType("bd09ll"); // 设置坐标类型
+            option.setScanSpan(1000);
+            mLocClient.setLocOption(option);
+            mLocClient.start();
+        }else{
+            mapView.getMap().setMyLocationEnabled(false);
+        }
+    }
 }
