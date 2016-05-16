@@ -1,26 +1,31 @@
-var {
-    View,
-    PropTypes,
-    requireNativeComponent,
-    Platform
-} = require('react-native');
-
-var iface = {
-  name: 'RCTBaiduMap',
-  propTypes: {
-    ...View.propTypes,
-    mode: PropTypes.number,
-    trafficEnabled: PropTypes.bool,
-    heatMapEnabled: PropTypes.bool,
-    marker:PropTypes.array
-  }
-}
-let BaiduMapView = undefined;
+import React,{ requireNativeComponent, Component, PropTypes, View, Platform } from 'react-native';
 
 if(Platform.OS === 'ios'){
-  BaiduMapView = requireNativeComponent('BaiduMapLibrary', null);
+  var LibBaiduMapView = requireNativeComponent('BaiduMapLibrary', BDMapView);
 }else{
-  BaiduMapView = requireNativeComponent('RCTBaiduMap', iface);
+  var LibBaiduMapView = requireNativeComponent('RCTBaiduMap', BDMapView);
 }
 
-module.exports = BaiduMapView;
+class BDMapView extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+        <LibBaiduMapView {...this.props}/>
+    );
+  }
+}
+
+BDMapView.propTypes = {
+  ...View.propTypes,
+  mode: PropTypes.number,
+  trafficEnabled: PropTypes.bool,
+  heatMapEnabled: PropTypes.bool,
+  marker:PropTypes.array,
+  isShowUserLocation: PropTypes.bool,
+
+}
+
+export default BDMapView;
