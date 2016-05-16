@@ -143,7 +143,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
 
 
     // 定位相关
-    boolean isFirstLoc = true; // 是否首次定位
+//    boolean isFirstLoc = true; // 是否首次定位
     LocationClient mLocClient;
     public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
         MapView mMapView;
@@ -164,14 +164,14 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
                     .direction(100).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             mMapView.getMap().setMyLocationData(locData);
-            if (isFirstLoc) {
-                isFirstLoc = false;
-                LatLng ll = new LatLng(location.getLatitude(),
-                        location.getLongitude());
-                MapStatus.Builder builder = new MapStatus.Builder();
-                builder.target(ll).zoom(18.0f);
-                mMapView.getMap().animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-            }
+//            if (isFirstLoc) {
+//                isFirstLoc = false;
+//                LatLng ll = new LatLng(location.getLatitude(),
+//                        location.getLongitude());
+//                MapStatus.Builder builder = new MapStatus.Builder();
+//                builder.target(ll).zoom(18.0f);
+//                mMapView.getMap().animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+//            }
         }
 
         public void onReceivePoi(BDLocation poiLocation) {
