@@ -126,7 +126,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      */
     private MapView getMap() {
         MapView mMapView = new MapView(mActivity);
-        mMapView.showZoomControls(false);
+        mMapView.showZoomControls(true);
         BaiduMap baiduMap = mMapView.getMap();
         baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler), 1 * 1000);
         baiduMap.setOnMapLoadedCallback(this);
