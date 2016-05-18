@@ -102,6 +102,10 @@ let BDMapModule = {
 
     moveToUserLocation(ref, isAnimate){
         MyMapModule.moveToUserLocation(ref, isAnimate);
+    },
+
+    cluster(ref, data){
+        MyMapModule.cluster(ref, data);
     }
 }
 

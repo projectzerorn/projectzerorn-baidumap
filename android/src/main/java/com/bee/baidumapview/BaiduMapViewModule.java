@@ -20,6 +20,8 @@ import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 import com.bee.baidumapview.utils.ImageUtil;
 import com.bee.baidumapview.utils.MapUtils;
+import com.bee.baidumapview.utils.clusterutil.clustering.ClusterItem;
+import com.bee.baidumapview.utils.clusterutil.clustering.ClusterManager;
 import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
@@ -417,7 +419,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         BaiduMap baiduMap = getMap(tag);
         LatLng latLng = new LatLng(lat, lng);
         MapStatus.Builder builder = new MapStatus.Builder();
-        builder.target(latLng).zoom(18.0f);
+        builder.target(latLng);
         if(isAnimate){
             baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         }else{
@@ -455,7 +457,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             BaiduMap baiduMap = getMap(mtag);
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MapStatus.Builder builder = new MapStatus.Builder();
-            builder.target(latLng).zoom(18.0f);
+            builder.target(latLng);
             if(mIsAnimate){
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }else{
@@ -477,6 +479,54 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         option.setScanSpan(1000);
         mLocClient.setLocOption(option);
         mLocClient.start();
+    }
+
+
+    /**
+     * 每个Marker点，包含Marker点坐标以及图标
+     */
+    public class MyItem implements ClusterItem {
+        private final LatLng mPosition;
+
+        public MyItem(LatLng latLng) {
+            mPosition = latLng;
+        }
+
+        @Override
+        public LatLng getPosition() {
+            return mPosition;
+        }
+
+        @Override
+        public BitmapDescriptor getBitmapDescriptor() {
+            return BitmapDescriptorFactory
+                    .fromResource(R.drawable.icon_gcoding);
+        }
+    }
+    @ReactMethod
+    public void cluster(int tag, ReadableArray data){
+        MapView mapview = getMapView(tag);
+        BaiduMap map = mapview.getMap();
+        // 初始化点聚合管理类
+        ClusterManager mClusterManager = new ClusterManager<>(getCurrentActivity(), map);
+        // 向点聚合管理类中添加Marker实例
+
+        for (int i = 0; i < data.size(); i++) {
+            ReadableArray nodelist = data.getArray(i);
+            List<MyItem> items = new ArrayList<>();
+            for(int j = 0; j < nodelist.size(); j++){
+                ReadableMap node = nodelist.getMap(j);
+                items.add(new MyItem(new LatLng(node.getDouble("lat"),node.getDouble("lng"))));
+            }
+            mClusterManager.addItems(items);
+        }
+
+        // 设置地图监听，当地图状态发生改变时，进行点聚合运算
+        map.setOnMapStatusChangeListener(mClusterManager);
+
+        //强制地图状态变化  刷新图标
+        MapStatus status = map.getMapStatus();
+        map.setMapStatus(MapStatusUpdateFactory.newMapStatus(status));
     }
 }
 
