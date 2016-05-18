@@ -5,40 +5,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
-
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.CircleOptions;
-import com.baidu.mapapi.map.MapPoi;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.Overlay;
-import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.map.PolylineOptions;
-import com.baidu.mapapi.map.Stroke;
+import android.util.Log;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.baidu.mapapi.search.geocode.*;
 import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 import com.bee.baidumapview.utils.ImageUtil;
 import com.bee.baidumapview.utils.MapUtils;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.ArrayList;
@@ -47,7 +29,6 @@ import java.util.List;
 
 public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener {
     public static final String TAG = "RCTBaiduMap";
-//    private Activity context;
     private Marker markerAnimation;
     private Marker tempMarker;
     List<Marker> markerList = new ArrayList<>();
@@ -63,7 +44,6 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     public BaiduMapViewModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-//        this.context = mainActivity;
         ImageUtil.init(this.getCurrentActivity(),R.mipmap.default_avatar);
         initSearch();
 
@@ -420,4 +400,85 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("SearchResult", params);
     }
+
+    private MapView getMapView(int tag){
+        Activity context = this.getCurrentActivity();
+        MapView mapView = (MapView) context.findViewById(tag);
+        return mapView;
+    }
+
+    private BaiduMap getMap(int tag){
+        BaiduMap baiduMap = getMapView(tag).getMap();
+        return baiduMap;
+    }
+
+    @ReactMethod
+    public void move(int tag, double lat, double lng, boolean isAnimate){
+        BaiduMap baiduMap = getMap(tag);
+        LatLng latLng = new LatLng(lat, lng);
+        MapStatus.Builder builder = new MapStatus.Builder();
+        builder.target(latLng).zoom(18.0f);
+        if(isAnimate){
+            baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+        }else{
+            baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+        }
+    }
+
+    // 定位相关
+    LocationClient mLocClient;
+    public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
+        MapView mMapView;
+        boolean mIsAnimate;
+        int mtag;
+
+        public MyLocationListener(int tag, boolean isAnimate){
+            mMapView = getMapView(tag);
+            mIsAnimate = isAnimate;
+            mtag = tag;
+        }
+
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            // map view 销毁后不在处理新接收的位置
+            if (location == null || mMapView == null) {
+                return;
+            }
+            Log.v("jackzhou", String.format("BaiduMapViewModule-onReceiveLocation-%s,%s",location.getLatitude(), location.getLongitude()));
+            MyLocationData locData = new MyLocationData.Builder()
+                    .accuracy(location.getRadius())
+                    // 此处设置开发者获取到的方向信息，顺时针0-360
+                    .direction(100).latitude(location.getLatitude())
+                    .longitude(location.getLongitude()).build();
+            mMapView.getMap().setMyLocationData(locData);
+
+            BaiduMap baiduMap = getMap(mtag);
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            MapStatus.Builder builder = new MapStatus.Builder();
+            builder.target(latLng).zoom(18.0f);
+            if(mIsAnimate){
+                baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+            }else{
+                baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+            }
+            mLocClient.stop();
+        }
+        public void onReceivePoi(BDLocation poiLocation) {
+        }
+    }
+    @ReactMethod
+    public void moveToUserLocation(int tag, boolean isAnimate){
+        mLocClient = new LocationClient(this.getCurrentActivity());
+        MyLocationListener myListener = new MyLocationListener(tag, isAnimate);
+        mLocClient.registerLocationListener(myListener);
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true); // 打开gps
+        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setScanSpan(1000);
+        mLocClient.setLocOption(option);
+        mLocClient.start();
+    }
 }
+
+
+

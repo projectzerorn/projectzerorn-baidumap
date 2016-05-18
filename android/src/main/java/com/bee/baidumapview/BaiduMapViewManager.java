@@ -13,10 +13,9 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.LayoutShadowNode;
-import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
-import com.baidu.location.LocationClientOption.LocationMode;
+import com.facebook.react.uimanager.annotations.ReactProp;
 
 public class BaiduMapViewManager extends SimpleViewManager<MapView> implements BaiduMap.OnMapLoadedCallback {
     public static final String RCT_CLASS = "RCTBaiduMap";
@@ -143,7 +142,6 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
 
 
     // 定位相关
-//    boolean isFirstLoc = true; // 是否首次定位
     LocationClient mLocClient;
     public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
         MapView mMapView;
@@ -158,20 +156,14 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             if (location == null || mMapView == null) {
                 return;
             }
+            Log.v("jackzhou", String.format("BaiduMapViewManager-onReceiveLocation-%s,%s",location.getLatitude(), location.getLongitude()));
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360
                     .direction(100).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             mMapView.getMap().setMyLocationData(locData);
-//            if (isFirstLoc) {
-//                isFirstLoc = false;
-//                LatLng ll = new LatLng(location.getLatitude(),
-//                        location.getLongitude());
-//                MapStatus.Builder builder = new MapStatus.Builder();
-//                builder.target(ll).zoom(18.0f);
-//                mMapView.getMap().animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-//            }
+            mLocClient.stop();
         }
 
         public void onReceivePoi(BDLocation poiLocation) {

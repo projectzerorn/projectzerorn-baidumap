@@ -95,6 +95,14 @@ let BDMapModule = {
             MyMapModule.addGeoFenceCircle(ref,msg)
         }
     },
+
+    move(ref, lat, lng, isAnimate){
+        MyMapModule.move(ref, lat, lng, isAnimate);
+    },
+
+    moveToUserLocation(ref, isAnimate){
+        MyMapModule.moveToUserLocation(ref, isAnimate);
+    }
 }
 
 module.exports = BDMapModule;
