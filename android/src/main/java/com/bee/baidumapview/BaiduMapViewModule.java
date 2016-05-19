@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -487,9 +490,15 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
      */
     public class MyItem implements ClusterItem {
         private final LatLng mPosition;
+        private String mTitle;
 
         public MyItem(LatLng latLng) {
             mPosition = latLng;
+        }
+
+        public MyItem(LatLng latLng, String title) {
+            mPosition = latLng;
+            mTitle = title;
         }
 
         @Override
@@ -499,8 +508,15 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
         @Override
         public BitmapDescriptor getBitmapDescriptor() {
-            return BitmapDescriptorFactory
-                    .fromResource(R.drawable.icon_gcoding);
+            if(mTitle != null && mTitle.length() > 0){
+                View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
+                TextView tv = (TextView)view.findViewById(R.id.tv_title);
+                tv.setText(mTitle);
+                return BitmapDescriptorFactory.fromView(view);
+            }else{
+                return BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
+            }
+
         }
     }
     @ReactMethod
@@ -516,7 +532,12 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             List<MyItem> items = new ArrayList<>();
             for(int j = 0; j < nodelist.size(); j++){
                 ReadableMap node = nodelist.getMap(j);
-                items.add(new MyItem(new LatLng(node.getDouble("lat"),node.getDouble("lng"))));
+                items.add(
+                        new MyItem(
+                                new LatLng(node.getDouble("lat"),node.getDouble("lng")),
+                                node.getString("title")
+                        )
+                );
             }
             mClusterManager.addItems(items);
         }
