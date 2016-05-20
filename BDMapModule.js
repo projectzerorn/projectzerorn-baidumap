@@ -27,34 +27,23 @@ let BDMapModule = {
         MyMapModule.onDestroyBDMap(ref);
     },
 
-    /**
-     * ref:React.findNodeHandle(this.refs.history)
-     */
-    updateMarkInfo(ref,data){
-        if(plat === 'ios'){
-            MyMapModule.setLocation(ref,data);
-        }else{
-            MyMapModule.updateMarkInfo(ref,data);
-        }
-    },
+    ///**
+    // *距离
+    // */
+    //setRuler(ref,ruler){
+    //    MyMapModule.setRuler(ref,ruler);
+    //},
 
-    /**
-     *距离
-     */
-    setRuler(ref,ruler){
-        MyMapModule.setRuler(ref,ruler);
-    },
-
-    /**
-     * 打点
-     */
-    addPoint(ref,avatar,itemArray){
-        if(plat === 'ios'){
-            MyMapModule.setLocation(ref,itemArray);
-        }else{
-            MyMapModule.addPoint(ref,avatar,itemArray);
-        }
-    },
+    ///**
+    // * 打点
+    // */
+    //addPoint(ref,avatar,itemArray){
+    //    if(plat === 'ios'){
+    //        MyMapModule.setLocation(ref,itemArray);
+    //    }else{
+    //        MyMapModule.addPoint(ref,avatar,itemArray);
+    //    }
+    //},
 
     /**
      * 连线
@@ -96,16 +85,20 @@ let BDMapModule = {
         }
     },
 
-    move(ref, lat, lng, isAnimate){
-        MyMapModule.move(ref, lat, lng, isAnimate);
+    move(ref, lat, lng, zoom, isAnimate){//lat,lng,zoom传入-1 为不改变
+        MyMapModule.move(ref, lat, lng, zoom, isAnimate);
     },
 
-    moveToUserLocation(ref, isAnimate){
-        MyMapModule.moveToUserLocation(ref, isAnimate);
+    moveToUserLocation(ref, zoom, isAnimate){
+        MyMapModule.moveToUserLocation(ref, zoom, isAnimate);
     },
 
     cluster(ref, data){
         MyMapModule.cluster(ref, data);
+    },
+
+    addMarks(ref, data){
+        MyMapModule.addMarks(ref, data);
     }
 }
 

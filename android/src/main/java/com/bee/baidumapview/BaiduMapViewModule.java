@@ -35,8 +35,8 @@ import java.util.List;
 public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener {
     public static final String TAG = "RCTBaiduMap";
     private Marker markerAnimation;
-    private Marker tempMarker;
-    List<Marker> markerList = new ArrayList<>();
+//    private Marker tempMarker;
+//    List<Marker> markerList = new ArrayList<>();
     private Marker markerPet;
     private Overlay mCircle;
     private LatLng tempLatlng;
@@ -117,51 +117,51 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         markerAnimation = (Marker) baiduMap.addOverlay(markerAnimationOptions);
     }
 
-    /**
-     * 添加锚点
-     *
-     * @param tag
-     * @param pointList
-     */
-    @ReactMethod
-    public void addPoint(int tag, final String avatar, final ReadableArray pointList) {
-        Activity context = this.getCurrentActivity();
-
-
-        markerList.clear();
-
-        if (pointList != null || pointList.size() == 0) {
-            final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
-            baiduMap.clear();
-            for (int i = 0; i < pointList.size(); i++) {
-                if (i == pointList.size() - 1) {
-                    final int index = i;
-                    final ReadableMap sub = pointList.getMap(i);
-                    MapUtils.getViewBitmap(context, avatar, new MapUtils.GetViewBitmapCallback() {
-                                @Override
-                                public void onSuccess(Bitmap bitmap) {
-                                    //定义Maker坐标点
-                                    LatLng point = new LatLng(sub.getDouble("latitude"), sub.getDouble("longitude"));
-                                    tempMarker = addMark(index, baiduMap, point, bitmap);
-                                    markerList.add(tempMarker);
-                                    baiduMap.animateMapStatus(MapStatusUpdateFactory.newLatLng(point), 1 * 1000);
-                                }
-                            }
-                    );
-
-                    return;
-                }
-                ReadableMap sub = pointList.getMap(i);
-                //定义Maker坐标点
-                LatLng point = new LatLng(sub.getDouble("latitude"), sub.getDouble("longitude"));
-                markerList.add(addMark(i, baiduMap, point, BitmapFactory
-                        .decodeResource(
-                                context.getResources(),
-                                R.mipmap.im_his_route_marker)));
-            }
-        }
-
-    }
+//    /**
+//     * 添加锚点
+//     *
+//     * @param tag
+//     * @param pointList
+//     */
+//    @ReactMethod
+//    public void addPoint(int tag, final String avatar, final ReadableArray pointList) {
+//        Activity context = this.getCurrentActivity();
+//
+//
+//        markerList.clear();
+//
+//        if (pointList != null || pointList.size() == 0) {
+//            final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+//            baiduMap.clear();
+//            for (int i = 0; i < pointList.size(); i++) {
+//                if (i == pointList.size() - 1) {
+//                    final int index = i;
+//                    final ReadableMap sub = pointList.getMap(i);
+//                    MapUtils.getViewBitmap(context, avatar, new MapUtils.GetViewBitmapCallback() {
+//                                @Override
+//                                public void onSuccess(Bitmap bitmap) {
+//                                    //定义Maker坐标点
+//                                    LatLng point = new LatLng(sub.getDouble("latitude"), sub.getDouble("longitude"));
+//                                    tempMarker = addMark(index, baiduMap, point, bitmap);
+//                                    markerList.add(tempMarker);
+//                                    baiduMap.animateMapStatus(MapStatusUpdateFactory.newLatLng(point), 1 * 1000);
+//                                }
+//                            }
+//                    );
+//
+//                    return;
+//                }
+//                ReadableMap sub = pointList.getMap(i);
+//                //定义Maker坐标点
+//                LatLng point = new LatLng(sub.getDouble("latitude"), sub.getDouble("longitude"));
+//                markerList.add(addMark(i, baiduMap, point, BitmapFactory
+//                        .decodeResource(
+//                                context.getResources(),
+//                                R.mipmap.im_his_route_marker)));
+//            }
+//        }
+//
+//    }
 
     /**
      * 画轨迹
@@ -209,33 +209,33 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         baiduMap.animateMapStatus(MapStatusUpdateFactory.newLatLng(pathList.get(0)), 1 * 1000);
     }
 
-    /**
-     * 添加锚点
-     *
-     * @param mlatLng
-     */
-    public Marker addMark(int index, BaiduMap baiduMap, LatLng mlatLng, Bitmap mBitmap) {
-        OverlayOptions markerOptions = new MarkerOptions().position(mlatLng)
-                .icon(BitmapDescriptorFactory.fromBitmap(mBitmap))
-                .anchor(0.5f, 1.0f);
-        // 添加中心位置
-        Marker marker = (Marker) baiduMap.addOverlay(markerOptions);
-        marker.setZIndex(index);
-        return marker;
-    }
+//    /**
+//     * 添加锚点
+//     *
+//     * @param mlatLng
+//     */
+//    public Marker addMark(int index, BaiduMap baiduMap, LatLng mlatLng, Bitmap mBitmap) {
+//        OverlayOptions markerOptions = new MarkerOptions().position(mlatLng)
+//                .icon(BitmapDescriptorFactory.fromBitmap(mBitmap))
+//                .anchor(0.5f, 1.0f);
+//        // 添加中心位置
+//        Marker marker = (Marker) baiduMap.addOverlay(markerOptions);
+//        marker.setZIndex(index);
+//        return marker;
+//    }
 
 
-    /**
-     * 设置标尺
-     * @param tag
-     * @param ruler
-     */
-    @ReactMethod
-    public void setRuler(int tag,int ruler){
-        Activity context = this.getCurrentActivity();
-        BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
-        baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler));
-    }
+//    /**
+//     * 设置标尺
+//     * @param tag
+//     * @param ruler
+//     */
+//    @ReactMethod
+//    public void setRuler(int tag,int ruler){
+//        Activity context = this.getCurrentActivity();
+//        BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+//        baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler));
+//    }
 
     /**
      * 添加电子栅栏
@@ -343,39 +343,6 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         });
     }
 
-
-    /**
-     * 更新选中的marker
-     *
-     */
-    @ReactMethod
-    public void updateMarkInfo(int tag, final ReadableMap readableMap) {
-        Activity context = this.getCurrentActivity();
-        final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
-//        if(markerToOne != null){
-//            markerToOne.remove();
-//        }
-        markerToOne = markerList.get(Integer.parseInt(readableMap.getString("index")));
-        tempMarker.setIcon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(
-                context.getResources(),
-                R.mipmap.im_his_route_marker)));
-        if(avatarBitmap != null){
-            markerToOne.setIcon(BitmapDescriptorFactory.fromBitmap(avatarBitmap));
-            baiduMap.animateMapStatus(MapStatusUpdateFactory.newLatLng(markerToOne.getPosition()), 1 * 1000);
-            tempMarker = markerToOne;
-        }else{
-            MapUtils.getViewBitmap(context, readableMap.getString("avatar"), new MapUtils.GetViewBitmapCallback() {
-            @Override
-            public void onSuccess(Bitmap bitmap) {
-                avatarBitmap = bitmap;
-                markerToOne.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                baiduMap.animateMapStatus(MapStatusUpdateFactory.newLatLng(markerToOne.getPosition()), 1 * 1000);
-                tempMarker = markerToOne;
-            }
-        });
-        }
-    }
-
     @ReactMethod
     public void onDestroyBDMap(int tag){
         ((MapView) this.getCurrentActivity().findViewById(tag)).onDestroy();
@@ -418,11 +385,18 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void move(int tag, double lat, double lng, boolean isAnimate){
+    public void move(int tag, double lat, double lng, float zoom, boolean isAnimate){
         BaiduMap baiduMap = getMap(tag);
-        LatLng latLng = new LatLng(lat, lng);
+
         MapStatus.Builder builder = new MapStatus.Builder();
-        builder.target(latLng);
+        if(lat != -1 && lng != -1){
+            LatLng latLng = new LatLng(lat, lng);
+            builder.target(latLng);
+        }
+        if(zoom != -1){
+            builder.zoom(zoom);
+        }
+
         if(isAnimate){
             baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         }else{
@@ -436,11 +410,13 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         MapView mMapView;
         boolean mIsAnimate;
         int mtag;
+        float mZoom;
 
-        public MyLocationListener(int tag, boolean isAnimate){
+        public MyLocationListener(int tag, float zoom, boolean isAnimate){
             mMapView = getMapView(tag);
             mIsAnimate = isAnimate;
             mtag = tag;
+            mZoom = zoom;
         }
 
         @Override
@@ -460,7 +436,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             BaiduMap baiduMap = getMap(mtag);
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MapStatus.Builder builder = new MapStatus.Builder();
-            builder.target(latLng);
+            builder.target(latLng).zoom(mZoom);
             if(mIsAnimate){
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }else{
@@ -472,9 +448,9 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         }
     }
     @ReactMethod
-    public void moveToUserLocation(int tag, boolean isAnimate){
+    public void moveToUserLocation(int tag, float zoom, boolean isAnimate){
         mLocClient = new LocationClient(this.getCurrentActivity());
-        MyLocationListener myListener = new MyLocationListener(tag, isAnimate);
+        MyLocationListener myListener = new MyLocationListener(tag, zoom, isAnimate);
         mLocClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true); // 打开gps
@@ -508,17 +484,20 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
         @Override
         public BitmapDescriptor getBitmapDescriptor() {
-            if(mTitle != null && mTitle.length() > 0){
-                View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
-                TextView tv = (TextView)view.findViewById(R.id.tv_title);
-                tv.setText(mTitle);
-                return BitmapDescriptorFactory.fromView(view);
-            }else{
-                return BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
-            }
-
+            return getMarkView(mTitle);
         }
     }
+    private BitmapDescriptor getMarkView(String title){//获取自定义的markview
+        if(title != null && title.length() > 0){
+            View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
+            TextView tv = (TextView)view.findViewById(R.id.tv_title);
+            tv.setText(title);
+            return BitmapDescriptorFactory.fromView(view);
+        }else{
+            return BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
+        }
+    }
+
     @ReactMethod
     public void cluster(int tag, ReadableArray data){
         MapView mapview = getMapView(tag);
@@ -526,6 +505,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         // 初始化点聚合管理类
         ClusterManager mClusterManager = new ClusterManager<>(getCurrentActivity(), map);
         // 向点聚合管理类中添加Marker实例
+
+        if(data == null || data.size() == 0){
+            return;
+        }
 
         for (int i = 0; i < data.size(); i++) {
             ReadableArray nodelist = data.getArray(i);
@@ -548,6 +531,27 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         //强制地图状态变化  刷新图标
         MapStatus status = map.getMapStatus();
         map.setMapStatus(MapStatusUpdateFactory.newMapStatus(status));
+    }
+
+    @ReactMethod
+    public void addMarks(int tag, ReadableArray markslist) {
+        if(markslist == null || markslist.size() == 0){
+            return;
+        }
+
+        ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
+
+        for (int i = 0; i < markslist.size(); i++) {
+            ReadableMap mark = markslist.getMap(i);
+            MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.getString("title"));
+            OverlayOptions option = new MarkerOptions()
+                    .position(item.getPosition())
+                    .icon(item.getBitmapDescriptor());
+            optionList.add(option);
+        }
+
+        //在地图上添加Marker，并显示
+        getMap(tag).addOverlays(optionList);
     }
 }
 
