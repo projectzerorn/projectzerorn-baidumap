@@ -16,6 +16,7 @@ import com.facebook.react.uimanager.LayoutShadowNode;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 public class BaiduMapViewManager extends SimpleViewManager<MapView> implements BaiduMap.OnMapLoadedCallback {
     public static final String RCT_CLASS = "RCTBaiduMap";
@@ -25,7 +26,16 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     private float ruler = 15;
     private ThemedReactContext reactContext;
 
+    @Override
+    public String getName() {
+        return RCT_CLASS;
+    }
 
+    @Override
+    protected MapView createViewInstance(ThemedReactContext reactContext) {
+        this.reactContext = reactContext;
+        return getMap();
+    }
 
     @Override
     public LayoutShadowNode createShadowNodeInstance() {
@@ -109,26 +119,48 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         }
     }
 
-    @Override
-    public String getName() {
-        return RCT_CLASS;
-    }
-
-    @Override
-    protected MapView createViewInstance(ThemedReactContext reactContext) {
-        this.reactContext = reactContext;
-        return getMap();
-    }
-
     /**
      * 设置一些amap的属性
      */
     private MapView getMap() {
-        MapView mMapView = new MapView(mActivity);
+        final MapView mMapView = new MapView(mActivity);
         mMapView.showZoomControls(true);
         BaiduMap baiduMap = mMapView.getMap();
         baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler), 1 * 1000);
         baiduMap.setOnMapLoadedCallback(this);
+
+        //监听
+        baiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+            /**
+             * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
+             * @param status 地图状态改变开始时的地图状态
+             */
+            public void onMapStatusChangeStart(MapStatus status){
+            }
+            /**
+             * 地图状态-变化中
+             * @param status 当前地图状态
+             */
+            public void onMapStatusChange(MapStatus status){
+            }
+            /**
+             * 地图状态改变结束
+             * @param status 地图状态改变结束后的地图状态
+             */
+            public void onMapStatusChangeFinish(MapStatus status){
+                WritableMap event = Arguments.createMap();
+                event.putDouble("centerLat", status.target.latitude);
+                event.putDouble("centerLng", status.target.longitude);
+                event.putDouble("zoom", status.zoom);
+                event.putDouble("northeastLat", status.bound.northeast.latitude);
+                event.putDouble("northeastLng", status.bound.northeast.longitude);
+                event.putDouble("southwestLat", status.bound.southwest.latitude);
+                event.putDouble("southwestLng", status.bound.southwest.longitude);
+
+                reactContext.getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(mMapView.getId(), "topChange", event);
+            }
+        });
         return mMapView;
     }
 
