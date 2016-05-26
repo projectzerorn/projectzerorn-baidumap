@@ -149,6 +149,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
              */
             public void onMapStatusChangeFinish(MapStatus status){
                 WritableMap event = Arguments.createMap();
+                event.putString("eventType", "onMapStatusChangeFinish");
                 event.putDouble("centerLat", status.target.latitude);
                 event.putDouble("centerLng", status.target.longitude);
                 event.putDouble("zoom", status.zoom);
@@ -159,6 +160,20 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
 
                 reactContext.getJSModule(RCTEventEmitter.class)
                         .receiveEvent(mMapView.getId(), "topChange", event);
+            }
+        });
+
+        //标点marker监听
+        baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener(){
+
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                WritableMap event = Arguments.createMap();
+                event.putString("eventType", "onMarkerClick");
+                event.putString("title", marker.getTitle());
+                reactContext.getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(mMapView.getId(), "topChange", event);
+                return true;
             }
         });
         return mMapView;

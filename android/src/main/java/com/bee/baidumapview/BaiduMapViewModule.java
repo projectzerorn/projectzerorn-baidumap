@@ -27,6 +27,9 @@ import com.bee.baidumapview.utils.clusterutil.clustering.ClusterItem;
 import com.bee.baidumapview.utils.clusterutil.clustering.ClusterManager;
 import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -544,14 +547,78 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         for (int i = 0; i < markslist.size(); i++) {
             ReadableMap mark = markslist.getMap(i);
             MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.getString("title"));
+
+            String markData = null;
+            try {
+                markData = convertMapToJson(mark).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             OverlayOptions option = new MarkerOptions()
                     .position(item.getPosition())
-                    .icon(item.getBitmapDescriptor());
+                    .icon(item.getBitmapDescriptor())
+                    .title(markData);//使用title字段传递  标点数据
             optionList.add(option);
         }
 
         //在地图上添加Marker，并显示
         getMap(tag).addOverlays(optionList);
+    }
+
+    private JSONObject convertMapToJson(ReadableMap readableMap) throws JSONException {
+        JSONObject object = new JSONObject();
+        ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+        while (iterator.hasNextKey()) {
+            String key = iterator.nextKey();
+            switch (readableMap.getType(key)) {
+            case Null:
+                object.put(key, JSONObject.NULL);
+                break;
+            case Boolean:
+                object.put(key, readableMap.getBoolean(key));
+                break;
+            case Number:
+                object.put(key, readableMap.getDouble(key));
+                break;
+            case String:
+                object.put(key, readableMap.getString(key));
+                break;
+            case Map:
+                object.put(key, convertMapToJson(readableMap.getMap(key)));
+                break;
+            case Array:
+                object.put(key, convertArrayToJson(readableMap.getArray(key)));
+                break;
+            }
+        }
+        return object;
+    }
+
+    private JSONArray convertArrayToJson(ReadableArray readableArray) throws JSONException {
+        JSONArray array = new JSONArray();
+        for (int i = 0; i < readableArray.size(); i++) {
+            switch (readableArray.getType(i)) {
+            case Null:
+                break;
+            case Boolean:
+                array.put(readableArray.getBoolean(i));
+                break;
+            case Number:
+                array.put(readableArray.getDouble(i));
+                break;
+            case String:
+                array.put(readableArray.getString(i));
+                break;
+            case Map:
+                array.put(convertMapToJson(readableArray.getMap(i)));
+                break;
+            case Array:
+                array.put(convertArrayToJson(readableArray.getArray(i)));
+                break;
+            }
+        }
+        return array;
     }
 }
 

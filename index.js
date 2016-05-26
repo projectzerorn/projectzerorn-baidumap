@@ -23,7 +23,16 @@ class BDMapView extends Component {
     }
 
     _onChange = (event:Event)=> {
-        this.props.onMapStatusChangeFinish(event.nativeEvent);
+        let eventType = event.nativeEvent.eventType;
+
+        if(eventType && eventType == "onMarkerClick"){
+            let dataStr = event.nativeEvent.title;
+            let dataJson = JSON.parse(dataStr);//通过title来传递 mark数据 数据结构为json
+            this.props.onMarkerClick(dataJson);
+        }else if(eventType && eventType == "onMapStatusChangeFinish"){
+            this.props.onMapStatusChangeFinish(event.nativeEvent);
+        }
+
     };
 }
 
@@ -36,6 +45,7 @@ BDMapView.propTypes = {
     isShowUserLocation: PropTypes.bool,
 
     onMapStatusChangeFinish: React.PropTypes.func,
+    onMarkerClick: React.PropTypes.func,
 }
 
 export default BDMapView;
