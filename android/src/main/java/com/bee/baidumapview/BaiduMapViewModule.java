@@ -537,9 +537,14 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void addMarks(int tag, ReadableArray markslist) {
+    public void addMarks(int tag, ReadableArray markslist, boolean isClearMap) {
         if(markslist == null || markslist.size() == 0){
             return;
+        }
+
+        BaiduMap map = getMap(tag);
+        if(isClearMap){
+            map.clear();
         }
 
         ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
@@ -563,7 +568,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         }
 
         //在地图上添加Marker，并显示
-        getMap(tag).addOverlays(optionList);
+        map.addOverlays(optionList);
     }
 
     private JSONObject convertMapToJson(ReadableMap readableMap) throws JSONException {
@@ -619,6 +624,14 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             }
         }
         return array;
+    }
+
+    @ReactMethod
+    public void clearMap(int tag) {
+        BaiduMap baidumap = getMap(tag);
+        if(baidumap != null){
+            baidumap.clear();
+        }
     }
 }
 

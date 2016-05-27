@@ -97,8 +97,12 @@ let BDMapModule = {
         MyMapModule.cluster(ref, data);
     },
 
-    addMarks(ref, data){
-        MyMapModule.addMarks(ref, data);
+    addMarks(ref, data, isClearMap = true){
+        MyMapModule.addMarks(ref, data, isClearMap);
+    },
+
+    clearMap(ref){
+        MyMapModule.clearMap(ref);
     }
 }
 
