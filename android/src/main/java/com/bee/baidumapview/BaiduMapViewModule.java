@@ -48,6 +48,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     private SuggestionSearch mSuggestionSearch = null;
     private Bitmap avatarBitmap;
     private Marker markerToOne;
+    private HeatMap mHeatmap;
 
     public BaiduMapViewModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -629,9 +630,33 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void clearMap(int tag) {
         BaiduMap baidumap = getMap(tag);
+
         if(baidumap != null){
             baidumap.clear();
         }
+
+        if(mHeatmap != null){
+            mHeatmap.removeHeatMap();
+        }
+    }
+
+    @ReactMethod
+    public void addHeatMap(int tag, ReadableArray list) {
+        if(list == null || list.size() == 0){
+            return;
+        }
+
+        BaiduMap baiduMap = getMap(tag);
+        List<LatLng> heatPointList = new ArrayList<LatLng>();
+        for (int i = 0; i < list.size(); i++) {
+            ReadableMap heatPointRNMap = list.getMap(i);
+            double lat = heatPointRNMap.getDouble("lat");
+            double lng = heatPointRNMap.getDouble("lng");
+            heatPointList.add(new LatLng(lat, lng));
+        }
+
+        mHeatmap = new HeatMap.Builder().data(heatPointList).build();
+        baiduMap.addHeatMap(mHeatmap);
     }
 }
 

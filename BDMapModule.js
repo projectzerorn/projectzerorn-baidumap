@@ -89,6 +89,10 @@ let BDMapModule = {
         MyMapModule.move(ref, lat, lng, zoom, isAnimate);
     },
 
+    zoom(ref, zoom, isAnimate = false){
+        MyMapModule.move(ref, -1, -1, zoom, isAnimate);
+    },
+
     moveToUserLocation(ref, zoom, isAnimate){
         MyMapModule.moveToUserLocation(ref, zoom, isAnimate);
     },
@@ -103,6 +107,10 @@ let BDMapModule = {
 
     clearMap(ref){
         MyMapModule.clearMap(ref);
+    },
+
+    addHeatMap(ref, datalist){
+        MyMapModule.addHeatMap(ref, datalist);
     }
 }
 
