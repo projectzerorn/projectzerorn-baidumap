@@ -16,12 +16,15 @@
     NSString *imageUrl;
     NSMutableArray *pointDataArray;
     NSMutableArray *pointViewArray;
-    float    lat;
-    float    log;
     BOOL     circleFlag;  //点击画圆的标识
     BMKPointAnnotation *anno;
     BMKLocationService *_locService;
     RCTResponseSenderBlock callb;
+    
+    Boolean moveToUserLocationFlag;//是否调用过moveToUserLocation方法
+    float moveToUserLocationZoom;
+    NSNumber * moveToUserLocationReactTag;
+    Boolean moveToUserLocationisAnimate;
 }
 
 @synthesize bridge = _bridge;
@@ -163,6 +166,28 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
 - (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation
 {
     [mapView_mk updateLocationData:userLocation];
+    
+    if(moveToUserLocationFlag){
+        dispatch_async(_bridge.uiManager.methodQueue,^{
+            [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+                id view = viewRegistry[moveToUserLocationReactTag];
+                BMKMapView *bk = (BMKMapView *)view;
+                
+                float userLat = _locService.userLocation.location.coordinate.latitude;
+                float userLng = _locService.userLocation.location.coordinate.longitude;
+                CLLocationCoordinate2D center = CLLocationCoordinate2DMake(userLat, userLng);
+                
+                BMKMapStatus* mapStatus = [bk getMapStatus];
+                mapStatus.fLevel = moveToUserLocationZoom;
+                mapStatus.targetGeoPt = center;
+                [bk setMapStatus:mapStatus];
+
+            }];
+        });
+
+    }
+    
+    [_locService stopUserLocationService];
 }
 
 
@@ -656,6 +681,37 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     //	CLLocationCoordinate2D center = CLLocationCoordinate2DMake(f1_1, f1_2);
     //	anno1.coordinate = center;
     //	[mapView addAnnotation:anno1];
+}
+
+#pragma mark -------------------------------------------------- 定位到用户坐标
+RCT_EXPORT_METHOD(moveToUserLocation:(nonnull NSNumber *)reactTag zoom:(float)zoom isAnimate:(BOOL)isAnimate){
+    dispatch_async(_bridge.uiManager.methodQueue,^{
+        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            BMKMapView *bk = (BMKMapView *)view;
+            
+            if(_locService != nil && _locService.userLocation != nil && _locService.userLocation.location.coordinate.latitude != 0){
+                float userLat = _locService.userLocation.location.coordinate.latitude;
+                float userLng = _locService.userLocation.location.coordinate.longitude;
+                CLLocationCoordinate2D center = CLLocationCoordinate2DMake(userLat, userLng);
+                
+                BMKMapStatus* mapStatus = [bk getMapStatus];
+                mapStatus.fLevel = zoom;
+                mapStatus.targetGeoPt = center;
+                [bk setMapStatus:mapStatus];
+            }else{
+                //初始化BMKLocationService
+                _locService = [[BMKLocationService alloc]init];
+                _locService.delegate = self;
+                //启动LocationService
+                [_locService startUserLocationService];
+                moveToUserLocationFlag = true;
+                moveToUserLocationZoom = zoom;
+                moveToUserLocationReactTag = reactTag;
+                moveToUserLocationisAnimate = isAnimate;
+            }
+        }];
+    });
 }
 
 
