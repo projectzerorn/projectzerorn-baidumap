@@ -181,7 +181,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
                 BMKMapStatus* mapStatus = [bk getMapStatus];
                 mapStatus.fLevel = moveToUserLocationZoom;
                 mapStatus.targetGeoPt = center;
-                [bk setMapStatus:mapStatus];
+                [bk setMapStatus:mapStatus withAnimation:moveToUserLocationisAnimate];
 
             }];
         });
@@ -684,7 +684,7 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     //	[mapView addAnnotation:anno1];
 }
 
-#pragma mark -------------------------------------------------- 定位到用户坐标
+#pragma mark -------------------------------------------------- BDMapModule定位到用户坐标
 RCT_EXPORT_METHOD(moveToUserLocation:(nonnull NSNumber *)reactTag zoom:(float)zoom isAnimate:(BOOL)isAnimate){
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
@@ -699,7 +699,8 @@ RCT_EXPORT_METHOD(moveToUserLocation:(nonnull NSNumber *)reactTag zoom:(float)zo
                 BMKMapStatus* mapStatus = [bk getMapStatus];
                 mapStatus.fLevel = zoom;
                 mapStatus.targetGeoPt = center;
-                [bk setMapStatus:mapStatus];
+                
+                [bk setMapStatus:mapStatus withAnimation:isAnimate];
             }else{
                 //初始化BMKLocationService
                 _locService = [[BMKLocationService alloc]init];
@@ -711,6 +712,27 @@ RCT_EXPORT_METHOD(moveToUserLocation:(nonnull NSNumber *)reactTag zoom:(float)zo
                 moveToUserLocationReactTag = reactTag;
                 moveToUserLocationisAnimate = isAnimate;
             }
+        }];
+    });
+}
+
+#pragma mark -------------------------------------------------- BDMapModule移动到坐标
+RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)lng zoom:(float)zoom isAnimate:(BOOL)isAnimate){
+    dispatch_async(_bridge.uiManager.methodQueue,^{
+        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            BMKMapView *bk = (BMKMapView *)view;
+                
+            BMKMapStatus* mapStatus = [bk getMapStatus];
+            if(zoom != -1){
+                mapStatus.fLevel = zoom;
+            }
+            if(lat != -1 && lng != -1){
+                CLLocationCoordinate2D center = CLLocationCoordinate2DMake(lat, lng);
+                mapStatus.targetGeoPt = center;
+            }
+            
+            [bk setMapStatus:mapStatus withAnimation:isAnimate];
         }];
     });
 }
