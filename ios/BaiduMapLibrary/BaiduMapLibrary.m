@@ -90,6 +90,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     [map setMapType:BMKMapTypeStandard];
     map.userTrackingMode = BMKUserTrackingModeFollow;
     map.zoomLevel = 17;//5;
+    map.zoomEnabledWithTap = true;
     self.geoSearcher = [[BMKGeoCodeSearch alloc]init];
     self.geoSearcher.delegate = self;
     self.sugestionSearch = [[BMKSuggestionSearch alloc]init];
@@ -97,9 +98,9 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     self.iconImage = nil;
     self.startPointFlag = NO;
     self.endPointFlag = NO;
-    UITapGestureRecognizer *tapgesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(drawCrile:)];
-    tapgesture.delegate = self;
-    [map addGestureRecognizer:tapgesture];
+//    UITapGestureRecognizer *tapgesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(drawCrile:)];
+//    tapgesture.delegate = self;
+//    [map addGestureRecognizer:tapgesture];
     return map;
 }
 
