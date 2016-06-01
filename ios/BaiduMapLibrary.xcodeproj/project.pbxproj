@@ -17,6 +17,10 @@
 		97655A2F1CC09338003ABC90 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97655A2E1CC09338003ABC90 /* CoreTelephony.framework */; };
 		97655A331CC0934F003ABC90 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97655A321CC0934F003ABC90 /* CoreGraphics.framework */; };
 		97655A351CC0935A003ABC90 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97655A341CC0935A003ABC90 /* Security.framework */; };
+		9A3D97B61CFE6E9400DECF2B /* CRBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97B51CFE6E9400DECF2B /* CRBubbleView.m */; };
+		9A3D97CE1CFE744200DECF2B /* UIView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97CD1CFE744200DECF2B /* UIView+Category.m */; };
+		9A3D97D11CFE7B3C00DECF2B /* MyAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97D01CFE7B3C00DECF2B /* MyAnnotation.m */; };
+		9A8C4F521CFDAEB0009D3647 /* MyAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A8C4F511CFDAEB0009D3647 /* MyAnnotationView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +49,14 @@
 		97655A2E1CC09338003ABC90 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		97655A321CC0934F003ABC90 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		97655A341CC0935A003ABC90 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		9A3D97B41CFE6E9400DECF2B /* CRBubbleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRBubbleView.h; sourceTree = "<group>"; };
+		9A3D97B51CFE6E9400DECF2B /* CRBubbleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRBubbleView.m; sourceTree = "<group>"; };
+		9A3D97CC1CFE744200DECF2B /* UIView+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Category.h"; sourceTree = "<group>"; };
+		9A3D97CD1CFE744200DECF2B /* UIView+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Category.m"; sourceTree = "<group>"; };
+		9A3D97CF1CFE7B3C00DECF2B /* MyAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyAnnotation.h; sourceTree = "<group>"; };
+		9A3D97D01CFE7B3C00DECF2B /* MyAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyAnnotation.m; sourceTree = "<group>"; };
+		9A8C4F501CFDAEB0009D3647 /* MyAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyAnnotationView.h; sourceTree = "<group>"; };
+		9A8C4F511CFDAEB0009D3647 /* MyAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyAnnotationView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +104,7 @@
 		97655A0B1CC09052003ABC90 /* BaiduMapLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				9A8C4F4D1CFDA260009D3647 /* depend */,
 				97655A0C1CC09052003ABC90 /* BaiduMapLibrary.h */,
 				97655A0E1CC09052003ABC90 /* BaiduMapLibrary.m */,
 			);
@@ -105,6 +118,21 @@
 				97655A241CC0917C003ABC90 /* UIImage+XG.m */,
 			);
 			name = FrameWork;
+			sourceTree = "<group>";
+		};
+		9A8C4F4D1CFDA260009D3647 /* depend */ = {
+			isa = PBXGroup;
+			children = (
+				9A3D97CC1CFE744200DECF2B /* UIView+Category.h */,
+				9A3D97CD1CFE744200DECF2B /* UIView+Category.m */,
+				9A3D97B41CFE6E9400DECF2B /* CRBubbleView.h */,
+				9A3D97B51CFE6E9400DECF2B /* CRBubbleView.m */,
+				9A3D97CF1CFE7B3C00DECF2B /* MyAnnotation.h */,
+				9A3D97D01CFE7B3C00DECF2B /* MyAnnotation.m */,
+				9A8C4F501CFDAEB0009D3647 /* MyAnnotationView.h */,
+				9A8C4F511CFDAEB0009D3647 /* MyAnnotationView.m */,
+			);
+			path = depend;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,6 +192,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				97655A251CC0917C003ABC90 /* UIImage+XG.m in Sources */,
+				9A3D97B61CFE6E9400DECF2B /* CRBubbleView.m in Sources */,
+				9A3D97D11CFE7B3C00DECF2B /* MyAnnotation.m in Sources */,
+				9A8C4F521CFDAEB0009D3647 /* MyAnnotationView.m in Sources */,
+				9A3D97CE1CFE744200DECF2B /* UIView+Category.m in Sources */,
 				97655A0F1CC09052003ABC90 /* BaiduMapLibrary.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

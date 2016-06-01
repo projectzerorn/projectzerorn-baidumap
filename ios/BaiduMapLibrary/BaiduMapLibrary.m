@@ -1,15 +1,13 @@
-//
-//  BaiduMapLibrary.m
-//  BaiduMapLibrary
-//
-//  Created by rover on 16/4/15.
-//  Copyright © 2016年 rover. All rights reserved.
-//
-
 #import "BaiduMapLibrary.h"
 
 
 #import "UIImage+XG.h"
+#import "MyAnnotationView.h"
+#import "MyAnnotation.h"
+
+
+#define ANNOTATION_TYPE_OTHER 0
+#define ANNOTATION_TYPE_TEXT 1
 
 @implementation BaiduMapLibrary{
     BMKMapView *mapView_mk;
@@ -25,6 +23,7 @@
     float moveToUserLocationZoom;
     NSNumber * moveToUserLocationReactTag;
     Boolean moveToUserLocationisAnimate;
+    int AnnotationType;
 }
 
 @synthesize bridge = _bridge;
@@ -635,42 +634,55 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 
 #pragma mark -------------------------------------------------- 打点回调函数，自定义图片
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
-    BMKPinAnnotationView *newAnnotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
-    newAnnotationView.pinColor = BMKPinAnnotationColorGreen;
-    newAnnotationView.annotation = annotation;
-    if([[annotation title] intValue] == 1){
-        newAnnotationView.userInteractionEnabled = NO;
-    }
-    NSURL *url = [NSURL URLWithString:self.iconStr];
-    if(self.startPointFlag == YES || self.endPointFlag == YES){
-        if(self.startPointFlag == YES){
-            self.startPointFlag = NO;
-            newAnnotationView.image = [UIImage imageNamed:@"nav_route_result_start_point_ios.png"];;
-        }
-        if(self.endPointFlag == YES){
-            self.endPointFlag = NO;
-            newAnnotationView.image = [UIImage imageNamed:@"nav_route_result_end_point_ios.png"];
-        }
-    }
-    else{
-        //    if(self.iconImage == nil)
-        {
-            if(![self.iconStr isEqualToString:@"im_his_route_marker_ios.png"]){
-                UIImage *icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
-                
-                UIImage *img1 = [UIImage imageNamed:@"marker_foot_ios.png"];//[UIImage imageNamed:@"MapLocatebakImg.png"];
-                self.iconImage = [self mergeToeImage:img1 image2:icon];
-                
-                self.iconImage = [self scaleToSize:self.iconImage size:CGSizeMake(80, 80)];
-            }
-            else{
-                self.iconImage = [UIImage imageNamed:self.iconStr];
-            }
-        }
+    if(AnnotationType == ANNOTATION_TYPE_TEXT){
+        MyAnnotationView *annotationView = [[MyAnnotationView alloc] init];
+        annotationView.canShowCallout = NO;
+        annotationView.annotation = annotation;
+
+        return annotationView;
         
-        newAnnotationView.image = self.iconImage;
+    }else{
+        BMKPinAnnotationView *newAnnotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
+        newAnnotationView.pinColor = BMKPinAnnotationColorGreen;
+        newAnnotationView.annotation = annotation;
+        if([[annotation title] intValue] == 1){
+            newAnnotationView.userInteractionEnabled = NO;
+        }
+        NSURL *url = [NSURL URLWithString:self.iconStr];
+        if(self.startPointFlag == YES || self.endPointFlag == YES){
+            if(self.startPointFlag == YES){
+                self.startPointFlag = NO;
+                newAnnotationView.image = [UIImage imageNamed:@"nav_route_result_start_point_ios.png"];
+            }
+            if(self.endPointFlag == YES){
+                self.endPointFlag = NO;
+                newAnnotationView.image = [UIImage imageNamed:@"nav_route_result_end_point_ios.png"];
+            }
+        }
+        else{
+            //    if(self.iconImage == nil)
+            {
+                if(![self.iconStr isEqualToString:@"im_his_route_marker_ios.png"]){
+                    UIImage *icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+                    
+                    UIImage *img1 = [UIImage imageNamed:@"marker_foot_ios.png"];//[UIImage imageNamed:@"MapLocatebakImg.png"];
+                    self.iconImage = [self mergeToeImage:img1 image2:icon];
+                    
+                    self.iconImage = [self scaleToSize:self.iconImage size:CGSizeMake(80, 80)];
+                }
+                else{
+                    self.iconImage = [UIImage imageNamed:self.iconStr];
+                }
+            }
+            
+            newAnnotationView.image = self.iconImage;
+        }
+        return newAnnotationView;
     }
-    return newAnnotationView;
+}
+
+-(void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
+    
 }
 
 
@@ -737,5 +749,32 @@ RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)ln
     });
 }
 
+#pragma mark -------------------------------------------------- BDMapModule添加标点
+RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isClearMap:(BOOL)isClearMap){
+    dispatch_async(_bridge.uiManager.methodQueue,^{
+        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            BMKMapView *bk = (BMKMapView *)view;
+            AnnotationType = ANNOTATION_TYPE_TEXT;
+
+            for(int i=0;i<data.count;i++){
+                NSDictionary *dic = (NSDictionary *)[data objectAtIndex:i];
+                float lat = [dic[@"lat"] floatValue];
+                float lng = [dic[@"lng"] floatValue];
+                NSString* title = [dic objectForKey:@"title"];
+                
+                MyAnnotation* annotation = [[MyAnnotation alloc]init];
+                CLLocationCoordinate2D coor;
+                coor.latitude = lat;
+                coor.longitude = lng;
+                annotation.coordinate = coor;
+                annotation.title = title;
+                annotation.bgColor = [UIColor colorWithRed:225/255. green:51/255. blue:48/255. alpha:0.9];
+                
+                [bk addAnnotation:annotation];
+            }
+        }];
+    });
+}
 
 @end
