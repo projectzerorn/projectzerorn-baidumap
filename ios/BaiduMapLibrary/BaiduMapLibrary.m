@@ -757,6 +757,11 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
             BMKMapView *bk = (BMKMapView *)view;
             AnnotationType = ANNOTATION_TYPE_TEXT;
 
+            if(isClearMap){//clear map
+                [bk removeOverlays:bk.overlays];
+                [bk removeAnnotations:bk.annotations];
+            }
+            
             for(int i=0;i<data.count;i++){
                 NSDictionary *dic = (NSDictionary *)[data objectAtIndex:i];
                 float lat = [dic[@"lat"] floatValue];
@@ -773,6 +778,19 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                 
                 [bk addAnnotation:annotation];
             }
+        }];
+    });
+}
+
+#pragma mark -------------------------------------------------- BDMapModule清空地图
+RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
+    dispatch_async(_bridge.uiManager.methodQueue,^{
+        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            BMKMapView *bk = (BMKMapView *)view;
+            
+            [bk removeOverlays:bk.overlays];
+            [bk removeAnnotations:bk.annotations];
         }];
     });
 }
