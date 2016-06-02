@@ -4,13 +4,14 @@
 #import "UIImage+XG.h"
 #import "MyAnnotationView.h"
 #import "MyAnnotation.h"
+#import "MyBMKMapView.h"
 
 
 #define ANNOTATION_TYPE_OTHER 0
 #define ANNOTATION_TYPE_TEXT 1
 
 @implementation BaiduMapLibrary{
-    BMKMapView *mapView_mk;
+    MyBMKMapView *mapView_mk;
     NSString *imageUrl;
     NSMutableArray *pointDataArray;
     NSMutableArray *pointViewArray;
@@ -47,7 +48,7 @@
 
 RCT_EXPORT_MODULE()     //必须导入Native的该宏，想当于声明这个类要实现自定义模块的功能
 
-
+RCT_EXPORT_VIEW_PROPERTY(onChange, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(showMapScaleBar,BOOL)
 
 RCT_CUSTOM_VIEW_PROPERTY(region, MKCoordinateRegion, RCTMap){
@@ -83,7 +84,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
 }
 
 - (UIView *)view{
-    BMKMapView *map = [[BMKMapView alloc] init];
+    MyBMKMapView *map = [[MyBMKMapView alloc] init];
     mapView_mk = map;
     map.delegate = self;
     [map setMapType:BMKMapTypeStandard];
@@ -112,7 +113,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     self.fenceDic = [[NSMutableDictionary alloc] init];
     
     UITapGestureRecognizer *tap = (UITapGestureRecognizer *)gesture;
-    BMKMapView *bk = (BMKMapView *)gesture.view;
+    MyBMKMapView *bk = (MyBMKMapView *)gesture.view;
     CGPoint point = [tap locationInView:bk];
     CLLocationCoordinate2D coord1 = [bk convertPoint:point
                                 toCoordinateFromView:mapView_mk];
@@ -138,7 +139,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
 }
 
 #pragma mark -------------------------------------------------- 画圆 画线
-- (BMKOverlayView *)mapView:(BMKMapView *)mapView viewForOverlay:(id <BMKOverlay>)overlay{
+- (BMKOverlayView *)mapView:(MyBMKMapView *)mapView viewForOverlay:(id <BMKOverlay>)overlay{
     if ([overlay isKindOfClass:[BMKCircle class]]){
         BMKCircleView* polygonView = [[BMKCircleView alloc] initWithOverlay:overlay];
         polygonView.strokeColor = [[UIColor yellowColor] colorWithAlphaComponent:0.1];
@@ -171,7 +172,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
         dispatch_async(_bridge.uiManager.methodQueue,^{
             [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
                 id view = viewRegistry[moveToUserLocationReactTag];
-                BMKMapView *bk = (BMKMapView *)view;
+                MyBMKMapView *bk = (MyBMKMapView *)view;
                 
                 float userLat = _locService.userLocation.location.coordinate.latitude;
                 float userLng = _locService.userLocation.location.coordinate.longitude;
@@ -241,7 +242,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
 
 
 #pragma mark -------------------------------------------------- 搜索地址
-- (void)mapViewDidFinishLoading:(BMKMapView *)mapView{
+- (void)mapViewDidFinishLoading:(MyBMKMapView *)mapView{
     [_bridge.eventDispatcher sendDeviceEventWithName:@"MapLoaded" body:@{@"result":@"OK"}];
 }
 
@@ -255,7 +256,7 @@ RCT_EXPORT_METHOD(onDestroyBDMap:(nonnull NSNumber *)reactTag){
             id view = viewRegistry[reactTag];
             self.geoSearcher.delegate = nil;
             self.sugestionSearch.delegate = self;
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             [bk removeOverlays:bk.overlays];
             [bk removeAnnotations:bk.annotations];
             bk.delegate = nil;
@@ -284,7 +285,7 @@ RCT_EXPORT_METHOD(setRuler:(nonnull NSNumber *)reactTag int:(int)level){
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             bk.zoomLevel = level;
         }];
     });
@@ -293,7 +294,7 @@ RCT_EXPORT_METHOD(setRuler:(nonnull NSNumber *)reactTag int:(int)level){
 #pragma mark - 定位定波纹闪动
 - (void)waveFun:(NSArray *)data{
     dispatch_async(dispatch_get_main_queue(), ^{
-        BMKMapView *mview = (BMKMapView *)[data objectAtIndex:0];
+        MyBMKMapView *mview = (MyBMKMapView *)[data objectAtIndex:0];
         float f1 = [[data objectAtIndex:1] floatValue];
         float f2 = [[data objectAtIndex:2] floatValue];
         float r  = [[data objectAtIndex:3] intValue];
@@ -340,7 +341,7 @@ RCT_EXPORT_METHOD(setRuler:(nonnull NSNumber *)reactTag int:(int)level){
 }
 
 - (void)removeWave:(id)map{
-    BMKMapView *mv = (BMKMapView *)map;
+    MyBMKMapView *mv = (MyBMKMapView *)map;
     [mv removeOverlays:mv.overlays];
 }
 
@@ -353,7 +354,7 @@ RCT_EXPORT_METHOD(setLocationAnimation:(nonnull NSNumber *)reactTag data:(id)dat
             if([obj isKindOfClass:[NSDictionary class]]){
                 NSDictionary *dic = (NSDictionary *)obj;
                 id view = viewRegistry[reactTag];
-                BMKMapView *bk = (BMKMapView *)view;
+                MyBMKMapView *bk = (MyBMKMapView *)view;
                 float f1_1 = [dic[@"baidu_latitude"] floatValue];
                 float f1_2 = [dic[@"baidu_longitude"] floatValue];
                 NSArray *arr = [[NSArray alloc] initWithObjects:bk,
@@ -391,7 +392,7 @@ RCT_EXPORT_METHOD(setLocation:(nonnull NSNumber *)reactTag data:(id)data)
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             NSObject *obj = data;
             if([obj isKindOfClass:[NSDictionary class]]){
                 NSDictionary *dic = (NSDictionary *)obj;
@@ -456,7 +457,7 @@ RCT_EXPORT_METHOD(DrawCircle_ios:(nonnull NSNumber *)reactTag data:(id)data){
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             [bk removeAnnotations:bk.annotations];
             [bk removeOverlays:bk.overlays];
             NSObject *obj = data;
@@ -492,7 +493,7 @@ RCT_EXPORT_METHOD(showHistory_ios:(nonnull NSNumber *)reactTag data:(id)data)
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             [bk removeAnnotations:bk.annotations];
             [bk removeOverlays:bk.overlays];
             pointDataArray = [[NSMutableArray alloc] init];
@@ -517,7 +518,7 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 }
 
 #pragma mark -------------------------------------------------- 画线函数
-- (void)drawLine:(NSMutableArray *)linedata mapView:(BMKMapView *)mapview{
+- (void)drawLine:(NSMutableArray *)linedata mapView:(MyBMKMapView *)mapview{
     dispatch_async(dispatch_get_main_queue(), ^{
         if(linedata.count == 0)
             return;
@@ -633,7 +634,7 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 }
 
 #pragma mark -------------------------------------------------- 打点回调函数，自定义图片
-- (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
+- (BMKAnnotationView *)mapView:(MyBMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     if(AnnotationType == ANNOTATION_TYPE_TEXT){
         MyAnnotationView *annotationView = [[MyAnnotationView alloc] init];
         annotationView.canShowCallout = NO;
@@ -681,12 +682,12 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     }
 }
 
--(void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
+-(void)mapView:(MyBMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
     
 }
 
 
-- (void)mapView:(BMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated{
+- (void)mapView:(MyBMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated{
     //	NSLog(@"region change = %f",mapView.region.center.latitude);
     //	float f1_1 = mapView.region.center.latitude;
     //	float f1_2 = mapView.region.center.longitude;
@@ -701,7 +702,7 @@ RCT_EXPORT_METHOD(moveToUserLocation:(nonnull NSNumber *)reactTag zoom:(float)zo
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             
             if(_locService != nil && _locService.userLocation != nil && _locService.userLocation.location.coordinate.latitude != 0){
                 float userLat = _locService.userLocation.location.coordinate.latitude;
@@ -733,7 +734,7 @@ RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)ln
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
                 
             BMKMapStatus* mapStatus = [bk getMapStatus];
             if(zoom != -1){
@@ -754,7 +755,7 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             AnnotationType = ANNOTATION_TYPE_TEXT;
 
             if(isClearMap){//clear map
@@ -762,6 +763,7 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                 [bk removeAnnotations:bk.annotations];
             }
             
+            NSMutableArray *annotationList = [[NSMutableArray alloc] init];
             for(int i=0;i<data.count;i++){
                 NSDictionary *dic = (NSDictionary *)[data objectAtIndex:i];
                 float lat = [dic[@"lat"] floatValue];
@@ -769,15 +771,14 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                 NSString* title = [dic objectForKey:@"title"];
                 
                 MyAnnotation* annotation = [[MyAnnotation alloc]init];
-                CLLocationCoordinate2D coor;
-                coor.latitude = lat;
-                coor.longitude = lng;
+                CLLocationCoordinate2D coor = CLLocationCoordinate2DMake(lat, lng);
                 annotation.coordinate = coor;
                 annotation.title = title;
                 annotation.bgColor = [UIColor colorWithRed:225/255. green:51/255. blue:48/255. alpha:0.9];
                 
-                [bk addAnnotation:annotation];
+                [annotationList addObject:annotation];
             }
+            [bk addAnnotations:annotationList];
         }];
     });
 }
@@ -787,12 +788,39 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
-            BMKMapView *bk = (BMKMapView *)view;
+            MyBMKMapView *bk = (MyBMKMapView *)view;
             
             [bk removeOverlays:bk.overlays];
             [bk removeAnnotations:bk.annotations];
         }];
     });
+}
+
+#pragma mark -------------------------------------------------- 地图区域改变完成后会调用此接口
+- (void)mapView:(MyBMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
+    
+    float zoom = mapView_mk.getMapStatus.fLevel;
+    float lat = mapView_mk.getMapStatus.targetGeoPt.latitude;
+    float lng = mapView_mk.getMapStatus.targetGeoPt.longitude;
+
+    CGFloat latitudeDelta = mapView_mk.region.span.latitudeDelta;
+    CGFloat longitudeDelta = mapView_mk.region.span.longitudeDelta;
+    
+    CGFloat northeastLat = lat + (latitudeDelta / 2.0);//northeastLat  maxlat
+    CGFloat northeastLng = lng + (longitudeDelta / 2.0);//northeastLng  maxlng
+    
+    CGFloat southwestLat = lat - (latitudeDelta / 2.0);//southwestLat  minlat
+    CGFloat southwestLng = lng - (longitudeDelta / 2.0);//southwestLng  minlng
+    
+    mapView.onChange(@{
+                       @"eventType": @"onMapStatusChangeFinish",
+                       @"centerLat": @(lat),
+                       @"centerLng": @(lng),
+                       @"zoom": @(zoom),
+                       @"northeastLat": @(northeastLat),
+                       @"northeastLng": @(northeastLng),
+                       @"southwestLat": @(southwestLat),
+                       @"southwestLng": @(southwestLng)});
 }
 
 @end
