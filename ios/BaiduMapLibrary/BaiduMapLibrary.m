@@ -637,7 +637,6 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 - (BMKAnnotationView *)mapView:(MyBMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     if(AnnotationType == ANNOTATION_TYPE_TEXT){
         MyAnnotationView *annotationView = [[MyAnnotationView alloc] init];
-        annotationView.canShowCallout = NO;
         annotationView.annotation = annotation;
 
         return annotationView;
@@ -680,10 +679,6 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
         }
         return newAnnotationView;
     }
-}
-
--(void)mapView:(MyBMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
-    
 }
 
 
@@ -796,7 +791,7 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
     });
 }
 
-#pragma mark -------------------------------------------------- 地图区域改变完成后会调用此接口
+#pragma mark BMKMapViewDelegate-------------------------------------------------- 地图区域改变完成后会调用此接口
 - (void)mapView:(MyBMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
     
     float zoom = mapView_mk.getMapStatus.fLevel;
@@ -821,6 +816,13 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
                        @"northeastLng": @(northeastLng),
                        @"southwestLat": @(southwestLat),
                        @"southwestLng": @(southwestLng)});
+}
+
+
+#pragma mark BMKMapViewDelegate-------------------------------------------------- 地图区域改变完成后会调用此接口
+- (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
+    NSString* log =  view.annotation.title;
+    NSLog(@"done");
 }
 
 @end
