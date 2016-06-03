@@ -18,10 +18,11 @@
 		97655A331CC0934F003ABC90 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97655A321CC0934F003ABC90 /* CoreGraphics.framework */; };
 		97655A351CC0935A003ABC90 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97655A341CC0935A003ABC90 /* Security.framework */; };
 		9A0B6F151CFEDCBE00ABA5B1 /* MyBMKMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B6F141CFEDCBE00ABA5B1 /* MyBMKMapView.m */; };
+		9A0B6F231D0032AA00ABA5B1 /* JsonUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B6F221D0032AA00ABA5B1 /* JsonUtil.m */; };
 		9A3D97B61CFE6E9400DECF2B /* CRBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97B51CFE6E9400DECF2B /* CRBubbleView.m */; };
 		9A3D97CE1CFE744200DECF2B /* UIView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97CD1CFE744200DECF2B /* UIView+Category.m */; };
-		9A3D97D11CFE7B3C00DECF2B /* MyAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97D01CFE7B3C00DECF2B /* MyAnnotation.m */; };
-		9A8C4F521CFDAEB0009D3647 /* MyAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A8C4F511CFDAEB0009D3647 /* MyAnnotationView.m */; };
+		9A3D97D11CFE7B3C00DECF2B /* MyBMKAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97D01CFE7B3C00DECF2B /* MyBMKAnnotation.m */; };
+		9A8C4F521CFDAEB0009D3647 /* MyBMKAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A8C4F511CFDAEB0009D3647 /* MyBMKAnnotationView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,14 +53,16 @@
 		97655A341CC0935A003ABC90 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9A0B6F131CFEDCBE00ABA5B1 /* MyBMKMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyBMKMapView.h; sourceTree = "<group>"; };
 		9A0B6F141CFEDCBE00ABA5B1 /* MyBMKMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyBMKMapView.m; sourceTree = "<group>"; };
+		9A0B6F211D0032AA00ABA5B1 /* JsonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonUtil.h; sourceTree = "<group>"; };
+		9A0B6F221D0032AA00ABA5B1 /* JsonUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonUtil.m; sourceTree = "<group>"; };
 		9A3D97B41CFE6E9400DECF2B /* CRBubbleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRBubbleView.h; sourceTree = "<group>"; };
 		9A3D97B51CFE6E9400DECF2B /* CRBubbleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRBubbleView.m; sourceTree = "<group>"; };
 		9A3D97CC1CFE744200DECF2B /* UIView+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Category.h"; sourceTree = "<group>"; };
 		9A3D97CD1CFE744200DECF2B /* UIView+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Category.m"; sourceTree = "<group>"; };
-		9A3D97CF1CFE7B3C00DECF2B /* MyAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyAnnotation.h; sourceTree = "<group>"; };
-		9A3D97D01CFE7B3C00DECF2B /* MyAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyAnnotation.m; sourceTree = "<group>"; };
-		9A8C4F501CFDAEB0009D3647 /* MyAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyAnnotationView.h; sourceTree = "<group>"; };
-		9A8C4F511CFDAEB0009D3647 /* MyAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyAnnotationView.m; sourceTree = "<group>"; };
+		9A3D97CF1CFE7B3C00DECF2B /* MyBMKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyBMKAnnotation.h; sourceTree = "<group>"; };
+		9A3D97D01CFE7B3C00DECF2B /* MyBMKAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyBMKAnnotation.m; sourceTree = "<group>"; };
+		9A8C4F501CFDAEB0009D3647 /* MyBMKAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyBMKAnnotationView.h; sourceTree = "<group>"; };
+		9A8C4F511CFDAEB0009D3647 /* MyBMKAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyBMKAnnotationView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,10 +135,12 @@
 				9A3D97CD1CFE744200DECF2B /* UIView+Category.m */,
 				9A3D97B41CFE6E9400DECF2B /* CRBubbleView.h */,
 				9A3D97B51CFE6E9400DECF2B /* CRBubbleView.m */,
-				9A3D97CF1CFE7B3C00DECF2B /* MyAnnotation.h */,
-				9A3D97D01CFE7B3C00DECF2B /* MyAnnotation.m */,
-				9A8C4F501CFDAEB0009D3647 /* MyAnnotationView.h */,
-				9A8C4F511CFDAEB0009D3647 /* MyAnnotationView.m */,
+				9A3D97CF1CFE7B3C00DECF2B /* MyBMKAnnotation.h */,
+				9A3D97D01CFE7B3C00DECF2B /* MyBMKAnnotation.m */,
+				9A8C4F501CFDAEB0009D3647 /* MyBMKAnnotationView.h */,
+				9A8C4F511CFDAEB0009D3647 /* MyBMKAnnotationView.m */,
+				9A0B6F211D0032AA00ABA5B1 /* JsonUtil.h */,
+				9A0B6F221D0032AA00ABA5B1 /* JsonUtil.m */,
 			);
 			path = depend;
 			sourceTree = "<group>";
@@ -199,8 +204,9 @@
 				9A0B6F151CFEDCBE00ABA5B1 /* MyBMKMapView.m in Sources */,
 				97655A251CC0917C003ABC90 /* UIImage+XG.m in Sources */,
 				9A3D97B61CFE6E9400DECF2B /* CRBubbleView.m in Sources */,
-				9A3D97D11CFE7B3C00DECF2B /* MyAnnotation.m in Sources */,
-				9A8C4F521CFDAEB0009D3647 /* MyAnnotationView.m in Sources */,
+				9A3D97D11CFE7B3C00DECF2B /* MyBMKAnnotation.m in Sources */,
+				9A8C4F521CFDAEB0009D3647 /* MyBMKAnnotationView.m in Sources */,
+				9A0B6F231D0032AA00ABA5B1 /* JsonUtil.m in Sources */,
 				9A3D97CE1CFE744200DECF2B /* UIView+Category.m in Sources */,
 				97655A0F1CC09052003ABC90 /* BaiduMapLibrary.m in Sources */,
 			);

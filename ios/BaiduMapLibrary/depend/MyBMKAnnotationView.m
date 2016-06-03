@@ -1,31 +1,27 @@
 
-#import "MyAnnotation.h"
-#import "MyAnnotationView.h"
+#import "MyBMKAnnotation.h"
+#import "MyBMKAnnotationView.h"
 #import "CRBubbleView.h"
 #import "UIView+Category.h"
+#import "JsonUtil.h"
 
 #define kSpacing 5
 #define ANNOTATION_FRAME    (CGRectMake(0, 0, 60., 60.))
 
-@interface MyAnnotationView () {
+@interface MyBMKAnnotationView () {
     UILabel* _oneLineLabel;
     CRBubbleView * _bubbleView;
 }
 @end
 
-@implementation MyAnnotationView
+@implementation MyBMKAnnotationView
 
--(instancetype)init{
-    if(self=[super init]){
+- (instancetype)initWithAnnotation:(id <BMKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier{
+    if (self=[super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier]) {
+        self.annotation = annotation;
         [self layoutUI];
     }
-    return self;
-}
 
--(instancetype)initWithFrame:(CGRect)frame{
-    if (self=[super initWithFrame:frame]) {
-        [self layoutUI];
-    }
     return self;
 }
 
@@ -33,7 +29,6 @@
     //背景
     self.backgroundColor    = [UIColor clearColor];
     self.frame              = ANNOTATION_FRAME;
-//    self.centerOffset       = CGPointMake(self.centerOffset.x, self.centerOffset.y - 25);
     
     _oneLineLabel                 = [[UILabel alloc] init];
     _oneLineLabel.frame           = CGRectMake(kSpacing, kSpacing+1, 100, 15);
@@ -47,7 +42,7 @@
 
 }
 
--(void)setAnnotation:(MyAnnotation *)annotation{
+-(void)setAnnotation:(MyBMKAnnotation *)annotation{
     [super setAnnotation:annotation];
     
     if (_bubbleView) {
@@ -57,7 +52,9 @@
     [self addSubview:_bubbleView];
     [self sendSubviewToBack:_bubbleView];
     
-    _oneLineLabel.text = annotation.title;
+    NSDictionary* dic = [JsonUtil dictionaryWithJsonString:annotation.title];//annotation.title传递的是整个节点所有数据
+    NSString* title = [dic objectForKey:@"title"];
+    _oneLineLabel.text = title;
     _bubbleView.isShort = YES;
     
     CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:12]} context:nil];
@@ -67,5 +64,6 @@
     _bubbleView.frame         = CGRectMake(0, 0, width? (width + 20) :60, 40);
     self.frame = CGRectMake(0, 0, width? (width + 20) :60, 40.);
 }
+
 
 @end

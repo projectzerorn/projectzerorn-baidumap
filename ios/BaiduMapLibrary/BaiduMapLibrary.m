@@ -2,9 +2,10 @@
 
 
 #import "UIImage+XG.h"
-#import "MyAnnotationView.h"
-#import "MyAnnotation.h"
+#import "MyBMKAnnotationView.h"
+#import "MyBMKAnnotation.h"
 #import "MyBMKMapView.h"
+#import "JsonUtil.h"
 
 
 #define ANNOTATION_TYPE_OTHER 0
@@ -636,8 +637,8 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 #pragma mark -------------------------------------------------- 打点回调函数，自定义图片
 - (BMKAnnotationView *)mapView:(MyBMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     if(AnnotationType == ANNOTATION_TYPE_TEXT){
-        MyAnnotationView *annotationView = [[MyAnnotationView alloc] init];
-        annotationView.annotation = annotation;
+        MyBMKAnnotationView *annotationView = [[MyBMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
+        annotationView.canShowCallout = NO;
 
         return annotationView;
         
@@ -765,10 +766,11 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                 float lng = [dic[@"lng"] floatValue];
                 NSString* title = [dic objectForKey:@"title"];
                 
-                MyAnnotation* annotation = [[MyAnnotation alloc]init];
+                MyBMKAnnotation* annotation = [[MyBMKAnnotation alloc]init];
                 CLLocationCoordinate2D coor = CLLocationCoordinate2DMake(lat, lng);
                 annotation.coordinate = coor;
-                annotation.title = title;
+                NSString *all = [JsonUtil dictToJsonStr:dic];
+                annotation.title = all;//使用title字段传递节点的所有数据
                 annotation.bgColor = [UIColor colorWithRed:225/255. green:51/255. blue:48/255. alpha:0.9];
                 
                 [annotationList addObject:annotation];
@@ -820,9 +822,16 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
 
 
 #pragma mark BMKMapViewDelegate-------------------------------------------------- 地图区域改变完成后会调用此接口
-- (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
-    NSString* log =  view.annotation.title;
-    NSLog(@"done");
+- (void)mapView:(MyBMKMapView *)mapView didSelectAnnotationView:(MyBMKAnnotationView *)view{
+    
+    NSMutableDictionary* dic = [[NSMutableDictionary alloc] init];
+    [dic setObject:@"onMarkerClick" forKey:@"eventType"];
+    [dic setObject:view.annotation.title forKey:@"title"];//这里view.annotation.title为节点所有数据
+    
+    mapView.onChange(dic);
 }
+
+
+
 
 @end
