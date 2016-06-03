@@ -111,8 +111,8 @@
 -(CGSize)size
 {
     //Cacultation of the bubble size
-    float height = _isShort? 40 :60;//CR_PADDING*3
-    float width = _isShort ? self.viewWidth : 60;//CR_PADDING*3
+    float height = self.viewHeight? self.viewHeight :60;//CR_PADDING*3
+    float width = self.viewWidth ? self.viewWidth : 60;//CR_PADDING*3
     
     titleLabel.width    = self.viewWidth;
     titleLabel.left = width/2;

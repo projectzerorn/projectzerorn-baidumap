@@ -31,6 +31,8 @@
     self.frame              = ANNOTATION_FRAME;
     
     _oneLineLabel                 = [[UILabel alloc] init];
+    _oneLineLabel.lineBreakMode   = UILineBreakModeWordWrap;
+    _oneLineLabel.numberOfLines   = 0;
     _oneLineLabel.frame           = CGRectMake(kSpacing, kSpacing+1, 100, 15);
     _oneLineLabel.font            = [UIFont systemFontOfSize:12];
     _oneLineLabel.textAlignment   = NSTextAlignmentCenter;
@@ -55,14 +57,21 @@
     NSDictionary* dic = [JsonUtil dictionaryWithJsonString:annotation.title];//annotation.title传递的是整个节点所有数据
     NSString* title = [dic objectForKey:@"title"];
     _oneLineLabel.text = title;
-    _bubbleView.isShort = YES;
+//    _bubbleView.isShort = YES;
     
     CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:12]} context:nil];
     CGFloat width = rect.size.width;
-    _bubbleView.viewWidth     = width? (width + 20) :60;
+    CGFloat height = rect.size.height;
+    
+    _bubbleView.viewWidth     = width? (width + 10) :60;
+    _bubbleView.viewHeight    = height? (height + 20) : 60;
+    _bubbleView.frame         = CGRectMake(0, 0, _bubbleView.viewWidth, _bubbleView.viewHeight);
+    
     _oneLineLabel.width       = width? (width + 10) :60;
-    _bubbleView.frame         = CGRectMake(0, 0, width? (width + 20) :60, 40);
-    self.frame = CGRectMake(0, 0, width? (width + 20) :60, 40.);
+    _oneLineLabel.height      = height? (height + 20) : 60;
+    _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
+    
+    self.frame = CGRectMake(0, 0, _bubbleView.viewWidth, _bubbleView.viewHeight);
 }
 
 

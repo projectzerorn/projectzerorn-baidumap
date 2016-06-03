@@ -18,8 +18,7 @@ typedef enum {
 @property (nonatomic, strong) UIColor           * color;
 @property (nonatomic, strong) NSString          * fontName;
 @property (nonatomic, assign) float             viewWidth;
-
-@property (nonatomic, assign) BOOL              isShort;
+@property (nonatomic, assign) float             viewHeight;
 
 -(id)initWithAttachedView:(UIView*)view title:(NSString*)title description:(NSString*)description arrowPosition:(CRArrowPosition)arrowPosition andColor:(UIColor*)color;
 
