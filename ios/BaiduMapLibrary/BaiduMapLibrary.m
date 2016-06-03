@@ -789,6 +789,7 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
             
             [bk removeOverlays:bk.overlays];
             [bk removeAnnotations:bk.annotations];
+            [bk removeHeatMap];
         }];
     });
 }
@@ -831,7 +832,34 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
     mapView.onChange(dic);
 }
 
-
+#pragma mark -------------------------------------------------- BDMapModule添加热力图
+RCT_EXPORT_METHOD(addHeatMap:(nonnull NSNumber *)reactTag data:(NSArray*)data){
+    dispatch_async(_bridge.uiManager.methodQueue,^{
+        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            MyBMKMapView *bk = (MyBMKMapView *)view;
+            
+            //创建热力图数据类
+            BMKHeatMap* heatMap = [[BMKHeatMap alloc]init];
+            //创建热力图数据数组
+            NSMutableArray* heatMapData = [NSMutableArray array];
+            for (NSDictionary *dic in data) {
+                //创建BMKHeatMapNode
+                BMKHeatMapNode* heapmapnode_test = [[BMKHeatMapNode alloc]init];
+                CLLocationCoordinate2D coor;
+                coor.latitude = [dic[@"lat"] doubleValue];
+                coor.longitude = [dic[@"lng"] doubleValue];
+                heapmapnode_test.pt = coor;
+                heapmapnode_test.intensity = 1;//强度
+                //添加BMKHeatMapNode到数组
+                [heatMapData addObject:heapmapnode_test];
+            }
+            
+            heatMap.mData = heatMapData;
+            [bk addHeatMap:heatMap];
+        }];
+    });
+}
 
 
 @end
