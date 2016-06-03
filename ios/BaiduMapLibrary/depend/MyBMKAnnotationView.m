@@ -34,7 +34,7 @@
     _oneLineLabel.lineBreakMode   = UILineBreakModeWordWrap;
     _oneLineLabel.numberOfLines   = 0;
     _oneLineLabel.frame           = CGRectMake(kSpacing, kSpacing+1, 100, 15);
-    _oneLineLabel.font            = [UIFont systemFontOfSize:12];
+    _oneLineLabel.font            = [UIFont systemFontOfSize:10];
     _oneLineLabel.textAlignment   = NSTextAlignmentCenter;
     _oneLineLabel.backgroundColor = [UIColor clearColor];
     _oneLineLabel.textColor       = [UIColor whiteColor];
@@ -59,15 +59,15 @@
     _oneLineLabel.text = title;
 //    _bubbleView.isShort = YES;
     
-    CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:12]} context:nil];
+    CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:10]} context:nil];
     CGFloat width = rect.size.width;
     CGFloat height = rect.size.height;
     
-    _bubbleView.viewWidth     = width? (width + 10) :60;
+    _bubbleView.viewWidth     = width? (width + 20) :60;
     _bubbleView.viewHeight    = height? (height + 20) : 60;
     _bubbleView.frame         = CGRectMake(0, 0, _bubbleView.viewWidth, _bubbleView.viewHeight);
     
-    _oneLineLabel.width       = width? (width + 10) :60;
+    _oneLineLabel.width       = width? (width + 20) :60;
     _oneLineLabel.height      = height? (height + 20) : 60;
     _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
     
