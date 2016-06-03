@@ -1,5 +1,7 @@
 # react-native-baidumap
 
+###非稳定版本 暂时不要使用  修改删除了一些方法  改动较大 后续可能会从sincethere/react-native-baidumap断开
+
 
 ![android](https://github.com/sincethere/react-native-baidumap/raw/master/android_map.png) 
 ![ios](https://github.com/sincethere/react-native-baidumap/raw/master/ios_map.png) 
