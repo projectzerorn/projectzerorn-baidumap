@@ -63,12 +63,12 @@
     CGFloat width = rect.size.width;
     CGFloat height = rect.size.height;
     
-    _bubbleView.viewWidth     = width? (width + 20) :60;
-    _bubbleView.viewHeight    = height? (height + 20) : 60;
+    _bubbleView.viewWidth     = width? (width + 10) :60;
+    _bubbleView.viewHeight    = height? (height + 25) : 60;
     _bubbleView.frame         = CGRectMake(0, 0, _bubbleView.viewWidth, _bubbleView.viewHeight);
     
-    _oneLineLabel.width       = width? (width + 20) :60;
-    _oneLineLabel.height      = height? (height + 20) : 60;
+    _oneLineLabel.width       = width? (width + 10) :60;
+    _oneLineLabel.height      = height? (height + 25) : 60;
     _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
     
     self.frame = CGRectMake(0, 0, _bubbleView.viewWidth, _bubbleView.viewHeight);

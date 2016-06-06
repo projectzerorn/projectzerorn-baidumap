@@ -496,6 +496,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
             TextView tv = (TextView)view.findViewById(R.id.tv_title);
             tv.setText(title);
+            tv.setTextSize(13);
             return BitmapDescriptorFactory.fromView(view);
         }else{
             return BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
