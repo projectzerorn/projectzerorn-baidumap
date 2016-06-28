@@ -30,6 +30,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -497,6 +498,11 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             TextView tv = (TextView)view.findViewById(R.id.tv_title);
             tv.setText(title);
             tv.setTextSize(13);
+            //补丁start 百度地图sdk调用BitmapDescriptorFactory.fromView(view)在4.2.2上报null错误  5.0.0是ok的
+            view.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            //补丁end
             return BitmapDescriptorFactory.fromView(view);
         }else{
             return BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
