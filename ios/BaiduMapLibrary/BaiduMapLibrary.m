@@ -10,6 +10,7 @@
 
 #define ANNOTATION_TYPE_OTHER 0
 #define ANNOTATION_TYPE_TEXT 1
+#define ANNOTATION_TYPE_SYSTEM 2
 
 @implementation BaiduMapLibrary{
     MyBMKMapView *mapView_mk;
@@ -46,6 +47,7 @@
 @synthesize tempArray;
 @synthesize startPointFlag;
 @synthesize endPointFlag;
+@synthesize poisearch;
 
 RCT_EXPORT_MODULE()     //必须导入Native的该宏，想当于声明这个类要实现自定义模块的功能
 
@@ -102,6 +104,11 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
 //    UITapGestureRecognizer *tapgesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(drawCrile:)];
 //    tapgesture.delegate = self;
 //    [map addGestureRecognizer:tapgesture];
+    
+    //初始化检索对象
+    self.poisearch =[[BMKPoiSearch alloc]init];
+    self.poisearch.delegate = self;
+    
     return map;
 }
 
@@ -642,6 +649,11 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 
         return annotationView;
         
+    }else if(AnnotationType == ANNOTATION_TYPE_SYSTEM){
+        BMKPinAnnotationView *annotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
+        annotationView.canShowCallout = YES;
+//        annotationView.image =
+        return annotationView;
     }else{
         BMKPinAnnotationView *newAnnotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
         newAnnotationView.pinColor = BMKPinAnnotationColorGreen;
@@ -780,6 +792,55 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
     });
 }
 
+#pragma mark -------------------------------------------------- BDMapModule添加周边标点
+RCT_EXPORT_METHOD(addPoi:(nonnull NSNumber *)reactTag){
+    dispatch_async(_bridge.uiManager.methodQueue,^{
+        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            MyBMKMapView *bk = (MyBMKMapView *)view;
+            AnnotationType = ANNOTATION_TYPE_SYSTEM;
+            
+            //发起检索
+            BMKNearbySearchOption *option = [[BMKNearbySearchOption alloc]init];
+            option.pageIndex = 1;
+            option.pageCapacity = 10;
+            option.location = CLLocationCoordinate2DMake(31.278797, 121.574597);
+            option.keyword = @"交通";
+            BOOL flag = [self.poisearch poiSearchNearBy:option];
+            if(flag)
+            {
+                NSLog(@"周边检索发送成功");
+            }  
+            else  
+            {  
+                NSLog(@"周边检索发送失败");  
+            }
+        }];
+    });
+}
+#pragma mark -------------------------------------------------- 实现PoiSearchDeleage处理回调结果
+- (void)onGetPoiResult:(BMKPoiSearch*)searcher result:(BMKPoiResult*)result errorCode:(BMKSearchErrorCode)error
+{
+    if (error == BMK_SEARCH_NO_ERROR) {
+        //在此处理正常结果
+        NSMutableArray *annotations = [NSMutableArray array];
+        for (int i = 0; i < result.poiInfoList.count; i++) {
+            BMKPoiInfo* poi = [result.poiInfoList objectAtIndex:i];
+            BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
+            item.coordinate = poi.pt;
+            item.title = poi.name;
+            [annotations addObject:item];
+        }
+        
+        [mapView_mk addAnnotations:annotations];
+        [mapView_mk showAnnotations:annotations animated:YES];
+    }else{
+        NSLog(@"抱歉，未找到结果");
+    }
+}
+
+
+
 #pragma mark -------------------------------------------------- BDMapModule清空地图
 RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
     dispatch_async(_bridge.uiManager.methodQueue,^{
@@ -822,7 +883,7 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
 }
 
 
-#pragma mark BMKMapViewDelegate-------------------------------------------------- 地图区域改变完成后会调用此接口
+#pragma mark BMKMapViewDelegate-------------------------------------------------- 点击标点后会调用此接口
 - (void)mapView:(MyBMKMapView *)mapView didSelectAnnotationView:(MyBMKAnnotationView *)view{
     
     NSMutableDictionary* dic = [[NSMutableDictionary alloc] init];

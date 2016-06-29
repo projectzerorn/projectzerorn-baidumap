@@ -23,7 +23,7 @@
 
 #import <BaiduMapAPI_Search/BMKSearchComponent.h>//引入检索功能所有的头文件
 
-@interface BaiduMapLibrary : RCTViewManager<RCTBridgeModule,MKMapViewDelegate,BMKMapViewDelegate,BMKLocationServiceDelegate,BMKGeoCodeSearchDelegate,BMKSuggestionSearchDelegate,UIGestureRecognizerDelegate>{
+@interface BaiduMapLibrary : RCTViewManager<RCTBridgeModule,MKMapViewDelegate,BMKMapViewDelegate,BMKLocationServiceDelegate,BMKGeoCodeSearchDelegate,BMKSuggestionSearchDelegate,UIGestureRecognizerDelegate,BMKPoiSearchDelegate>{
     
     BMKGeoCodeSearch			  *geoSearcher;
     BMKSuggestionSearch     *sugestionSearch;
@@ -40,6 +40,8 @@
     NSMutableArray          *tempArray;           //存储wave中间数组
     BOOL                    startPointFlag;       //起点
     BOOL                    endPointFlag;         //终点
+    
+    BMKPoiSearch* poisearch;
 }
 
 @property (nonatomic, retain) BMKGeoCodeSearch			*geoSearcher;
@@ -58,5 +60,6 @@
 @property (nonatomic, retain) NSMutableArray        *tempArray;
 @property (assign)            BOOL                  startPointFlag;
 @property (assign)            BOOL                  endPointFlag;
+@property (nonatomic, retain) BMKPoiSearch			*poisearch;
 
 @end
