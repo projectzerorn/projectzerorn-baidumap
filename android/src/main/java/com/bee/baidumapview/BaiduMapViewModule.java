@@ -8,6 +8,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -23,6 +25,7 @@ import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 import com.bee.baidumapview.utils.ImageUtil;
 import com.bee.baidumapview.utils.MapUtils;
+import com.bee.baidumapview.utils.UIUtil;
 import com.bee.baidumapview.utils.clusterutil.clustering.ClusterItem;
 import com.bee.baidumapview.utils.clusterutil.clustering.ClusterManager;
 import com.facebook.react.bridge.*;
@@ -30,7 +33,6 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -502,6 +504,14 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     private BitmapDescriptor getMarkView(String title, String mBackgroundType){//获取自定义的markview
         if(title != null && title.length() > 0){
             View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
+            TextView tv = (TextView)view.findViewById(R.id.tv_title);
+            tv.setText(title);
+            tv.setTextSize(13);
+            //补丁start 百度地图sdk调用BitmapDescriptorFactory.fromView(view)在4.2.2上报null错误  5.0.0是ok的
+            view.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            //补丁end
 
             if(mBackgroundType.equalsIgnoreCase("BubbleRed")){
                 view.setBackgroundResource(R.drawable.custom_maker_normal_red);
@@ -511,16 +521,25 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 view.setBackgroundResource(R.drawable.custom_maker_normal_orange);
             }else if(mBackgroundType.equalsIgnoreCase("BubbleGreen")){
                 view.setBackgroundResource(R.drawable.custom_maker_normal_green);
-            }
 
-            TextView tv = (TextView)view.findViewById(R.id.tv_title);
-            tv.setText(title);
-            tv.setTextSize(13);
-            //补丁start 百度地图sdk调用BitmapDescriptorFactory.fromView(view)在4.2.2上报null错误  5.0.0是ok的
-            view.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            //补丁end
+            }else if(mBackgroundType.startsWith("Circle")){
+                if(mBackgroundType.equalsIgnoreCase("CircleRed")){
+                    view.setBackgroundResource(R.drawable.circle_red);
+                }else if(mBackgroundType.equalsIgnoreCase("CircleOrange")){
+                    view.setBackgroundResource(R.drawable.circle_orange);
+                }else if(mBackgroundType.equalsIgnoreCase("CircleYellow")){
+                    view.setBackgroundResource(R.drawable.circle_yellow);
+                }
+
+                UIUtil.measureView(view);
+                int max = Math.max(view.getMeasuredHeight(),view.getMeasuredWidth());
+                view.setLayoutParams(new ViewGroup.LayoutParams(max, max));
+
+                //textview居中
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                tv.setLayoutParams(params);
+            }
             return BitmapDescriptorFactory.fromView(view);
         }else{
             return BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);

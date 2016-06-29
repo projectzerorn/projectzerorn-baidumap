@@ -26,7 +26,12 @@ class BDMapView extends Component {
         let eventType = event.nativeEvent.eventType;
         if(eventType && eventType == "onMarkerClick"){
             let dataStr = event.nativeEvent.title;
-            let dataJson = JSON.parse(dataStr);//通过title来传递 mark数据 数据结构为json
+            let dataJson;
+            try{
+                dataJson = JSON.parse(dataStr);//通过title来传递 mark数据 数据结构为json
+            }catch (e) {
+                dataJson = dataStr;
+            }
             this.props.onMarkerClick(dataJson);
         }else if(eventType && eventType == "onMapStatusChangeFinish"){
             this.props.onMapStatusChangeFinish(event.nativeEvent);

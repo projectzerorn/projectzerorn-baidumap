@@ -101,7 +101,7 @@ let BDMapModule = {
         MyMapModule.cluster(ref, data);
     },
 
-    addMarks(ref, data, isClearMap = true, backgroundType = "red"){
+    addMarks(ref, data, isClearMap = true, backgroundType = "BubbleRed"){
         MyMapModule.addMarks(ref, data, isClearMap, backgroundType);
     },
 
