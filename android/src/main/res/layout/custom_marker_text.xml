@@ -13,5 +13,6 @@
                 android:text="111"
                 android:layout_gravity="center"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="2dp"/>
+                android:layout_marginTop="2dp"
+                android:textAlignment="center"/>
 </RelativeLayout>
