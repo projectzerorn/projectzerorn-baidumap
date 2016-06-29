@@ -101,8 +101,12 @@ let BDMapModule = {
         MyMapModule.cluster(ref, data);
     },
 
-    addMarks(ref, data, isClearMap = true){
-        MyMapModule.addMarks(ref, data, isClearMap);
+    addMarks(ref, data, isClearMap = true, backgroundType = "red"){
+        MyMapModule.addMarks(ref, data, isClearMap, backgroundType);
+    },
+
+    addPoi(ref){
+        MyMapModule.addPoi(ref);
     },
 
     clearMap(ref){

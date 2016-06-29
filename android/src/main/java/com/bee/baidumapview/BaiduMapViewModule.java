@@ -472,6 +472,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     public class MyItem implements ClusterItem {
         private final LatLng mPosition;
         private String mTitle;
+        private String mBackgroundType;
 
         public MyItem(LatLng latLng) {
             mPosition = latLng;
@@ -482,6 +483,12 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             mTitle = title;
         }
 
+        public MyItem(LatLng latLng, String title, String backgroundType) {
+            mPosition = latLng;
+            mTitle = title;
+            mBackgroundType = backgroundType;
+        }
+
         @Override
         public LatLng getPosition() {
             return mPosition;
@@ -489,12 +496,23 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
         @Override
         public BitmapDescriptor getBitmapDescriptor() {
-            return getMarkView(mTitle);
+            return getMarkView(mTitle, mBackgroundType);
         }
     }
-    private BitmapDescriptor getMarkView(String title){//获取自定义的markview
+    private BitmapDescriptor getMarkView(String title, String mBackgroundType){//获取自定义的markview
         if(title != null && title.length() > 0){
             View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
+
+            if(mBackgroundType.equalsIgnoreCase("BubbleRed")){
+                view.setBackgroundResource(R.drawable.custom_maker_normal_red);
+            }else if(mBackgroundType.equalsIgnoreCase("BubbleYellow")){
+                view.setBackgroundResource(R.drawable.custom_maker_normal_yellow);
+            }else if(mBackgroundType.equalsIgnoreCase("BubbleOrange")){
+                view.setBackgroundResource(R.drawable.custom_maker_normal_orange);
+            }else if(mBackgroundType.equalsIgnoreCase("BubbleGreen")){
+                view.setBackgroundResource(R.drawable.custom_maker_normal_green);
+            }
+
             TextView tv = (TextView)view.findViewById(R.id.tv_title);
             tv.setText(title);
             tv.setTextSize(13);
@@ -545,7 +563,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void addMarks(int tag, ReadableArray markslist, boolean isClearMap) {
+    public void addMarks(int tag, ReadableArray markslist, boolean isClearMap, String backgroundType) {
         if(markslist == null || markslist.size() == 0){
             return;
         }
@@ -559,7 +577,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
         for (int i = 0; i < markslist.size(); i++) {
             ReadableMap mark = markslist.getMap(i);
-            MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.getString("title"));
+            MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.getString("title"), backgroundType);
 
             String markData = null;
             try {
