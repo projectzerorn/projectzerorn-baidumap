@@ -71,6 +71,34 @@ public class MapUtils {
         }
     }
 
+    public static void getBitmap(final Context context, final String avatar, final int mMaxWidthPx, final GetViewBitmapCallback getViewBitmapCallback) {
+        if(TextUtils.isEmpty(avatar)){
+            getViewBitmapCallback.onSuccess(BitmapFactory.decodeResource(context.getResources(), R.mipmap.default_avatar));
+        }else{
+            Handler uiHandler = new Handler(Looper.getMainLooper());
+            uiHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    ImageUtil.load(context, mMaxWidthPx, avatar,new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            getViewBitmapCallback.onSuccess(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    });
+                }
+            });
+
+        }
+    }
+
     /**
      * View转换为bitmap的方法。
      */

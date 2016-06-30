@@ -17,8 +17,10 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.*;
+import com.baidu.mapapi.search.poi.*;
 import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
@@ -38,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener {
+public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener,OnGetPoiSearchResultListener {
     public static final String TAG = "RCTBaiduMap";
     private Marker markerAnimation;
 //    private Marker tempMarker;
@@ -52,13 +54,14 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     private Bitmap avatarBitmap;
     private Marker markerToOne;
     private HeatMap mHeatmap;
+    private PoiSearch mPoiSearch;
 
     public BaiduMapViewModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
         ImageUtil.init(this.getCurrentActivity(),R.mipmap.default_avatar);
+        Log.v("jackzhou","BaiduMapViewModule - ImageUtil.init");
         initSearch();
-
     }
 
 
@@ -339,6 +342,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
      * 初始化搜索
      */
     private void initSearch(){
+        Log.v("jackzhou","BaiduMapViewModule - initSearch");
         Handler uiHandler = new Handler(Looper.getMainLooper());
         uiHandler.post(new Runnable() {
             @Override
@@ -346,6 +350,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 mSearch = GeoCoder.newInstance();
                 mSuggestionSearch = SuggestionSearch.newInstance();
                 mSuggestionSearch.setOnGetSuggestionResultListener(BaiduMapViewModule.this);
+
+                mPoiSearch = PoiSearch.newInstance();
+                mPoiSearch.setOnGetPoiSearchResultListener(BaiduMapViewModule.this);
+                Log.v("jackzhou","BaiduMapViewModule - initSearch PoiSearch.newInstance()");
             }
         });
     }
@@ -353,6 +361,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void onDestroyBDMap(int tag){
         ((MapView) this.getCurrentActivity().findViewById(tag)).onDestroy();
+//        mPoiSearch.destroy();
     }
 
 
@@ -413,6 +422,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     // 定位相关
     LocationClient mLocClient;
+
     public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
         MapView mMapView;
         boolean mIsAnimate;
@@ -614,6 +624,61 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
         //在地图上添加Marker，并显示
         map.addOverlays(optionList);
+    }
+
+    private String mIconUrl;
+    private int mMapTag;
+    private int mMaxWidthPx;
+    @ReactMethod
+    public void addNearPois(int tag, double lat, double lng, String keyword, String iconUrl, boolean isClearMap, int maxWidthDip, int radius, int pageCapacity) {
+
+        BaiduMap map = getMap(tag);
+        if(isClearMap){
+            map.clear();
+        }
+
+        PoiNearbySearchOption poiNearbySearchOption = new PoiNearbySearchOption();
+        poiNearbySearchOption
+                .pageCapacity(pageCapacity)
+                .pageNum(0)
+                .keyword(keyword)
+                .location(new LatLng(lat,lng))
+                .radius(radius);
+        mIconUrl = iconUrl;
+        mMapTag = tag;
+        mMaxWidthPx = UIUtil.dip2px(getCurrentActivity(), maxWidthDip);
+        //baidu地图一个search对象同一时间只能进行一次检索   不会在多线程导致icon串？  待验证- -！http://bbs.lbsyun.baidu.com/forum.php?mod=viewthread&tid=110078&highlight=poi
+        mPoiSearch.searchNearby(poiNearbySearchOption);
+    }
+    //searchNearby后的回调OnGetPoiSearchResultListener
+    @Override
+    public void onGetPoiResult(PoiResult poiResult) {
+        Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois onGetPoiResult"));
+        final List<PoiInfo> list = poiResult.getAllPoi();
+        if(list != null && list.size() > 0){
+            MapUtils.getBitmap(this.getCurrentActivity(), mIconUrl, mMaxWidthPx, new MapUtils.GetViewBitmapCallback() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
+                            for(PoiInfo temp: list) {
+                                OverlayOptions option = new MarkerOptions()
+                                        .position(temp.location)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                        .title(temp.name);
+                                optionList.add(option);
+                            }
+
+                            //在地图上添加Marker，并显示
+                            getMap(mMapTag).addOverlays(optionList);
+                        }
+                    }
+            );
+        }
+    }
+    //OnGetPoiSearchResultListener
+    @Override
+    public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
+
     }
 
     private JSONObject convertMapToJson(ReadableMap readableMap) throws JSONException {

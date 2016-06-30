@@ -105,8 +105,10 @@ let BDMapModule = {
         MyMapModule.addMarks(ref, data, isClearMap, backgroundType);
     },
 
-    addPoi(ref){
-        MyMapModule.addPoi(ref);
+    //radius半径，单位：米
+    //pageCapacity搜索结果上限数
+    addNearPois(ref, lat, lng, keyword, iconUrl, isClearMap=true, maxWidthDip=30, radius=1000, pageCapacity=50){
+        MyMapModule.addNearPois(ref, lat, lng, keyword, iconUrl, isClearMap, maxWidthDip, radius, pageCapacity);
     },
 
     clearMap(ref){
