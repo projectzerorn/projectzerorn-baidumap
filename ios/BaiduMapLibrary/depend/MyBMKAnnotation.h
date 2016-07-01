@@ -6,5 +6,6 @@
 @interface MyBMKAnnotation : BMKPointAnnotation
 
 @property (nonatomic, strong) UIColor           * bgColor;
+@property (nonatomic, retain) NSString          * backgroundType;//标点样式
 
 @end

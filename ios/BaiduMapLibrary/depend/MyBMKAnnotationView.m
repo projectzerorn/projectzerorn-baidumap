@@ -4,13 +4,14 @@
 #import "CRBubbleView.h"
 #import "UIView+Category.h"
 #import "JsonUtil.h"
+#import "HexColors.h"
 
 #define kSpacing 5
 #define ANNOTATION_FRAME    (CGRectMake(0, 0, 60., 60.))
 
 @interface MyBMKAnnotationView () {
     UILabel* _oneLineLabel;
-    CRBubbleView * _bubbleView;
+    UIView * _MarkView;
 }
 @end
 
@@ -47,31 +48,62 @@
 -(void)setAnnotation:(MyBMKAnnotation *)annotation{
     [super setAnnotation:annotation];
     
-    if (_bubbleView) {
-        [_bubbleView removeFromSuperview];
+    if (_MarkView) {
+        [_MarkView removeFromSuperview];
     }
-    _bubbleView = [[CRBubbleView alloc] initWithAttachedView:nil title:@"" description:@"" arrowPosition:CRArrowPositionBottom andColor:annotation.bgColor];
-    [self addSubview:_bubbleView];
-    [self sendSubviewToBack:_bubbleView];
     
-    NSDictionary* dic = [JsonUtil dictionaryWithJsonString:annotation.title];//annotation.title传递的是整个节点所有数据
-    NSString* title = [dic objectForKey:@"title"];
-    _oneLineLabel.text = title;
-//    _bubbleView.isShort = YES;
-    
-    CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:10]} context:nil];
-    CGFloat width = rect.size.width;
-    CGFloat height = rect.size.height;
-    
-    _bubbleView.viewWidth     = width? (width + 10) :60;
-    _bubbleView.viewHeight    = height? (height + 25) : 60;
-    _bubbleView.frame         = CGRectMake(0, 0, _bubbleView.viewWidth, _bubbleView.viewHeight);
-    
-    _oneLineLabel.width       = width? (width + 10) :60;
-    _oneLineLabel.height      = height? (height + 25) : 60;
-    _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
-    
-    self.frame = CGRectMake(0, 0, _bubbleView.viewWidth, _bubbleView.viewHeight);
+    if([annotation.backgroundType rangeOfString:@"Bubble"].location != NSNotFound){//包含
+        _MarkView = [[CRBubbleView alloc] initWithAttachedView:nil title:@"" description:@"" arrowPosition:CRArrowPositionBottom andColor:annotation.bgColor];
+        
+        CRBubbleView* bubbleView = (CRBubbleView*)_MarkView;
+        [self addSubview:bubbleView];
+        [self sendSubviewToBack:bubbleView];
+        
+        NSDictionary* dic = [JsonUtil dictionaryWithJsonString:annotation.title];//annotation.title传递的是整个节点所有数据
+        NSString* title = [dic objectForKey:@"title"];
+        _oneLineLabel.text = title;
+        
+        CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:10]} context:nil];
+        CGFloat width = rect.size.width;
+        CGFloat height = rect.size.height;
+        
+        bubbleView.viewWidth     = width? (width + 10) :60;
+        bubbleView.viewHeight    = height? (height + 25) : 60;
+        bubbleView.frame         = CGRectMake(0, 0, bubbleView.viewWidth, bubbleView.viewHeight);
+        
+        _oneLineLabel.width       = width? (width + 10) :60;
+        _oneLineLabel.height      = height? (height + 25) : 60;
+        _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
+        
+        self.frame = CGRectMake(0, 0, bubbleView.viewWidth, bubbleView.viewHeight);
+        
+    }else if([annotation.backgroundType rangeOfString:@"Circle"].location != NSNotFound){
+        
+        NSDictionary* dic = [JsonUtil dictionaryWithJsonString:annotation.title];//annotation.title传递的是整个节点所有数据
+        NSString* title = [dic objectForKey:@"title"];
+        _oneLineLabel.text = title;
+        
+        CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:10]} context:nil];
+        CGFloat width = rect.size.width;
+        CGFloat height = rect.size.height;
+        
+        float max = MAX(width?(width + 10):60, height?(height + 25):60);
+        _oneLineLabel.width       = max;
+        _oneLineLabel.height      = max;
+        _oneLineLabel.frame       = CGRectMake(0, 0, _oneLineLabel.width, _oneLineLabel.height);
+        
+        if([self.annotation.backgroundType rangeOfString:@"Red"].location != NSNotFound){//包含"Red"
+            _oneLineLabel.backgroundColor = [UIColor hx_colorWithHexString:@"#ed1b23"];
+        }else if([self.annotation.backgroundType rangeOfString:@"Orange"].location != NSNotFound){
+            _oneLineLabel.backgroundColor = [UIColor hx_colorWithHexString:@"#f26521"];
+        }else if([self.annotation.backgroundType rangeOfString:@"Yellow"].location != NSNotFound){
+            _oneLineLabel.backgroundColor = [UIColor hx_colorWithHexString:@"#fbaf5c"];
+        }
+        
+        _oneLineLabel.layer.cornerRadius = _oneLineLabel.bounds.size.width/2;
+        _oneLineLabel.layer.masksToBounds=YES;
+    }
+ 
 }
 
 

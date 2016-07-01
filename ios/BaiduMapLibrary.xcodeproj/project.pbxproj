@@ -22,6 +22,7 @@
 		9A3D97B61CFE6E9400DECF2B /* CRBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97B51CFE6E9400DECF2B /* CRBubbleView.m */; };
 		9A3D97CE1CFE744200DECF2B /* UIView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97CD1CFE744200DECF2B /* UIView+Category.m */; };
 		9A3D97D11CFE7B3C00DECF2B /* MyBMKAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D97D01CFE7B3C00DECF2B /* MyBMKAnnotation.m */; };
+		9A677B191D264C3700DB5A88 /* HexColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A677B181D264C3700DB5A88 /* HexColors.m */; };
 		9A8C4F521CFDAEB0009D3647 /* MyBMKAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A8C4F511CFDAEB0009D3647 /* MyBMKAnnotationView.m */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +62,8 @@
 		9A3D97CD1CFE744200DECF2B /* UIView+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Category.m"; sourceTree = "<group>"; };
 		9A3D97CF1CFE7B3C00DECF2B /* MyBMKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyBMKAnnotation.h; sourceTree = "<group>"; };
 		9A3D97D01CFE7B3C00DECF2B /* MyBMKAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyBMKAnnotation.m; sourceTree = "<group>"; };
+		9A677B171D264C3700DB5A88 /* HexColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexColors.h; sourceTree = "<group>"; };
+		9A677B181D264C3700DB5A88 /* HexColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HexColors.m; sourceTree = "<group>"; };
 		9A8C4F501CFDAEB0009D3647 /* MyBMKAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyBMKAnnotationView.h; sourceTree = "<group>"; };
 		9A8C4F511CFDAEB0009D3647 /* MyBMKAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyBMKAnnotationView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -129,6 +132,8 @@
 		9A8C4F4D1CFDA260009D3647 /* depend */ = {
 			isa = PBXGroup;
 			children = (
+				9A677B171D264C3700DB5A88 /* HexColors.h */,
+				9A677B181D264C3700DB5A88 /* HexColors.m */,
 				9A0B6F131CFEDCBE00ABA5B1 /* MyBMKMapView.h */,
 				9A0B6F141CFEDCBE00ABA5B1 /* MyBMKMapView.m */,
 				9A3D97CC1CFE744200DECF2B /* UIView+Category.h */,
@@ -204,6 +209,7 @@
 				9A0B6F151CFEDCBE00ABA5B1 /* MyBMKMapView.m in Sources */,
 				97655A251CC0917C003ABC90 /* UIImage+XG.m in Sources */,
 				9A3D97B61CFE6E9400DECF2B /* CRBubbleView.m in Sources */,
+				9A677B191D264C3700DB5A88 /* HexColors.m in Sources */,
 				9A3D97D11CFE7B3C00DECF2B /* MyBMKAnnotation.m in Sources */,
 				9A8C4F521CFDAEB0009D3647 /* MyBMKAnnotationView.m in Sources */,
 				9A0B6F231D0032AA00ABA5B1 /* JsonUtil.m in Sources */,

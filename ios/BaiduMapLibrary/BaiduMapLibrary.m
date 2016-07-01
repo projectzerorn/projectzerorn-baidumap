@@ -6,6 +6,7 @@
 #import "MyBMKAnnotation.h"
 #import "MyBMKMapView.h"
 #import "JsonUtil.h"
+#import "HexColors.h"
 
 
 #define ANNOTATION_TYPE_OTHER 0
@@ -759,7 +760,7 @@ RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)ln
 }
 
 #pragma mark -------------------------------------------------- BDMapModule添加标点
-RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isClearMap:(BOOL)isClearMap){
+RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isClearMap:(BOOL)isClearMap backgroundType:(NSString*)backgroundType){
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
@@ -783,7 +784,17 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                 annotation.coordinate = coor;
                 NSString *all = [JsonUtil dictToJsonStr:dic];
                 annotation.title = all;//使用title字段传递节点的所有数据
-                annotation.bgColor = [UIColor colorWithRed:225/255. green:51/255. blue:48/255. alpha:0.9];
+                if([backgroundType rangeOfString:@"Red"].location != NSNotFound){//包含
+                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#ed1b23"];
+                }else if([backgroundType rangeOfString:@"Orange"].location != NSNotFound){//包含
+                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#f26521"];
+                }else if([backgroundType rangeOfString:@"Yellow"].location != NSNotFound){//包含
+                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#fbaf5c"];
+                }else if([backgroundType rangeOfString:@"Green"].location != NSNotFound){//包含
+                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#10aa9a"];
+                }
+                annotation.backgroundType = backgroundType;
+                
                 
                 [annotationList addObject:annotation];
             }
