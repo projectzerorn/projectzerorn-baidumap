@@ -401,10 +401,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void move(int tag, double lat, double lng, float zoom, boolean isAnimate){
-        BaiduMap baiduMap = getMap(tag);
+    public void move(int tag, double lat, double lng, float zoom, final boolean isAnimate){
+        final BaiduMap baiduMap = getMap(tag);
 
-        MapStatus.Builder builder = new MapStatus.Builder();
+        final MapStatus.Builder builder = new MapStatus.Builder();
         if(lat != -1 && lng != -1){
             LatLng latLng = new LatLng(lat, lng);
             builder.target(latLng);
@@ -413,11 +413,18 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             builder.zoom(zoom);
         }
 
-        if(isAnimate){
-            baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-        }else{
-            baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-        }
+        getCurrentActivity().runOnUiThread(
+                    new Runnable() {
+                       @Override
+                       public void run() {
+                           if(isAnimate){
+                               baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                           }else{
+                               baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                           }
+                       }
+                   }
+        );
     }
 
     // 定位相关
@@ -597,9 +604,14 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             return;
         }
 
-        BaiduMap map = getMap(tag);
+        final BaiduMap map = getMap(tag);
         if(isClearMap){
-            map.clear();
+            getCurrentActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    map.clear();
+                }
+            });
         }
 
         ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
@@ -632,9 +644,14 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void addNearPois(int tag, double lat, double lng, String keyword, String iconUrl, boolean isClearMap, int maxWidthDip, int radius, int pageCapacity) {
         Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois keyword="+keyword));
-        BaiduMap map = getMap(tag);
+        final BaiduMap map = getMap(tag);
         if(isClearMap){
-            map.clear();
+            getCurrentActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    map.clear();
+                }
+            });
         }
 
         PoiNearbySearchOption poiNearbySearchOption = new PoiNearbySearchOption();

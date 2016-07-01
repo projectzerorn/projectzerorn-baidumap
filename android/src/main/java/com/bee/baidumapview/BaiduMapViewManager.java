@@ -2,6 +2,9 @@ package com.bee.baidumapview;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -17,12 +20,16 @@ import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class BaiduMapViewManager extends SimpleViewManager<MapView> implements BaiduMap.OnMapLoadedCallback {
     public static final String RCT_CLASS = "RCTBaiduMap";
     public static final String TAG = "RCTBaiduMap";
 
     private static Activity mActivity;
+    private static View mInfoWindow;
+    private static TextView mTv;
     private float ruler = 15;
     private ThemedReactContext reactContext;
 
@@ -48,9 +55,9 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     }
 
     public BaiduMapViewManager(Activity activity) {
-
         mActivity = activity;
-
+        mInfoWindow = LayoutInflater.from(mActivity.getApplicationContext()).inflate(R.layout.custom_infowindow, null);
+        mTv = (TextView) mInfoWindow.findViewById(R.id.tv_poi_title);
     }
 
     /**
@@ -125,7 +132,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     private MapView getMap() {
         final MapView mMapView = new MapView(mActivity);
         mMapView.showZoomControls(true);
-        BaiduMap baiduMap = mMapView.getMap();
+        final BaiduMap baiduMap = mMapView.getMap();
         baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler), 1 * 1000);
         baiduMap.setOnMapLoadedCallback(this);
 
@@ -170,12 +177,37 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             public boolean onMarkerClick(Marker marker) {
                 WritableMap event = Arguments.createMap();
                 event.putString("eventType", "onMarkerClick");
+                try {//判断是否为json
+                    new JSONObject(marker.getTitle());
+                } catch (JSONException e) {
+                    //非json格式直接出泡泡框来显示文字
+                    mTv.setText(marker.getTitle());
+                    InfoWindow infoWindow = new InfoWindow(mInfoWindow, marker.getPosition(), -1*marker.getIcon().getBitmap().getHeight());
+                    baiduMap.showInfoWindow(infoWindow);
+                    mInfoWindow.setVisibility(View.GONE);//RN的坑？ 会有个mInfoWindow显示在左上角  gone掉
+                }
+
+                //是json格式
                 event.putString("title", marker.getTitle());
                 reactContext.getJSModule(RCTEventEmitter.class)
                         .receiveEvent(mMapView.getId(), "topChange", event);
                 return true;
             }
         });
+
+        baiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener(){
+
+            @Override
+            public void onMapClick(LatLng latLng) {
+                baiduMap.hideInfoWindow();
+            }
+
+            @Override
+            public boolean onMapPoiClick(MapPoi mapPoi) {
+                return false;
+            }
+        });
+
         return mMapView;
     }
 
