@@ -105,6 +105,7 @@ let BDMapModule = {
         MyMapModule.addMarks(ref, data, isClearMap, backgroundType);
     },
 
+    //maxWidthDip为图片等比缩放后宽度，注意下，调试时更换图片大小需要杀掉下app进程，不然有缓存调整的大小无效
     //radius半径，单位：米
     //pageCapacity搜索结果上限数
     addNearPois(ref, lat, lng, keyword, iconUrl, isClearMap=true, maxWidthDip=30, radius=1000, pageCapacity=50){

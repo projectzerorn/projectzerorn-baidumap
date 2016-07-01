@@ -631,7 +631,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     private int mMaxWidthPx;
     @ReactMethod
     public void addNearPois(int tag, double lat, double lng, String keyword, String iconUrl, boolean isClearMap, int maxWidthDip, int radius, int pageCapacity) {
-
+        Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois keyword="+keyword));
         BaiduMap map = getMap(tag);
         if(isClearMap){
             map.clear();
