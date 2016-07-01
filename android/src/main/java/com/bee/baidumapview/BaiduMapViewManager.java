@@ -184,7 +184,12 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
                     mTv.setText(marker.getTitle());
                     InfoWindow infoWindow = new InfoWindow(mInfoWindow, marker.getPosition(), -1*marker.getIcon().getBitmap().getHeight());
                     baiduMap.showInfoWindow(infoWindow);
-                    mInfoWindow.setVisibility(View.GONE);//RN的坑？ 会有个mInfoWindow显示在左上角  gone掉
+                    try{
+                        mMapView.removeView(mInfoWindow);//RN的坑？ 会有个mInfoWindow显示在左上角  去掉
+                    }catch (Exception e1){
+
+                    }
+
                 }
 
                 //是json格式
