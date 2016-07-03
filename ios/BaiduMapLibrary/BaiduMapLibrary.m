@@ -28,6 +28,7 @@
     NSNumber * moveToUserLocationReactTag;
     Boolean moveToUserLocationisAnimate;
     int AnnotationType;
+    UIImage* mIconImage;
 }
 
 @synthesize bridge = _bridge;
@@ -653,7 +654,7 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     }else if(AnnotationType == ANNOTATION_TYPE_SYSTEM){
         BMKPinAnnotationView *annotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
         annotationView.canShowCallout = YES;
-//        annotationView.image =
+        annotationView.image = mIconImage;
         return annotationView;
     }else{
         BMKPinAnnotationView *newAnnotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
@@ -804,28 +805,62 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
 }
 
 #pragma mark -------------------------------------------------- BDMapModule添加周边标点
-RCT_EXPORT_METHOD(addPoi:(nonnull NSNumber *)reactTag){
+RCT_EXPORT_METHOD(  addNearPois:(nonnull NSNumber *)reactTag
+                            lat:(double)lat
+                            lng:(double)lng
+                        keyword:(NSString*)keyword
+                        iconUrl:(NSString*)iconUrl
+                     isClearMap:(BOOL)isClearMap
+                    maxWidthDip:(int)maxWidthDip
+                         radius:(int)radius
+                   pageCapacity:(int)pageCapacity
+                  ){
     dispatch_async(_bridge.uiManager.methodQueue,^{
         [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
-            AnnotationType = ANNOTATION_TYPE_SYSTEM;
             
-            //发起检索
-            BMKNearbySearchOption *option = [[BMKNearbySearchOption alloc]init];
-            option.pageIndex = 1;
-            option.pageCapacity = 10;
-            option.location = CLLocationCoordinate2DMake(31.278797, 121.574597);
-            option.keyword = @"交通";
-            BOOL flag = [self.poisearch poiSearchNearBy:option];
-            if(flag)
-            {
-                NSLog(@"周边检索发送成功");
-            }  
-            else  
-            {  
-                NSLog(@"周边检索发送失败");  
+            if(isClearMap){//clear map
+                [bk removeOverlays:bk.overlays];
+                [bk removeAnnotations:bk.annotations];
             }
+            
+            //下载icon图片
+            //创建异步线程执行队列
+            dispatch_queue_t asynchronousQueue = dispatch_queue_create("imageDownloadQueue", NULL);
+            //创建异步线程
+            dispatch_async(asynchronousQueue, ^{
+                //网络下载图片  NSData格式
+                NSError *error;
+                NSData *imageData = [NSData dataWithContentsOfURL: [NSURL URLWithString:iconUrl] options:NSDataReadingMappedIfSafe error:&error];
+                if (imageData) {
+                    UIImage* sourceImg = [UIImage imageWithData:imageData];
+                    
+                    int maxWidthpx;
+                    UIScreen *currentScreen = [UIScreen mainScreen];
+                    float phoneWidth = currentScreen.applicationFrame.size.width;
+                    if(phoneWidth == 320.0f){//iphone5s
+                        maxWidthpx = maxWidthDip * 2;
+                    }else if(phoneWidth == 375.0f){//iphone6s
+                        maxWidthpx = maxWidthDip * 2.5;
+                    }else if(phoneWidth == 414.0f){//iphone6s plus
+                        maxWidthpx = maxWidthDip * 3.5;
+                    }
+
+                    mIconImage = [self imageCompressForWidth:sourceImg targetWidth:maxWidthpx];
+                }
+                //回到主线程更新UI
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    //发起poi检索查询
+                    BMKNearbySearchOption *option = [[BMKNearbySearchOption alloc]init];
+                    option.pageIndex = 0;
+                    option.pageCapacity = pageCapacity;
+                    option.location = CLLocationCoordinate2DMake(lat, lng);
+                    option.keyword = keyword;
+                    option.radius = radius;
+                    [self.poisearch poiSearchNearBy:option];
+                });
+            });
         }];
     });
 }
@@ -833,6 +868,7 @@ RCT_EXPORT_METHOD(addPoi:(nonnull NSNumber *)reactTag){
 - (void)onGetPoiResult:(BMKPoiSearch*)searcher result:(BMKPoiResult*)result errorCode:(BMKSearchErrorCode)error
 {
     if (error == BMK_SEARCH_NO_ERROR) {
+        AnnotationType = ANNOTATION_TYPE_SYSTEM;
         //在此处理正常结果
         NSMutableArray *annotations = [NSMutableArray array];
         for (int i = 0; i < result.poiInfoList.count; i++) {
@@ -933,5 +969,50 @@ RCT_EXPORT_METHOD(addHeatMap:(nonnull NSNumber *)reactTag data:(NSArray*)data){
     });
 }
 
+
+-(UIImage *) imageCompressForWidth:(UIImage *)sourceImage targetWidth:(CGFloat)defineWidth{
+    UIImage *newImage = nil;
+    CGSize imageSize = sourceImage.size;
+    CGFloat width = imageSize.width;
+    CGFloat height = imageSize.height;
+    CGFloat targetWidth = defineWidth;
+    CGFloat targetHeight = height / (width / targetWidth);
+    CGSize size = CGSizeMake(targetWidth, targetHeight);
+    CGFloat scaleFactor = 0.0;
+    CGFloat scaledWidth = targetWidth;
+    CGFloat scaledHeight = targetHeight;
+    CGPoint thumbnailPoint = CGPointMake(0.0, 0.0);
+    if(CGSizeEqualToSize(imageSize, size) == NO){
+        CGFloat widthFactor = targetWidth / width;
+        CGFloat heightFactor = targetHeight / height;
+        if(widthFactor > heightFactor){
+            scaleFactor = widthFactor;
+        }        else{
+            scaleFactor = heightFactor;
+        }
+        scaledWidth = width * scaleFactor;
+        scaledHeight = height * scaleFactor;
+        if(widthFactor > heightFactor){
+            thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5;
+        }else if(widthFactor < heightFactor){
+            thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
+        }
+    }
+    UIGraphicsBeginImageContext(size);
+    CGRect thumbnailRect = CGRectZero;
+    thumbnailRect.origin = thumbnailPoint;
+    thumbnailRect.size.width = scaledWidth;
+    thumbnailRect.size.height = scaledHeight;
+    
+    [sourceImage drawInRect:thumbnailRect];
+    
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    if(newImage == nil){
+        NSLog(@"scale image fail");
+    }
+    
+    UIGraphicsEndImageContext();
+    return newImage;
+}
 
 @end
