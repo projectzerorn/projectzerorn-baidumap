@@ -1,4 +1,5 @@
-import React,{ requireNativeComponent, Component, PropTypes, View, Platform } from 'react-native';
+import React,{Component,PropTypes} from 'react';
+import{ requireNativeComponent, View, Platform } from 'react-native';
 
 if (Platform.OS === 'ios') {
     var LibBaiduMapView = requireNativeComponent('BaiduMapLibrary', BDMapView);
