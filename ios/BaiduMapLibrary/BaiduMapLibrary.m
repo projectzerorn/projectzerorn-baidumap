@@ -8,7 +8,6 @@
 #import "JsonUtil.h"
 #import "HexColors.h"
 
-
 #define ANNOTATION_TYPE_OTHER 0
 #define ANNOTATION_TYPE_TEXT 1
 #define ANNOTATION_TYPE_SYSTEM 2
@@ -31,7 +30,6 @@
     UIImage* mIconImage;
 }
 
-@synthesize bridge = _bridge;
 @synthesize methodQueue = _methodQueue;
 @synthesize geoSearcher;
 @synthesize sugestionSearch;
@@ -179,8 +177,8 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     [mapView_mk updateLocationData:userLocation];
     
     if(moveToUserLocationFlag){
-        dispatch_async(_bridge.uiManager.methodQueue,^{
-            [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        dispatch_async(self.bridge.uiManager.methodQueue,^{
+            [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
                 id view = viewRegistry[moveToUserLocationReactTag];
                 MyBMKMapView *bk = (MyBMKMapView *)view;
                 
@@ -217,7 +215,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
             NSNumber *ra = [NSNumber numberWithInt:self.range];
             [self.fenceDic setObject:ra forKey:@"radius"];
 //            [[PetGlobal shareInstance].rootView.bridge.eventDispatcher sendDeviceEventWithName:@"FenceInfo" body:@{@"result":self.fenceDic}];
-            [_bridge.eventDispatcher sendDeviceEventWithName:@"FenceInfo" body:@{@"result":self.fenceDic}];
+            [self.bridge.eventDispatcher sendDeviceEventWithName:@"FenceInfo" body:@{@"result":self.fenceDic}];
             break;
         }
     }
@@ -243,7 +241,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
             [tempArr addObject:arr];
         }
         
-        [_bridge.eventDispatcher sendDeviceEventWithName:@"SearchResult" body:@{@"result_pt":tempArr,@"result_key":result.keyList}];
+        [self.bridge.eventDispatcher sendDeviceEventWithName:@"SearchResult" body:@{@"result_pt":tempArr,@"result_key":result.keyList}];
     }
     else {
         NSLog(@"抱歉，未找到结果");
@@ -253,13 +251,13 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
 
 #pragma mark -------------------------------------------------- 搜索地址
 - (void)mapViewDidFinishLoading:(MyBMKMapView *)mapView{
-    [_bridge.eventDispatcher sendDeviceEventWithName:@"MapLoaded" body:@{@"result":@"OK"}];
+    [self.bridge.eventDispatcher sendDeviceEventWithName:@"MapLoaded" body:@{@"result":@"OK"}];
 }
 
 #pragma mark -------------------------------------------------- 销毁地图
 RCT_EXPORT_METHOD(onDestroyBDMap:(nonnull NSNumber *)reactTag){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             for(int i=0;i<self.tempArray.count;i++){
                 [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(waveFun:) object:[self.tempArray objectAtIndex:i]];
             }
@@ -292,8 +290,8 @@ RCT_EXPORT_METHOD(seekAddress:(NSString *)address){
 
 #pragma mark -------------------------------------------------- 放大 ／ 缩小地图
 RCT_EXPORT_METHOD(setRuler:(nonnull NSNumber *)reactTag int:(int)level){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             bk.zoomLevel = level;
@@ -358,8 +356,8 @@ RCT_EXPORT_METHOD(setRuler:(nonnull NSNumber *)reactTag int:(int)level){
 
 #pragma mark - 设置坐标点动画
 RCT_EXPORT_METHOD(setLocationAnimation:(nonnull NSNumber *)reactTag data:(id)data){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             NSObject *obj = data;
             if([obj isKindOfClass:[NSDictionary class]]){
                 NSDictionary *dic = (NSDictionary *)obj;
@@ -399,8 +397,8 @@ RCT_EXPORT_METHOD(setLocationAnimation:(nonnull NSNumber *)reactTag data:(id)dat
 #pragma mark -------------------------------------------------- 提供给JS使用，在地图上标记锚点
 RCT_EXPORT_METHOD(setLocation:(nonnull NSNumber *)reactTag data:(id)data)
 {
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             NSObject *obj = data;
@@ -464,8 +462,8 @@ RCT_EXPORT_METHOD(setLocation:(nonnull NSNumber *)reactTag data:(id)data)
 
 #pragma mark -------------------------------------------------- 当拉动滑条改变围栏半径是，调用此方法，需将围栏的经纬度传过来
 RCT_EXPORT_METHOD(DrawCircle_ios:(nonnull NSNumber *)reactTag data:(id)data){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             [bk removeAnnotations:bk.annotations];
@@ -500,8 +498,8 @@ RCT_EXPORT_METHOD(DrawCircle_ios:(nonnull NSNumber *)reactTag data:(id)data){
 #pragma mark -------------------------------------------------- 画历史轨迹
 RCT_EXPORT_METHOD(showHistory_ios:(nonnull NSNumber *)reactTag data:(id)data)
 {
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             [bk removeAnnotations:bk.annotations];
@@ -709,8 +707,8 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 
 #pragma mark -------------------------------------------------- BDMapModule定位到用户坐标
 RCT_EXPORT_METHOD(moveToUserLocation:(nonnull NSNumber *)reactTag zoom:(float)zoom isAnimate:(BOOL)isAnimate){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             
@@ -741,8 +739,8 @@ RCT_EXPORT_METHOD(moveToUserLocation:(nonnull NSNumber *)reactTag zoom:(float)zo
 
 #pragma mark -------------------------------------------------- BDMapModule移动到坐标
 RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)lng zoom:(float)zoom isAnimate:(BOOL)isAnimate){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
                 
@@ -762,8 +760,8 @@ RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)ln
 
 #pragma mark -------------------------------------------------- BDMapModule添加标点
 RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isClearMap:(BOOL)isClearMap backgroundType:(NSString*)backgroundType){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             AnnotationType = ANNOTATION_TYPE_TEXT;
@@ -815,8 +813,8 @@ RCT_EXPORT_METHOD(  addNearPois:(nonnull NSNumber *)reactTag
                          radius:(int)radius
                    pageCapacity:(int)pageCapacity
                   ){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             
@@ -890,8 +888,8 @@ RCT_EXPORT_METHOD(  addNearPois:(nonnull NSNumber *)reactTag
 
 #pragma mark -------------------------------------------------- BDMapModule清空地图
 RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             
@@ -942,8 +940,8 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
 
 #pragma mark -------------------------------------------------- BDMapModule添加热力图
 RCT_EXPORT_METHOD(addHeatMap:(nonnull NSNumber *)reactTag data:(NSArray*)data){
-    dispatch_async(_bridge.uiManager.methodQueue,^{
-        [_bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
             MyBMKMapView *bk = (MyBMKMapView *)view;
             
