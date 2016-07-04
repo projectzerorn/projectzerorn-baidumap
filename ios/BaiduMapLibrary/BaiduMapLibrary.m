@@ -878,7 +878,7 @@ RCT_EXPORT_METHOD(  addNearPois:(nonnull NSNumber *)reactTag
         }
         
         [mapView_mk addAnnotations:annotations];
-        [mapView_mk showAnnotations:annotations animated:YES];
+//        [mapView_mk showAnnotations:annotations animated:YES];
     }else{
         NSLog(@"抱歉，未找到结果");
     }
