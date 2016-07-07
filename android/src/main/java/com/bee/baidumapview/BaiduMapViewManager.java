@@ -271,4 +271,11 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             mapView.getMap().setMyLocationEnabled(false);
         }
     }
+
+    @ReactProp(name="isGesturesEnabled", defaultBoolean = true)
+    public void setIsGesturesEnabled(MapView mapView, boolean isGesturesEnabled) {
+        mapView.getMap().getUiSettings().setAllGesturesEnabled(isGesturesEnabled);
+    }
+
+    
 }
