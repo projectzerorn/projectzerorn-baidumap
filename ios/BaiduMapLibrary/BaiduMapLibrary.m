@@ -63,6 +63,10 @@ RCT_CUSTOM_VIEW_PROPERTY(isEnableClicked, BOOL, BaiduMapLibrary){
     NSLog(@"self.isEnableClicked = %d",self.isEnableClicked);
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(isGesturesEnabled, BOOL, BaiduMapLibrary){
+    mapView_mk.gesturesEnabled = [json boolValue];
+}
+
 RCT_CUSTOM_VIEW_PROPERTY(range, int, BaiduMapLibrary){
     self.range = [json intValue];
 }
