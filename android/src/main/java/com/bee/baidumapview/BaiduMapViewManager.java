@@ -131,7 +131,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      */
     private MapView getMap() {
         final MapView mMapView = new MapView(mActivity);
-        mMapView.showZoomControls(true);
+        mMapView.showZoomControls(false);
         final BaiduMap baiduMap = mMapView.getMap();
         baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler), 1 * 1000);
         baiduMap.setOnMapLoadedCallback(this);
@@ -272,10 +272,8 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         }
     }
 
-    @ReactProp(name="isGesturesEnabled", defaultBoolean = true)
-    public void setIsGesturesEnabled(MapView mapView, boolean isGesturesEnabled) {
-        mapView.getMap().getUiSettings().setAllGesturesEnabled(isGesturesEnabled);
+    @ReactProp(name="showZoomControls", defaultBoolean = false)
+    public void showZoomControls(MapView mapView, boolean showZoomControls) {
+        mapView.showZoomControls(showZoomControls);
     }
-
-    
 }
