@@ -395,14 +395,21 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         return mapView;
     }
 
-    private BaiduMap getMap(int tag){
-        BaiduMap baiduMap = getMapView(tag).getMap();
+    private BaiduMap getMap(int tag) {
+        BaiduMap baiduMap = null;
+        MapView mapView = getMapView(tag);
+        if (mapView != null) {
+            baiduMap = mapView.getMap();
+        }
         return baiduMap;
     }
 
     @ReactMethod
     public void move(int tag, double lat, double lng, float zoom, final boolean isAnimate){
         final BaiduMap baiduMap = getMap(tag);
+        if(baiduMap == null){
+            return;
+        }
 
         final MapStatus.Builder builder = new MapStatus.Builder();
         if(lat != -1 && lng != -1){
@@ -458,6 +465,9 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             mMapView.getMap().setMyLocationData(locData);
 
             BaiduMap baiduMap = getMap(mtag);
+            if(baiduMap == null){
+                return;
+            }
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MapStatus.Builder builder = new MapStatus.Builder();
             builder.target(latLng).zoom(mZoom);
@@ -605,6 +615,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         }
 
         final BaiduMap map = getMap(tag);
+        if(map == null){
+            return;
+        }
+
         if(isClearMap){
             getCurrentActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -645,6 +659,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     public void addNearPois(int tag, double lat, double lng, String keyword, String iconUrl, boolean isClearMap, int maxWidthDip, int radius, int pageCapacity) {
         Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois keyword="+keyword));
         final BaiduMap map = getMap(tag);
+        if(map == null){
+            return;
+        }
+
         if(isClearMap){
             getCurrentActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -686,7 +704,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                             }
 
                             //在地图上添加Marker，并显示
-                            getMap(mMapTag).addOverlays(optionList);
+                            BaiduMap baiduMap = getMap(mMapTag);
+                            if(baiduMap != null){
+                                baiduMap.addOverlays(optionList);
+                            }
                         }
                     }
             );
@@ -756,6 +777,9 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void clearMap(int tag) {
         BaiduMap baidumap = getMap(tag);
+        if(baidumap == null){
+            return;
+        }
 
         if(baidumap != null){
             baidumap.clear();
@@ -773,16 +797,18 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         }
 
         BaiduMap baiduMap = getMap(tag);
-        List<LatLng> heatPointList = new ArrayList<LatLng>();
-        for (int i = 0; i < list.size(); i++) {
-            ReadableMap heatPointRNMap = list.getMap(i);
-            double lat = heatPointRNMap.getDouble("lat");
-            double lng = heatPointRNMap.getDouble("lng");
-            heatPointList.add(new LatLng(lat, lng));
-        }
+        if(baiduMap != null){
+            List<LatLng> heatPointList = new ArrayList<LatLng>();
+            for (int i = 0; i < list.size(); i++) {
+                ReadableMap heatPointRNMap = list.getMap(i);
+                double lat = heatPointRNMap.getDouble("lat");
+                double lng = heatPointRNMap.getDouble("lng");
+                heatPointList.add(new LatLng(lat, lng));
+            }
 
-        mHeatmap = new HeatMap.Builder().data(heatPointList).build();
-        baiduMap.addHeatMap(mHeatmap);
+            mHeatmap = new HeatMap.Builder().data(heatPointList).build();
+            baiduMap.addHeatMap(mHeatmap);
+        }
     }
 }
 
