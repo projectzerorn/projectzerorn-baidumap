@@ -360,7 +360,12 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     @ReactMethod
     public void onDestroyBDMap(int tag){
-        ((MapView) this.getCurrentActivity().findViewById(tag)).onDestroy();
+
+        MapView map = ((MapView) this.getCurrentActivity().findViewById(tag));
+        if(map != null){
+            map.onDestroy();
+        }
+
 //        mPoiSearch.destroy();
     }
 

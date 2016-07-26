@@ -266,6 +266,9 @@ RCT_EXPORT_METHOD(onDestroyBDMap:(nonnull NSNumber *)reactTag){
                 [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(waveFun:) object:[self.tempArray objectAtIndex:i]];
             }
             id view = viewRegistry[reactTag];
+            if(view == NULL){
+                return;
+            }
             self.geoSearcher.delegate = nil;
             self.sugestionSearch.delegate = self;
             MyBMKMapView *bk = (MyBMKMapView *)view;
