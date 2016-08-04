@@ -71,6 +71,10 @@ RCT_CUSTOM_VIEW_PROPERTY(range, int, BaiduMapLibrary){
     self.range = [json intValue];
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(zoom, int, BaiduMapLibrary){
+    mapView_mk.zoomLevel = [json intValue];
+}
+
 #pragma mark -------------------------------------------------- 是否显示用户位置标点
 RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     Boolean isShowUserLocation = [json boolValue];
