@@ -41,7 +41,7 @@ android {
 allprojects {
     repositories {
         mavenLocal()
-        maven { url 'http://maven.oschina.net/content/groups/public/' }
+        maven { url 'http://maven.aliyun.com/mvn/repository/' }
         mavenCentral()
         jcenter()
     }
