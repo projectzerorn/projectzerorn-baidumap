@@ -3,6 +3,7 @@ package com.bee.baidumapview;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -17,10 +18,9 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.*;
-import com.baidu.mapapi.search.poi.*;
+import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
@@ -30,8 +30,11 @@ import com.bee.baidumapview.utils.MapUtils;
 import com.bee.baidumapview.utils.UIUtil;
 import com.bee.baidumapview.utils.clusterutil.clustering.ClusterItem;
 import com.bee.baidumapview.utils.clusterutil.clustering.ClusterManager;
+import com.bee.baidumapview.utils.http.HttpUtil;
 import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener,OnGetPoiSearchResultListener {
+public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener {
     public static final String TAG = "RCTBaiduMap";
     private Marker markerAnimation;
 //    private Marker tempMarker;
@@ -54,13 +57,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     private Bitmap avatarBitmap;
     private Marker markerToOne;
     private HeatMap mHeatmap;
-    private PoiSearch mPoiSearch;
 
     public BaiduMapViewModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        ImageUtil.init(this.getCurrentActivity(),R.mipmap.default_avatar);
-        Log.v("jackzhou","BaiduMapViewModule - ImageUtil.init");
         initSearch();
     }
 
@@ -350,10 +350,6 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 mSearch = GeoCoder.newInstance();
                 mSuggestionSearch = SuggestionSearch.newInstance();
                 mSuggestionSearch.setOnGetSuggestionResultListener(BaiduMapViewModule.this);
-
-                mPoiSearch = PoiSearch.newInstance();
-                mPoiSearch.setOnGetPoiSearchResultListener(BaiduMapViewModule.this);
-                Log.v("jackzhou","BaiduMapViewModule - initSearch PoiSearch.newInstance()");
             }
         });
     }
@@ -365,8 +361,6 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         if(map != null){
             map.onDestroy();
         }
-
-//        mPoiSearch.destroy();
     }
 
 
@@ -657,11 +651,8 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         map.addOverlays(optionList);
     }
 
-    private String mIconUrl;
-    private int mMapTag;
-    private int mMaxWidthPx;
     @ReactMethod
-    public void addNearPois(int tag, double lat, double lng, String keyword, String iconUrl, boolean isClearMap, int maxWidthDip, int radius, int pageCapacity) {
+    public void addNearPois(final int tag, final double lat, final double lng, final String keyword, final String iconUrl, boolean isClearMap, final String ak, final String mcode, int maxWidthDip, final int radius, int pageCapacity) {
         Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois keyword="+keyword));
         final BaiduMap map = getMap(tag);
         if(map == null){
@@ -684,45 +675,112 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 .keyword(keyword)
                 .location(new LatLng(lat,lng))
                 .radius(radius);
-        mIconUrl = iconUrl;
-        mMapTag = tag;
-        mMaxWidthPx = UIUtil.dip2px(getCurrentActivity(), maxWidthDip);
-        //baidu地图一个search对象同一时间只能进行一次检索   不会在多线程导致icon串？  待验证- -！http://bbs.lbsyun.baidu.com/forum.php?mod=viewthread&tid=110078&highlight=poi
-        mPoiSearch.searchNearby(poiNearbySearchOption);
-    }
-    //searchNearby后的回调OnGetPoiSearchResultListener
-    @Override
-    public void onGetPoiResult(PoiResult poiResult) {
-        Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois onGetPoiResult"));
-        final List<PoiInfo> list = poiResult.getAllPoi();
-        if(list != null && list.size() > 0){
-            MapUtils.getBitmap(this.getCurrentActivity(), mIconUrl, mMaxWidthPx, new MapUtils.GetViewBitmapCallback() {
-                        @Override
-                        public void onSuccess(Bitmap bitmap) {
-                            ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
-                            for(PoiInfo temp: list) {
-                                OverlayOptions option = new MarkerOptions()
-                                        .position(temp.location)
-                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                                        .title(temp.name);
-                                optionList.add(option);
-                            }
+//        mMaxWidthPx = UIUtil.dip2px(getCurrentActivity(), maxWidthDip);
 
-                            //在地图上添加Marker，并显示
-                            BaiduMap baiduMap = getMap(mMapTag);
-                            if(baiduMap != null){
-                                baiduMap.addOverlays(optionList);
-                            }
-                        }
-                    }
+        Handler uiHandler = new Handler(Looper.getMainLooper());
+        uiHandler.post(new Runnable() {
+            //获取周边poi
+            String url = String.format(
+                    "http://api.map.baidu.com/place/v2/search?query=%s&location=%f,%f&radius=%d&output=json&ak=%s&mcode=%s",
+                    keyword,
+                    lat,
+                    lng,
+                    radius,
+                    ak,
+                    mcode
             );
-        }
-    }
-    //OnGetPoiSearchResultListener
-    @Override
-    public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
+            String result = HttpUtil.getMethod(url);
 
+            @Override
+            public void run() {
+                if(result != null){
+                    try {
+                        JSONObject resultJson = new JSONObject(result);
+                        final JSONArray list = resultJson.getJSONArray("results");
+                        //下载图片icon
+                        ImageUtil.load(getCurrentActivity(), iconUrl,new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                                //addmark
+                                ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
+                                for(int i=0; i<list.length(); i++){
+                                    JSONObject temp = null;
+                                    try {
+                                        temp = list.getJSONObject(i);
+                                        double lat = temp.getJSONObject("location").getDouble("lat");
+                                        double lng = temp.getJSONObject("location").getDouble("lng");
+                                        String name = temp.getString("name");
+                                        String address = temp.getString("address");
+
+                                        String title = name;
+                                        if(keyword.contains("公交站") || keyword.contains("地铁站")){
+                                            title = String.format("%s(%s)",name,address);
+                                        }
+                                        OverlayOptions option = new MarkerOptions()
+                                                        .position(new LatLng(lat, lng))
+                                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                                        .title(title);
+                                                optionList.add(option);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                //在地图上添加Marker，并显示
+                                BaiduMap baiduMap = getMap(tag);
+                                if(baiduMap != null){
+                                    baiduMap.addOverlays(optionList);
+                                }
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
+//    //searchNearby后的回调OnGetPoiSearchResultListener
+//    @Override
+//    public void onGetPoiResult(PoiResult poiResult) {
+//        Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois onGetPoiResult"));
+//        final List<PoiInfo> list = poiResult.getAllPoi();
+//        if(list != null && list.size() > 0){
+//            MapUtils.getBitmap(this.getCurrentActivity(), mIconUrl, mMaxWidthPx, new MapUtils.GetViewBitmapCallback() {
+//                        @Override
+//                        public void onSuccess(Bitmap bitmap) {
+//                            ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
+//                            for(PoiInfo temp: list) {
+//                                OverlayOptions option = new MarkerOptions()
+//                                        .position(temp.location)
+//                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+//                                        .title(temp.name);
+//                                optionList.add(option);
+//                            }
+//
+//                            //在地图上添加Marker，并显示
+//                            BaiduMap baiduMap = getMap(mMapTag);
+//                            if(baiduMap != null){
+//                                baiduMap.addOverlays(optionList);
+//                            }
+//                        }
+//                    }
+//            );
+//        }
+//    }
+//    //OnGetPoiSearchResultListener
+//    @Override
+//    public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
+//
+//    }
 
     private JSONObject convertMapToJson(ReadableMap readableMap) throws JSONException {
         JSONObject object = new JSONObject();

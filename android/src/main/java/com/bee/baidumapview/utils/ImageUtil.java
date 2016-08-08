@@ -62,6 +62,14 @@ public class ImageUtil {
         Picasso.with(context).load(url).into(target);
     }
 
+    public static void load(Context context, String url,Target target){
+        if(TextUtils.isEmpty(url)){
+            Picasso.with(context).load(defaultDrawableRes).into(target);
+            return;
+        }
+        Picasso.with(context).load(url).into(target);
+    }
+
     public static void load(final Context context, int maxWidthPx,String url,Target target){
 
         final int targetWidth = maxWidthPx;
