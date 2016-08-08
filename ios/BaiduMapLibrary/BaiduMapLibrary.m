@@ -814,12 +814,15 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
 }
 
 #pragma mark -------------------------------------------------- BDMapModule添加周边标点
-RCT_EXPORT_METHOD(  addNearPois:(nonnull NSNumber *)reactTag
+RCT_EXPORT_METHOD(  addNearPois:
+                  (nonnull NSNumber *)reactTag
                             lat:(double)lat
                             lng:(double)lng
                         keyword:(NSString*)keyword
                         iconUrl:(NSString*)iconUrl
                      isClearMap:(BOOL)isClearMap
+                             ak:(NSString*)ak
+                          mcode:(NSString*)mcode
                     maxWidthDip:(int)maxWidthDip
                          radius:(int)radius
                    pageCapacity:(int)pageCapacity
@@ -858,42 +861,93 @@ RCT_EXPORT_METHOD(  addNearPois:(nonnull NSNumber *)reactTag
 
                     mIconImage = [self imageCompressForWidth:sourceImg targetWidth:maxWidthpx];
                 }
+                
+                //poi搜索
+                //搜索周边poi
+                NSString* urlStr = [NSString stringWithFormat:
+                                    @"http://api.map.baidu.com/place/v2/search?query=%@&location=%f,%f&radius=%d&output=json&ak=%@&mcode=%@",
+                                    keyword,
+                                    lat,
+                                    lng,
+                                    radius,
+                                    ak,
+                                    mcode];
+                NSLog(@"%@", urlStr);
+                NSURL *url = [NSURL URLWithString:[urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0f];
+                NSURLResponse *response = nil;
+                NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+                
+                NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+                NSLog(@"%@", dict);
+                
+                
                 //回到主线程更新UI
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    //发起poi检索查询
-                    BMKNearbySearchOption *option = [[BMKNearbySearchOption alloc]init];
-                    option.pageIndex = 0;
-                    option.pageCapacity = pageCapacity;
-                    option.location = CLLocationCoordinate2DMake(lat, lng);
-                    option.keyword = keyword;
-                    option.radius = radius;
-                    [self.poisearch poiSearchNearBy:option];
+                    
+                    if([[dict objectForKey:@"status"] integerValue] == 0){
+                        NSMutableArray * resultArray = [dict mutableArrayValueForKey:@"results"];
+                        
+                        AnnotationType = ANNOTATION_TYPE_SYSTEM;
+                        NSMutableArray *annotations = [NSMutableArray array];
+                        for (int i = 0; i < resultArray.count; i++) {
+                            NSDictionary* poi = [resultArray objectAtIndex:i];
+                            BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
+                            float lat = [[[poi valueForKey:@"location"] valueForKey:@"lat"] floatValue];
+                            float lng = [[[poi valueForKey:@"location"] valueForKey:@"lng"] floatValue];
+                            item.coordinate = CLLocationCoordinate2DMake(lat,lng);
+                            NSString* name = [poi valueForKey:@"name"];
+                            NSString* address = [poi valueForKey:@"address"];
+                            if([keyword containsString:@"公交站"] || [keyword containsString:@"地铁站"]){
+                                item.title = [NSString stringWithFormat:@"%@(%@)", name, address];
+                            }else{
+                                item.title = name;
+                            }
+                            
+                            [annotations addObject:item];
+                        }
+                        
+                        [bk addAnnotations:annotations];
+                    }
+                    
+                    //百度关键字无法多关键字查找  使用web api替换
+//                    //发起poi检索查询
+//                    BMKNearbySearchOption *option = [[BMKNearbySearchOption alloc]init];
+//                    option.pageIndex = 0;
+//                    option.pageCapacity = pageCapacity;
+//                    option.location = CLLocationCoordinate2DMake(lat, lng);
+//                    option.keyword = keyword;
+//                    option.radius = radius;
+//                    [self.poisearch poiSearchNearBy:option];
                 });
             });
         }];
     });
 }
-#pragma mark -------------------------------------------------- 实现PoiSearchDeleage处理回调结果
-- (void)onGetPoiResult:(BMKPoiSearch*)searcher result:(BMKPoiResult*)result errorCode:(BMKSearchErrorCode)error
-{
-    if (error == BMK_SEARCH_NO_ERROR) {
-        AnnotationType = ANNOTATION_TYPE_SYSTEM;
-        //在此处理正常结果
-        NSMutableArray *annotations = [NSMutableArray array];
-        for (int i = 0; i < result.poiInfoList.count; i++) {
-            BMKPoiInfo* poi = [result.poiInfoList objectAtIndex:i];
-            BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
-            item.coordinate = poi.pt;
-            item.title = poi.name;
-            [annotations addObject:item];
-        }
-        
-        [mapView_mk addAnnotations:annotations];
-//        [mapView_mk showAnnotations:annotations animated:YES];
-    }else{
-        NSLog(@"抱歉，未找到结果");
-    }
-}
+
+
+//百度关键字无法多关键字查找  使用web api替换
+//#pragma mark -------------------------------------------------- 实现PoiSearchDeleage处理回调结果
+//- (void)onGetPoiResult:(BMKPoiSearch*)searcher result:(BMKPoiResult*)result errorCode:(BMKSearchErrorCode)error
+//{
+//    if (error == BMK_SEARCH_NO_ERROR) {
+//        AnnotationType = ANNOTATION_TYPE_SYSTEM;
+//        //在此处理正常结果
+//        NSMutableArray *annotations = [NSMutableArray array];
+//        for (int i = 0; i < result.poiInfoList.count; i++) {
+//            BMKPoiInfo* poi = [result.poiInfoList objectAtIndex:i];
+//            BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
+//            item.coordinate = poi.pt;
+//            item.title = poi.name;
+//            [annotations addObject:item];
+//        }
+//        
+//        [mapView_mk addAnnotations:annotations];
+////        [mapView_mk showAnnotations:annotations animated:YES];
+//    }else{
+//        NSLog(@"抱歉，未找到结果");
+//    }
+//}
 
 
 
