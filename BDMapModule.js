@@ -104,8 +104,11 @@ let BDMapModule = {
         MyMapModule.cluster(ref, data);
     },
 
-    addMarks(ref, data, isClearMap = true, backgroundType = "BubbleRed"){
-        MyMapModule.addMarks(ref, data, isClearMap, backgroundType);
+    addMarks(ref, data, isClearMap = true, backgroundTypeArray = ["BubbleRed"]){
+        if(!(backgroundTypeArray instanceof Array)){//兼容以前代码，若为string则将其转化为array
+            backgroundTypeArray = [backgroundTypeArray];
+        }
+        MyMapModule.addMarks(ref, data, isClearMap, backgroundTypeArray);
     },
 
     //ak:百度地图的key

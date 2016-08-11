@@ -770,7 +770,7 @@ RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)ln
 }
 
 #pragma mark -------------------------------------------------- BDMapModule添加标点
-RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isClearMap:(BOOL)isClearMap backgroundType:(NSString*)backgroundType){
+RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isClearMap:(BOOL)isClearMap backgroundTypeArray:(NSArray*)backgroundTypeArray){
     dispatch_async(self.bridge.uiManager.methodQueue,^{
         [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
@@ -785,6 +785,7 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
             NSMutableArray *annotationList = [[NSMutableArray alloc] init];
             for(int i=0;i<data.count;i++){
                 NSDictionary *dic = (NSDictionary *)[data objectAtIndex:i];
+                NSString* backgroundType = [backgroundTypeArray objectAtIndex:i];
                 float lat = [dic[@"lat"] floatValue];
                 float lng = [dic[@"lng"] floatValue];
                 NSString* title = [dic objectForKey:@"title"];
