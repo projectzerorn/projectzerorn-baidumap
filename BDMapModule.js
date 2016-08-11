@@ -24,6 +24,9 @@ let BDMapModule = {
      * ref:React.findNodeHandle(this.refs.history)
      */
     onDestroyBDMap(ref){
+        if(ref == undefined){
+            return;
+        }
         MyMapModule.onDestroyBDMap(ref);
     },
 
