@@ -785,7 +785,13 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
             NSMutableArray *annotationList = [[NSMutableArray alloc] init];
             for(int i=0;i<data.count;i++){
                 NSDictionary *dic = (NSDictionary *)[data objectAtIndex:i];
-                NSString* backgroundType = [backgroundTypeArray objectAtIndex:i];
+                NSString* backgroundType;
+                if(data.count > backgroundTypeArray.count){
+                    backgroundType = [backgroundTypeArray objectAtIndex:0];
+                }else{
+                    backgroundType = [backgroundTypeArray objectAtIndex:i];
+                }
+                
                 float lat = [dic[@"lat"] floatValue];
                 float lng = [dic[@"lng"] floatValue];
                 NSString* title = [dic objectForKey:@"title"];
