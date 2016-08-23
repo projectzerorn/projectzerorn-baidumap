@@ -794,6 +794,9 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                 
                 float lat = [dic[@"lat"] floatValue];
                 float lng = [dic[@"lng"] floatValue];
+                if(isnan(lat) || isnan(lng)){//数据问题 跳过
+                    continue;
+                }
                 NSString* title = [dic objectForKey:@"title"];
                 
                 MyBMKAnnotation* annotation = [[MyBMKAnnotation alloc]init];
