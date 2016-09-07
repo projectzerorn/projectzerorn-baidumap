@@ -608,7 +608,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void addMarks(int tag, ReadableArray markslist, boolean isClearMap, String backgroundType) {
+    public void addMarks(int tag, ReadableArray markslist, boolean isClearMap, ReadableArray backgroundType) {
         if(markslist == null || markslist.size() == 0){
             return;
         }
@@ -630,8 +630,15 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
 
         for (int i = 0; i < markslist.size(); i++) {
+            String backgroundTypeTemp;
+            if(backgroundType.size() == markslist.size()){
+                backgroundTypeTemp = backgroundType.getString(i);
+            }else{
+                backgroundTypeTemp = backgroundType.getString(0);
+            }
+
             ReadableMap mark = markslist.getMap(i);
-            MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.getString("title"), backgroundType);
+            MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.getString("title"), backgroundTypeTemp);
 
             String markData = null;
             try {
