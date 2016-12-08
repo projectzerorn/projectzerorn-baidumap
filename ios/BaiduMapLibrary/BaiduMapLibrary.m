@@ -875,7 +875,7 @@ RCT_EXPORT_METHOD(  addNearPois:
                 //poi搜索
                 //搜索周边poi
                 NSString* urlStr = [NSString stringWithFormat:
-                                    @"http://api.map.baidu.com/place/v2/search?query=%@&location=%f,%f&radius=%d&output=json&ak=%@&mcode=%@",
+                                    @"https://api.map.baidu.com/place/v2/search?query=%@&location=%f,%f&radius=%d&output=json&ak=%@&mcode=%@",
                                     keyword,
                                     lat,
                                     lng,
