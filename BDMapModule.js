@@ -124,8 +124,16 @@ let BDMapModule = {
         MyMapModule.clearMap(ref);
     },
 
-    addHeatMap(ref, datalist){
-        MyMapModule.addHeatMap(ref, datalist);
+    /**
+     * 热力图
+     * @param ref
+     * @param datalist  数据
+     * @param color1    自定义热力图渐变色
+     * @param color2    自定义热力图渐变色
+     * @param color3    自定义热力图渐变色
+     */
+    addHeatMap(ref, datalist, color1, color2, color3){
+        MyMapModule.addHeatMap(ref, datalist, color1, color2, color3);
     }
 }
 

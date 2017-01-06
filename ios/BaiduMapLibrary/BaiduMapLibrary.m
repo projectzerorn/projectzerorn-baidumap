@@ -1014,7 +1014,7 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
 }
 
 #pragma mark -------------------------------------------------- BDMapModule添加热力图
-RCT_EXPORT_METHOD(addHeatMap:(nonnull NSNumber *)reactTag data:(NSArray*)data){
+RCT_EXPORT_METHOD(addHeatMap:(nonnull NSNumber *)reactTag data:(NSArray*)data colorStr1:(NSString *)colorStr1 colorStr2:(NSString *)colorStr2 colorStr3:(NSString *)colorStr3){
     dispatch_async(self.bridge.uiManager.methodQueue,^{
         [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
             id view = viewRegistry[reactTag];
@@ -1042,6 +1042,18 @@ RCT_EXPORT_METHOD(addHeatMap:(nonnull NSNumber *)reactTag data:(NSArray*)data){
             }
             
             heatMap.mData = heatMapData;
+            
+            if(colorStr1 != nil && colorStr2 != nil && colorStr3 != nil){
+                //创建渐变色类
+                UIColor* color1 = [UIColor hx_colorWithHexString: colorStr1];
+                UIColor* color2 = [UIColor hx_colorWithHexString: colorStr2];
+                UIColor* color3 = [UIColor hx_colorWithHexString: colorStr3];
+                NSArray*colorInitialArray = [[NSArray alloc]initWithObjects:color1,color2,color3, nil];
+                BMKGradient* gradient = [[BMKGradient alloc]initWithColors:colorInitialArray startPoints:@[@"0.08f", @"0.4f", @"1f"]];
+                //如果用户自定义了渐变色则按自定义的渐变色进行绘制否则按默认渐变色进行绘制
+                heatMap.mGradient = gradient;
+            }
+            
             [bk addHeatMap:heatMap];
         }];
     });
