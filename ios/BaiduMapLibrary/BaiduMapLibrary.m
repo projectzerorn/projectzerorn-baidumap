@@ -1031,7 +1031,12 @@ RCT_EXPORT_METHOD(addHeatMap:(nonnull NSNumber *)reactTag data:(NSArray*)data){
                 coor.latitude = [dic[@"lat"] doubleValue];
                 coor.longitude = [dic[@"lng"] doubleValue];
                 heapmapnode_test.pt = coor;
-                heapmapnode_test.intensity = 1;//强度
+                if([dic objectForKey:@"intensity"]){//intensity存在
+                    heapmapnode_test.intensity = [dic[@"intensity"] doubleValue];//强度
+                }else{
+                    heapmapnode_test.intensity = 1;//强度
+                }
+                
                 //添加BMKHeatMapNode到数组
                 [heatMapData addObject:heapmapnode_test];
             }
