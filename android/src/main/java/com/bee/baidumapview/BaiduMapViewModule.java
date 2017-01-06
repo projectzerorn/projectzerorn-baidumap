@@ -41,6 +41,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.graphics.Color;
 
 
 public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener {
@@ -861,7 +862,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void addHeatMap(int tag, ReadableArray list) {
+    public void addHeatMap(int tag, ReadableArray list, String colorStr1, String colorStr2, String colorStr3) {
         if(list == null || list.size() == 0){
             return;
         }
@@ -873,10 +874,32 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 ReadableMap heatPointRNMap = list.getMap(i);
                 double lat = heatPointRNMap.getDouble("lat");
                 double lng = heatPointRNMap.getDouble("lng");
-                heatPointList.add(new LatLng(lat, lng));
+                if(heatPointRNMap.hasKey("intensity")){
+                    for(int j=0; j < heatPointRNMap.getInt("intensity"); j++){
+                        heatPointList.add(new LatLng(lat, lng));
+                    }
+                }else{
+                    heatPointList.add(new LatLng(lat, lng));
+                }
             }
 
-            mHeatmap = new HeatMap.Builder().data(heatPointList).build();
+            if(colorStr1 != null && colorStr2 != null && colorStr3 != null){
+                //设置渐变颜色值
+                int[] DEFAULT_GRADIENT_COLORS = {
+                                Color.parseColor(colorStr1),
+                                Color.parseColor(colorStr2),
+                                Color.parseColor(colorStr3)
+                };
+                //设置渐变颜色起始值
+                float[] DEFAULT_GRADIENT_START_POINTS = { 0.08f, 0.4f, 1f };
+                //构造颜色渐变对象
+                Gradient gradient = new Gradient(DEFAULT_GRADIENT_COLORS, DEFAULT_GRADIENT_START_POINTS);
+
+                mHeatmap = new HeatMap.Builder().data(heatPointList).gradient(gradient).build();
+            }else{
+                mHeatmap = new HeatMap.Builder().data(heatPointList).build();
+            }
+
             baiduMap.addHeatMap(mHeatmap);
         }
     }
