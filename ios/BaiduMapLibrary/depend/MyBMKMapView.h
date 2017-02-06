@@ -1,7 +1,7 @@
 
 
 #import <BaiduMapAPI_Map/BMKMapView.h>
-#import "RCTComponent.h"
+#import <React/RCTComponent.h>
 
 @interface MyBMKMapView : BMKMapView
 

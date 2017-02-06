@@ -6,14 +6,14 @@
 //  Copyright © 2016年 rover. All rights reserved.
 //
 
-#import "RCTViewManager.h"
-#import "RCTMapManager.h"
-#import "RCTUIManager.h"
-#import "RCTBridge.h"
+#import <React/RCTViewManager.h>
+#import <React/RCTMapManager.h>
+#import <React/RCTUIManager.h>
+#import <React/RCTBridge.h>
 #import <MapKit/MapKit.h>
-#import "RCTMap.h"
+#import <React/RCTMap.h>
 
-#import "UIView+React.h"
+#import <React/UIView+React.h>
 
 #import <BaiduMapAPI_Base/BMKBaseComponent.h>//引入base相关所有的头文件
 
