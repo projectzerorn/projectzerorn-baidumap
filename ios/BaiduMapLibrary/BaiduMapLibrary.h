@@ -7,11 +7,9 @@
 //
 
 #import <React/RCTViewManager.h>
-#import <React/RCTMapManager.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTBridge.h>
 #import <MapKit/MapKit.h>
-#import <React/RCTMap.h>
 
 #import <React/UIView+React.h>
 

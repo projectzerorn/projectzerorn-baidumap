@@ -54,10 +54,6 @@ RCT_EXPORT_MODULE()     //必须导入Native的该宏，想当于声明这个类
 RCT_EXPORT_VIEW_PROPERTY(onChange, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(showMapScaleBar,BOOL)
 
-RCT_CUSTOM_VIEW_PROPERTY(region, MKCoordinateRegion, RCTMap){
-    [view setRegion:json ? [RCTConvert MKCoordinateRegion:json] : defaultView.region animated:NO];
-}
-
 RCT_CUSTOM_VIEW_PROPERTY(isEnableClicked, BOOL, BaiduMapLibrary){
     self.isEnableClicked = [json boolValue];
     NSLog(@"self.isEnableClicked = %d",self.isEnableClicked);
