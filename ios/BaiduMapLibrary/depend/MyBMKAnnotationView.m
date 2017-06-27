@@ -91,14 +91,8 @@
         _oneLineLabel.width       = max;
         _oneLineLabel.height      = max;
         _oneLineLabel.frame       = CGRectMake(0, 0, _oneLineLabel.width, _oneLineLabel.height);
+        _oneLineLabel.backgroundColor = annotation.bgColor;
         
-        if([self.annotation.backgroundType rangeOfString:@"Red"].location != NSNotFound){//包含"Red"
-            _oneLineLabel.backgroundColor = [UIColor hx_colorWithHexString:@"#ed1b23"];
-        }else if([self.annotation.backgroundType rangeOfString:@"Orange"].location != NSNotFound){
-            _oneLineLabel.backgroundColor = [UIColor hx_colorWithHexString:@"#f26521"];
-        }else if([self.annotation.backgroundType rangeOfString:@"Yellow"].location != NSNotFound){
-            _oneLineLabel.backgroundColor = [UIColor hx_colorWithHexString:@"#fbaf5c"];
-        }
         
         _oneLineLabel.layer.cornerRadius = _oneLineLabel.bounds.size.width/2;
         _oneLineLabel.layer.masksToBounds=YES;

@@ -546,8 +546,11 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 view.setBackgroundResource(R.drawable.custom_maker_normal_yellow);
             }else if(mBackgroundType.equalsIgnoreCase("BubbleOrange")){
                 view.setBackgroundResource(R.drawable.custom_maker_normal_orange);
-            }else if(mBackgroundType.equalsIgnoreCase("BubbleGreen")){
+            }else if(mBackgroundType.equalsIgnoreCase("BubbleGreen")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_green);
+            }else if(mBackgroundType.equalsIgnoreCase("BubbleGray")){
+                view.setBackgroundResource(R.drawable.custom_maker_normal_gray);
+
 
             }else if(mBackgroundType.startsWith("Circle")){
                 if(mBackgroundType.equalsIgnoreCase("CircleRed")){
@@ -556,6 +559,8 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                     view.setBackgroundResource(R.drawable.circle_orange);
                 }else if(mBackgroundType.equalsIgnoreCase("CircleYellow")){
                     view.setBackgroundResource(R.drawable.circle_yellow);
+                }else if(mBackgroundType.equalsIgnoreCase("CircleGray")){
+                    view.setBackgroundResource(R.drawable.circle_gray);
                 }
 
                 UIUtil.measureView(view);

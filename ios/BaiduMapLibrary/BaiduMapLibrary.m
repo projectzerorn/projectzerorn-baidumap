@@ -808,6 +808,8 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                     annotation.bgColor = [UIColor hx_colorWithHexString:@"#fbaf5c"];
                 }else if([backgroundType rangeOfString:@"Green"].location != NSNotFound){//包含
                     annotation.bgColor = [UIColor hx_colorWithHexString:@"#10aa9a"];
+                }else if([backgroundType rangeOfString:@"Gray"].location != NSNotFound){
+                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#928892"];
                 }
                 annotation.backgroundType = backgroundType;
                 
