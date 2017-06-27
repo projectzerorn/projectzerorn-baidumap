@@ -52,6 +52,19 @@
         [_MarkView removeFromSuperview];
     }
     
+    //设置颜色
+    if([annotation.backgroundType rangeOfString:@"Red"].location != NSNotFound){//包含
+        annotation.bgColor = [UIColor hx_colorWithHexString:@"#ed1b23"];
+    }else if([annotation.backgroundType rangeOfString:@"Orange"].location != NSNotFound){
+        annotation.bgColor = [UIColor hx_colorWithHexString:@"#f26521"];
+    }else if([annotation.backgroundType rangeOfString:@"Yellow"].location != NSNotFound){
+        annotation.bgColor = [UIColor hx_colorWithHexString:@"#fbaf5c"];
+    }else if([annotation.backgroundType rangeOfString:@"Green"].location != NSNotFound){
+        annotation.bgColor = [UIColor hx_colorWithHexString:@"#10aa9a"];
+    }else if([annotation.backgroundType rangeOfString:@"Gray"].location != NSNotFound){
+        annotation.bgColor = [UIColor hx_colorWithHexString:@"#928892"];
+    }
+    
     if([annotation.backgroundType rangeOfString:@"Bubble"].location != NSNotFound){//包含
         _MarkView = [[CRBubbleView alloc] initWithAttachedView:nil title:@"" description:@"" arrowPosition:CRArrowPositionBottom andColor:annotation.bgColor];
         
@@ -76,6 +89,7 @@
         _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
         
         self.frame = CGRectMake(0, 0, bubbleView.viewWidth, bubbleView.viewHeight);
+        self.centerOffset = CGPointMake(-1*bubbleView.viewWidth/2, -1*bubbleView.viewHeight);
         
     }else if([annotation.backgroundType rangeOfString:@"Circle"].location != NSNotFound){
         
@@ -96,6 +110,8 @@
         
         _oneLineLabel.layer.cornerRadius = _oneLineLabel.bounds.size.width/2;
         _oneLineLabel.layer.masksToBounds=YES;
+        
+        self.centerOffset = CGPointMake(-1*_oneLineLabel.width/2, -1*_oneLineLabel.height);
     }
  
 }

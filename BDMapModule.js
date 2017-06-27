@@ -111,6 +111,10 @@ let BDMapModule = {
         MyMapModule.addMarks(ref, data, isClearMap, backgroundTypeArray);
     },
 
+    replaceMark(ref, lat, lng, backgroundType){
+        MyMapModule.replaceMark(ref, lat, lng, backgroundType);
+    },
+
     //ak:百度地图的key
     //mcode:ak为app端的时候需要这个参数，为字符串，对应为百度地图key中的安全码
     //maxWidthDip:为图片等比缩放后宽度，注意下，调试时更换图片大小需要杀掉下app进程，不然有缓存调整的大小无效

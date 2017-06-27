@@ -800,23 +800,46 @@ RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isCl
                 annotation.coordinate = coor;
                 NSString *all = [JsonUtil dictToJsonStr:dic];
                 annotation.title = all;//使用title字段传递节点的所有数据
-                if([backgroundType rangeOfString:@"Red"].location != NSNotFound){//包含
-                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#ed1b23"];
-                }else if([backgroundType rangeOfString:@"Orange"].location != NSNotFound){//包含
-                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#f26521"];
-                }else if([backgroundType rangeOfString:@"Yellow"].location != NSNotFound){//包含
-                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#fbaf5c"];
-                }else if([backgroundType rangeOfString:@"Green"].location != NSNotFound){//包含
-                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#10aa9a"];
-                }else if([backgroundType rangeOfString:@"Gray"].location != NSNotFound){
-                    annotation.bgColor = [UIColor hx_colorWithHexString:@"#928892"];
-                }
                 annotation.backgroundType = backgroundType;
-                
                 
                 [annotationList addObject:annotation];
             }
             [bk addAnnotations:annotationList];
+        }];
+    });
+}
+
+#pragma mark -------------------------------------------------- BDMapModule替换标点
+RCT_EXPORT_METHOD(replaceMark:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)lng backgroundTypeArray:(NSString*)backgroundType){
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            MyBMKMapView *bk = (MyBMKMapView *)view;
+            AnnotationType = ANNOTATION_TYPE_TEXT;
+            
+            //获取标点
+            NSMutableArray *annotationList = [bk annotations];
+            for(int i=0;i<annotationList.count;i++){
+                MyBMKAnnotation *annotationTemp = (MyBMKAnnotation *)[annotationList objectAtIndex:i];
+                NSString* titleTemp = [annotationTemp title];
+                NSDictionary * titleTempJson = [JsonUtil dictionaryWithJsonString:titleTemp];
+                float lattemp = [titleTempJson[@"lat"] floatValue];
+                float lngtemp = [titleTempJson[@"lng"] floatValue];
+                
+                if(lat == lattemp && lng == lngtemp){
+                    //删除节点
+                    [bk removeAnnotation:annotationTemp];
+                    
+                    //添加新节点
+                    MyBMKAnnotation* annotationNew = [[MyBMKAnnotation alloc]init];
+                    CLLocationCoordinate2D coor = CLLocationCoordinate2DMake(lattemp, lngtemp);
+                    annotationNew.coordinate = coor;
+                    annotationNew.title = titleTemp;
+                    annotationNew.backgroundType = backgroundType;
+                    
+                    [bk addAnnotation:annotationNew];
+                }
+            }
         }];
     });
 }
