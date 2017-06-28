@@ -54,7 +54,7 @@
     
     //设置颜色
     if([annotation.backgroundType rangeOfString:@"Red"].location != NSNotFound){//包含
-        annotation.bgColor = [UIColor hx_colorWithHexString:@"#ed1b23"];
+        annotation.bgColor = [UIColor hx_colorWithHexString:@"#ea4c40"];
     }else if([annotation.backgroundType rangeOfString:@"Orange"].location != NSNotFound){
         annotation.bgColor = [UIColor hx_colorWithHexString:@"#f26521"];
     }else if([annotation.backgroundType rangeOfString:@"Yellow"].location != NSNotFound){
@@ -62,7 +62,7 @@
     }else if([annotation.backgroundType rangeOfString:@"Green"].location != NSNotFound){
         annotation.bgColor = [UIColor hx_colorWithHexString:@"#10aa9a"];
     }else if([annotation.backgroundType rangeOfString:@"Gray"].location != NSNotFound){
-        annotation.bgColor = [UIColor hx_colorWithHexString:@"#928892"];
+        annotation.bgColor = [UIColor hx_colorWithHexString:@"#918892"];
     }
     
     if([annotation.backgroundType rangeOfString:@"Bubble"].location != NSNotFound){//包含
@@ -110,6 +110,12 @@
         _oneLineLabel.layer.cornerRadius = _oneLineLabel.bounds.size.width/2;
         _oneLineLabel.layer.masksToBounds=YES;
         
+    }else if([annotation.backgroundType rangeOfString:@"MarkRed"].location != NSNotFound){
+        self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_red.png"];
+    }else if([annotation.backgroundType rangeOfString:@"MarkGreen"].location != NSNotFound){
+        self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_green.png"];
+    }else if([annotation.backgroundType rangeOfString:@"MarkGray"].location != NSNotFound){
+        self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_gray.png"];
     }
  
 }
