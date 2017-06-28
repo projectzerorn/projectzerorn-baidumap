@@ -89,7 +89,6 @@
         _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
         
         self.frame = CGRectMake(0, 0, bubbleView.viewWidth, bubbleView.viewHeight);
-        self.centerOffset = CGPointMake(-1*bubbleView.viewWidth/2, -1*bubbleView.viewHeight);
         
     }else if([annotation.backgroundType rangeOfString:@"Circle"].location != NSNotFound){
         
@@ -111,7 +110,6 @@
         _oneLineLabel.layer.cornerRadius = _oneLineLabel.bounds.size.width/2;
         _oneLineLabel.layer.masksToBounds=YES;
         
-        self.centerOffset = CGPointMake(-1*_oneLineLabel.width/2, -1*_oneLineLabel.height);
     }
  
 }
