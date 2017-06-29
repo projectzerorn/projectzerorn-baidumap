@@ -3,6 +3,7 @@ package com.bee.baidumapview;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -41,7 +42,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.graphics.Color;
 
 
 public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener {
@@ -540,7 +540,16 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             //补丁end
 
-            if(mBackgroundType.equalsIgnoreCase("BubbleRed")){
+            if(mBackgroundType.equalsIgnoreCase("MarkRed")){
+                view.setBackgroundResource(R.drawable.mark_red);
+                tv.setVisibility(View.GONE);
+            }else if(mBackgroundType.equalsIgnoreCase("MarkGreen")){
+                view.setBackgroundResource(R.drawable.mark_green);
+                tv.setVisibility(View.GONE);
+            }else if(mBackgroundType.equalsIgnoreCase("MarkGray")){
+                view.setBackgroundResource(R.drawable.mark_gray);
+                tv.setVisibility(View.GONE);
+            }else if(mBackgroundType.equalsIgnoreCase("BubbleRed")){
                 view.setBackgroundResource(R.drawable.custom_maker_normal_red);
             }else if(mBackgroundType.equalsIgnoreCase("BubbleYellow")){
                 view.setBackgroundResource(R.drawable.custom_maker_normal_yellow);
@@ -614,6 +623,41 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
+    public void replaceMark(int tag, double lat, double lng, String backgroundType) {
+        final BaiduMap map = getMap(tag);
+        if(map == null){
+            return;
+        }
+
+        List<Marker> markersList = map.getMarkersInBounds(map.getMapStatusLimit());
+        if(markersList != null && markersList.size() > 0){
+            for(Marker temp: markersList){
+                double lattemp = temp.getPosition().latitude;
+                double lngtemp = temp.getPosition().longitude;
+                if(lattemp == lat && lngtemp == lng){
+                    //移除标点
+                    temp.remove();
+
+                    //添加标点
+                    String justTitle = "";
+                    try {
+                        justTitle = new JSONObject(temp.getTitle()).getString("title");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    MyItem item = new MyItem(temp.getPosition(), justTitle, backgroundType);
+                    OverlayOptions option = new MarkerOptions()
+                                        .position(temp.getPosition())
+                                        .icon(item.getBitmapDescriptor())
+                                        .title(temp.getTitle());//使用title字段传递  标点数据
+                    map.addOverlay(option);
+                }
+            }
+        }
+    }
+
+    @ReactMethod
     public void addMarks(int tag, ReadableArray markslist, boolean isClearMap, ReadableArray backgroundType) {
         if(markslist == null || markslist.size() == 0){
             return;
@@ -663,6 +707,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         //在地图上添加Marker，并显示
         map.addOverlays(optionList);
     }
+
 
     @ReactMethod
     public void addNearPois(final int tag, final double lat, final double lng, final String keyword, final String iconUrl, boolean isClearMap, final String ak, final String mcode, int maxWidthDip, final int radius, int pageCapacity) {
