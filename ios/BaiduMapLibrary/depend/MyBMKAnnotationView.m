@@ -35,7 +35,7 @@
     _oneLineLabel.lineBreakMode   = UILineBreakModeWordWrap;
     _oneLineLabel.numberOfLines   = 0;
     _oneLineLabel.frame           = CGRectMake(kSpacing, kSpacing+1, 100, 15);
-    _oneLineLabel.font            = [UIFont systemFontOfSize:10];
+    _oneLineLabel.font            = [UIFont systemFontOfSize:11];
     _oneLineLabel.textAlignment   = NSTextAlignmentCenter;
     _oneLineLabel.backgroundColor = [UIColor clearColor];
     _oneLineLabel.textColor       = [UIColor whiteColor];
@@ -80,11 +80,11 @@
         CGFloat width = rect.size.width;
         CGFloat height = rect.size.height;
         
-        bubbleView.viewWidth     = width? (width + 10) :60;
+        bubbleView.viewWidth     = width? (width + 15) :60;
         bubbleView.viewHeight    = height? (height + 25) : 60;
         bubbleView.frame         = CGRectMake(0, 0, bubbleView.viewWidth, bubbleView.viewHeight);
         
-        _oneLineLabel.width       = width? (width + 10) :60;
+        _oneLineLabel.width       = width? (width + 15) :60;
         _oneLineLabel.height      = height? (height + 25) : 60;
         _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
         

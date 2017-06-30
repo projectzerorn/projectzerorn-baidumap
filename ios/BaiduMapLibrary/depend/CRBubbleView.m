@@ -4,7 +4,7 @@
 #import "UIView+Category.h"
 
 #define CR_ARROW_SPACE 8
-#define CR_ARROW_SIZE 6
+#define CR_ARROW_SIZE 8
 
 #define CR_PADDING 8
 #define CR_RADIUS 4
