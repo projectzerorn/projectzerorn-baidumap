@@ -35,7 +35,7 @@
     _oneLineLabel.lineBreakMode   = UILineBreakModeWordWrap;
     _oneLineLabel.numberOfLines   = 0;
     _oneLineLabel.frame           = CGRectMake(kSpacing, kSpacing+1, 100, 15);
-    _oneLineLabel.font            = [UIFont systemFontOfSize:11];
+    _oneLineLabel.font            = [UIFont systemFontOfSize:12];
     _oneLineLabel.textAlignment   = NSTextAlignmentCenter;
     _oneLineLabel.backgroundColor = [UIColor clearColor];
     _oneLineLabel.textColor       = [UIColor whiteColor];
