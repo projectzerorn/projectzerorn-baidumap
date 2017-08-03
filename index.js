@@ -12,6 +12,13 @@ if (Platform.OS === 'ios') {
 }
 
 class BDMapView extends Component {
+    static defaultProps = {
+        mode: 1,
+        isShowUserLocation: false,
+        onMapStatusChangeFinish: ()=>{},
+        onMarkerClick: ()=>{},
+    };
+
     constructor(props) {
         super(props);
     }
