@@ -113,6 +113,9 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     self.poisearch =[[BMKPoiSearch alloc]init];
     self.poisearch.delegate = self;
     
+    //打开个性化地图
+    [MyBMKMapView enableCustomMapStyle:YES];
+    
     return map;
 }
 
