@@ -202,6 +202,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             }
         });
 
+        mMapView.setMapCustomEnable(true);//打开个性化地图
         return mMapView;
     }
 
