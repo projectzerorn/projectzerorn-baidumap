@@ -1,6 +1,5 @@
 package com.bee.baidumapview;
 
-import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.model.LatLng;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -26,11 +26,11 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     public static final String RCT_CLASS = "RCTBaiduMap";
     public static final String TAG = "RCTBaiduMap";
 
-    private static Activity mActivity;
     private static View mInfoWindow;
     private static TextView mTv;
     private float ruler = 15;
     private ThemedReactContext reactContext;
+    private ReactApplicationContext appContext;
 
     @Override
     public String getName() {
@@ -43,9 +43,9 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         return getMap();
     }
 
-    public BaiduMapViewManager(Activity activity) {
-        mActivity = activity;
-        mInfoWindow = LayoutInflater.from(mActivity.getApplicationContext()).inflate(R.layout.custom_infowindow, null);
+    public BaiduMapViewManager(ReactApplicationContext reactContext) {
+        this.appContext = reactContext;
+        mInfoWindow = LayoutInflater.from(this.appContext).inflate(R.layout.custom_infowindow, null);
         mTv = (TextView) mInfoWindow.findViewById(R.id.tv_poi_title);
     }
 
@@ -119,7 +119,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * 设置一些amap的属性
      */
     private MapView getMap() {
-        final MapView mMapView = new MapView(mActivity);
+        final MapView mMapView = new MapView(reactContext);
         mMapView.showZoomControls(false);
         final BaiduMap baiduMap = mMapView.getMap();
         baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler), 1 * 1000);
@@ -247,7 +247,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     public void setIsShowUserLocation(MapView mapView, boolean isShowUserLocation) {
         if(isShowUserLocation){
             mapView.getMap().setMyLocationEnabled(true);//开启
-            mLocClient = new LocationClient(mActivity);
+            mLocClient = new LocationClient(reactContext);
             MyLocationListener myListener = new MyLocationListener(mapView);
             mLocClient.registerLocationListener(myListener);
             LocationClientOption option = new LocationClientOption();

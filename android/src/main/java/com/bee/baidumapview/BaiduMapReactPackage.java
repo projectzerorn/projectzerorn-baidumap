@@ -1,7 +1,5 @@
 package com.bee.baidumapview;
 
-import android.app.Activity;
-
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -14,10 +12,9 @@ import java.util.List;
 
 
 public class BaiduMapReactPackage implements ReactPackage {
-    private Activity mActivity;
 
-    public BaiduMapReactPackage(Activity activity) {
-        mActivity = activity;
+    public BaiduMapReactPackage() {
+
     }
 
     @Override
@@ -32,6 +29,6 @@ public class BaiduMapReactPackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Arrays.<ViewManager>asList(new BaiduMapViewManager(mActivity));
+        return Arrays.<ViewManager>asList(new BaiduMapViewManager(reactContext));
     }
 }
