@@ -63,6 +63,9 @@
         annotation.bgColor = [UIColor hx_colorWithHexString:@"#10aa9a"];
     }else if([annotation.backgroundType rangeOfString:@"Gray"].location != NSNotFound){
         annotation.bgColor = [UIColor hx_colorWithHexString:@"#918892"];
+    }else if([annotation.backgroundType rangeOfString:@"Bubble"].location != NSNotFound){//“Bubble#ff0000”这种用户自定义颜色的情况
+        NSString* replacedStr = [annotation.backgroundType stringByReplacingOccurrencesOfString:@"Bubble"withString:@""];
+        annotation.bgColor = [UIColor hx_colorWithHexString:replacedStr];
     }
     
     if([annotation.backgroundType rangeOfString:@"Bubble"].location != NSNotFound){//包含
