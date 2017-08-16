@@ -104,6 +104,13 @@ let BDMapModule = {
         MyMapModule.cluster(ref, data);
     },
 
+    /**
+     *
+     * @param ref
+     * @param data
+     * @param isClearMap
+     * @param backgroundTypeArray
+     */
     addMarks(ref, data, isClearMap = true, backgroundTypeArray = ["BubbleRed"]){
         if(!(backgroundTypeArray instanceof Array)){//兼容以前代码，若为string则将其转化为array
             backgroundTypeArray = [backgroundTypeArray];

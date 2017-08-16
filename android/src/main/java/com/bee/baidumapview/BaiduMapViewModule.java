@@ -1,12 +1,11 @@
 package com.bee.baidumapview;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -559,9 +558,20 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 view.setBackgroundResource(R.drawable.custom_maker_normal_green);
             }else if(mBackgroundType.equalsIgnoreCase("BubbleGray")){
                 view.setBackgroundResource(R.drawable.custom_maker_normal_gray);
-
-
-            }else if(mBackgroundType.startsWith("Circle")){
+            }else if(mBackgroundType.startsWith("Bubble")){//剩下的用户自定义颜色情况  用户传入"Bubble#ff0000"来定义颜色
+                Drawable sourceDrawable = ContextCompat.getDrawable(reactContext, R.drawable.custom_maker_normal_white);
+                int changeColor;
+                String colorStr = "";
+                try{
+                    colorStr = mBackgroundType.replaceAll("Bubble","");
+                    changeColor = Color.parseColor(colorStr);
+                }catch (Exception e){
+                    throw new RuntimeException(colorStr + "：无效的颜色值");
+                }
+                sourceDrawable.setColorFilter(changeColor, PorterDuff.Mode.MULTIPLY);
+                view.setBackground(sourceDrawable);
+            }
+            else if(mBackgroundType.startsWith("Circle")){
                 if(mBackgroundType.equalsIgnoreCase("CircleRed")){
                     view.setBackgroundResource(R.drawable.circle_red);
                 }else if(mBackgroundType.equalsIgnoreCase("CircleOrange")){
