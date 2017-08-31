@@ -7,6 +7,7 @@ if (Platform.OS === 'ios') {
     var LibBaiduMapView = requireNativeComponent('RCTBaiduMap', BDMapView, {
         nativeOnly: {
             onMapStatusChangeFinish: true,
+            onMapStartMove:true,
         },
     });
 }
@@ -16,6 +17,7 @@ class BDMapView extends Component {
         mode: 1,
         isShowUserLocation: false,
         onMapStatusChangeFinish: ()=>{},
+        onMapStartMove: ()=>{},
         onMarkerClick: ()=>{},
     };
 
@@ -43,6 +45,8 @@ class BDMapView extends Component {
             this.props.onMarkerClick(dataJson);
         }else if(eventType && eventType == "onMapStatusChangeFinish"){
             this.props.onMapStatusChangeFinish(event.nativeEvent);
+        }else if(eventType && eventType == "onMapStartMove"){
+            this.props.onMapStartMove(event.nativeEvent);
         }
     };
 }
@@ -54,7 +58,7 @@ BDMapView.propTypes = {
     heatMapEnabled: PropTypes.bool,
     marker: PropTypes.array,
     isShowUserLocation: PropTypes.bool,
-
+    onMapStartMove: React.PropTypes.func,
     onMapStatusChangeFinish: React.PropTypes.func,
     onMarkerClick: React.PropTypes.func,
 }

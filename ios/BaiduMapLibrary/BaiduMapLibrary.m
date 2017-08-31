@@ -704,15 +704,33 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     }
 }
 
-
 - (void)mapView:(MyBMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated{
-    //	NSLog(@"region change = %f",mapView.region.center.latitude);
-    //	float f1_1 = mapView.region.center.latitude;
-    //	float f1_2 = mapView.region.center.longitude;
-    //	BMKPointAnnotation *anno1 = [[BMKPointAnnotation alloc] init];
-    //	CLLocationCoordinate2D center = CLLocationCoordinate2DMake(f1_1, f1_2);
-    //	anno1.coordinate = center;
-    //	[mapView addAnnotation:anno1];
+    
+    if(mapView.onChange != nil){
+        float zoom = mapView_mk.getMapStatus.fLevel;
+        float lat = mapView_mk.getMapStatus.targetGeoPt.latitude;
+        float lng = mapView_mk.getMapStatus.targetGeoPt.longitude;
+        
+        CGFloat latitudeDelta = mapView_mk.region.span.latitudeDelta;
+        CGFloat longitudeDelta = mapView_mk.region.span.longitudeDelta;
+        
+        CGFloat northeastLat = lat + (latitudeDelta / 2.0);//northeastLat  maxlat
+        CGFloat northeastLng = lng + (longitudeDelta / 2.0);//northeastLng  maxlng
+        
+        CGFloat southwestLat = lat - (latitudeDelta / 2.0);//southwestLat  minlat
+        CGFloat southwestLng = lng - (longitudeDelta / 2.0);//southwestLng  minlng
+        
+        mapView.onChange(@{
+                           @"eventType": @"onMapStartMove",
+                           @"centerLat": @(lat),
+                           @"centerLng": @(lng),
+                           @"zoom": @(zoom),
+                           @"northeastLat": @(northeastLat),
+                           @"northeastLng": @(northeastLng),
+                           @"southwestLat": @(southwestLat),
+                           @"southwestLng": @(southwestLng)});
+    }
+    
 }
 
 #pragma mark -------------------------------------------------- BDMapModule定位到用户坐标
