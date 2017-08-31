@@ -132,6 +132,18 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
              * @param status 地图状态改变开始时的地图状态
              */
             public void onMapStatusChangeStart(MapStatus status){
+                WritableMap event = Arguments.createMap();
+                event.putString("eventType", "onMapStartMove");
+                event.putDouble("centerLat", status.target.latitude);
+                event.putDouble("centerLng", status.target.longitude);
+                event.putDouble("zoom", status.zoom);
+                event.putDouble("northeastLat", status.bound.northeast.latitude);
+                event.putDouble("northeastLng", status.bound.northeast.longitude);
+                event.putDouble("southwestLat", status.bound.southwest.latitude);
+                event.putDouble("southwestLng", status.bound.southwest.longitude);
+
+                reactContext.getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(mMapView.getId(), "topChange", event);
             }
             /**
              * 地图状态-变化中
