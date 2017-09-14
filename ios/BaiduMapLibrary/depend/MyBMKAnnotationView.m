@@ -5,6 +5,7 @@
 #import "UIView+Category.h"
 #import "JsonUtil.h"
 #import "HexColors.h"
+#import "UIImage+RTTint.h"
 
 #define kSpacing 5
 #define ANNOTATION_FRAME    (CGRectMake(0, 0, 60., 60.))
@@ -66,6 +67,9 @@
     }else if([annotation.backgroundType rangeOfString:@"Bubble"].location != NSNotFound){//“Bubble#ff0000”这种用户自定义颜色的情况
         NSString* replacedStr = [annotation.backgroundType stringByReplacingOccurrencesOfString:@"Bubble"withString:@""];
         annotation.bgColor = [UIColor hx_colorWithHexString:replacedStr];
+    }else if([annotation.backgroundType rangeOfString:@"Circle"].location != NSNotFound){//“Circle#ff0000”这种用户自定义颜色的情况
+        NSString* replacedStr = [annotation.backgroundType stringByReplacingOccurrencesOfString:@"Circle"withString:@""];
+        annotation.bgColor = [UIColor hx_colorWithHexString:replacedStr];
     }
     
     if([annotation.backgroundType rangeOfString:@"Bubble"].location != NSNotFound){//包含
@@ -119,6 +123,11 @@
         self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_green.png"];
     }else if([annotation.backgroundType rangeOfString:@"MarkGray"].location != NSNotFound){
         self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_gray.png"];
+    }else if([annotation.backgroundType rangeOfString:@"Mark#"].location != NSNotFound){
+        UIImage *image = [UIImage imageNamed:@"mapapi.bundle/images/mark_red.png"];
+        NSString* replacedStr = [annotation.backgroundType stringByReplacingOccurrencesOfString:@"Mark"withString:@""];
+        UIImage *tinted = [image rt_tintedImageWithColor:[UIColor hx_colorWithHexString:replacedStr] level:1.0f];
+        self.image = tinted;
     }
  
 }
