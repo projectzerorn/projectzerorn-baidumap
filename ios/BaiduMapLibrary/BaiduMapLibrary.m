@@ -704,6 +704,21 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     }
 }
 
+// 地图长按的返回方法 (获取长按的经纬度,查找这里的小吃)
+- (void)mapview:(MyBMKMapView *)mapView onLongClick:(CLLocationCoordinate2D)coordinate
+{
+    if(mapView.onChange != nil){
+        float lat = coordinate.latitude;
+        float lng = coordinate.longitude;
+        
+        mapView.onChange(@{
+                           @"eventType": @"onLongClick",
+                           @"lat": @(lat),
+                           @"lng": @(lng)});
+    }
+}
+
+
 - (void)mapView:(MyBMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated{
     
     if(mapView.onChange != nil){

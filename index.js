@@ -1,5 +1,5 @@
-import React,{Component,PropTypes} from 'react';
-import{ requireNativeComponent, View, Platform } from 'react-native';
+import React, {Component, PropTypes} from 'react';
+import {requireNativeComponent, View, Platform} from 'react-native';
 
 if (Platform.OS === 'ios') {
     var LibBaiduMapView = requireNativeComponent('BaiduMapLibrary', BDMapView);
@@ -7,7 +7,8 @@ if (Platform.OS === 'ios') {
     var LibBaiduMapView = requireNativeComponent('RCTBaiduMap', BDMapView, {
         nativeOnly: {
             onMapStatusChangeFinish: true,
-            onMapStartMove:true,
+            onMapStartMove: true,
+            onLongClick: true,
         },
     });
 }
@@ -16,9 +17,10 @@ class BDMapView extends Component {
     static defaultProps = {
         mode: 1,
         isShowUserLocation: false,
-        onMapStatusChangeFinish: ()=>{},
-        onMapStartMove: ()=>{},
-        onMarkerClick: ()=>{},
+        onMapStatusChangeFinish: () => {},
+        onMapStartMove: () => {},
+        onMarkerClick: () => {},
+        onLongClick: () => {},
     };
 
     constructor(props) {
@@ -32,21 +34,23 @@ class BDMapView extends Component {
         );
     }
 
-    _onChange = (event:Event)=> {
+    _onChange = (event: Event) => {
         let eventType = event.nativeEvent.eventType;
-        if(eventType && eventType == "onMarkerClick"){
+        if (eventType && eventType == 'onMarkerClick') {
             let dataStr = event.nativeEvent.title;
             let dataJson;
-            try{
+            try {
                 dataJson = JSON.parse(dataStr);//通过title来传递 mark数据 数据结构为json
-            }catch (e) {
+            } catch (e) {
                 dataJson = dataStr;
             }
             this.props.onMarkerClick(dataJson);
-        }else if(eventType && eventType == "onMapStatusChangeFinish"){
+        } else if (eventType && eventType == 'onMapStatusChangeFinish') {
             this.props.onMapStatusChangeFinish(event.nativeEvent);
-        }else if(eventType && eventType == "onMapStartMove"){
+        } else if (eventType && eventType == 'onMapStartMove') {
             this.props.onMapStartMove(event.nativeEvent);
+        } else if (eventType && eventType == 'onLongClick') {
+            this.props.onLongClick(event.nativeEvent);
         }
     };
 }
@@ -61,6 +65,7 @@ BDMapView.propTypes = {
     onMapStartMove: React.PropTypes.func,
     onMapStatusChangeFinish: React.PropTypes.func,
     onMarkerClick: React.PropTypes.func,
-}
+    onLongClick: React.PropTypes.func,
+};
 
 export default BDMapView;
