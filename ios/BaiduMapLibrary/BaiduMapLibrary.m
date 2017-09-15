@@ -651,11 +651,45 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     return resultingImage;
 }
 
+#pragma mark -------------------------------------------------- 长按拖动大头针的事件
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotationViewDragState)oldState{
+    
+    switch (newState) {
+        case MKAnnotationViewDragStateStarting: {
+            NSLog(@"拿起");
+            return;
+        }
+            
+        case MKAnnotationViewDragStateDragging: {
+            NSLog(@"开始拖拽");
+            return;
+        }
+            
+        case MKAnnotationViewDragStateEnding: {
+            CLLocationCoordinate2D destCoordinate = view.annotation.coordinate;
+            float lat = destCoordinate.latitude;
+            float lng = destCoordinate.longitude;
+            NSLog(@"放下,并将大头针%f", destCoordinate.latitude);
+            return;
+        }
+        default:
+            return;
+    }
+}
+
+
 #pragma mark -------------------------------------------------- 打点回调函数，自定义图片
 - (BMKAnnotationView *)mapView:(MyBMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     if(AnnotationType == ANNOTATION_TYPE_TEXT){
         MyBMKAnnotationView *annotationView = [[MyBMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
         annotationView.canShowCallout = NO;
+        if([annotation isMemberOfClass:[MyBMKAnnotation class]]){
+            MyBMKAnnotation* temp = (MyBMKAnnotation*)annotation;
+            NSString* title = temp.title;
+            NSMutableDictionary *dict = [NSJSONSerialization JSONObjectWithData:[title dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
+            BOOL draggable = [[dict valueForKey:@"draggable"] boolValue];
+            annotationView.draggable = draggable;
+        }
 
         return annotationView;
         
