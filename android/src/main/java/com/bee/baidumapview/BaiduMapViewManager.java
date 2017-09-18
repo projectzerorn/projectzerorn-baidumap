@@ -53,11 +53,10 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * 地图模式
      *
      * @param mapView
-     * @param type
-     *  1. 普通
-     *  2.卫星
+     * @param type    1. 普通
+     *                2.卫星
      */
-    @ReactProp(name="mode", defaultInt = 1)
+    @ReactProp(name = "mode", defaultInt = 1)
     public void setMode(MapView mapView, int type) {
         Log.i(TAG, "mode:" + type);
         mapView.getMap().setMapType(type);
@@ -69,7 +68,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * @param mapView
      * @param isEnabled
      */
-    @ReactProp(name="trafficEnabled", defaultBoolean = false)
+    @ReactProp(name = "trafficEnabled", defaultBoolean = false)
     public void setTrafficEnabled(MapView mapView, boolean isEnabled) {
         Log.d(TAG, "trafficEnabled:" + isEnabled);
         mapView.getMap().setTrafficEnabled(isEnabled);
@@ -81,7 +80,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * @param mapView
      * @param isEnabled
      */
-    @ReactProp(name="heatMapEnabled", defaultBoolean = false)
+    @ReactProp(name = "heatMapEnabled", defaultBoolean = false)
     public void setHeatMapEnabled(MapView mapView, boolean isEnabled) {
         Log.d(TAG, "heatMapEnabled" + isEnabled);
         mapView.getMap().setBaiduHeatMapEnabled(isEnabled);
@@ -94,7 +93,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * @param mapView
      * @param array
      */
-    @ReactProp(name="marker")
+    @ReactProp(name = "marker")
     public void setMarker(MapView mapView, ReadableArray array) {
         Log.d(TAG, "marker:" + array);
         if (array != null) {
@@ -131,7 +130,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
              * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
              * @param status 地图状态改变开始时的地图状态
              */
-            public void onMapStatusChangeStart(MapStatus status){
+            public void onMapStatusChangeStart(MapStatus status) {
                 WritableMap event = Arguments.createMap();
                 event.putString("eventType", "onMapStartMove");
                 event.putDouble("centerLat", status.target.latitude);
@@ -145,17 +144,19 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
                 reactContext.getJSModule(RCTEventEmitter.class)
                         .receiveEvent(mMapView.getId(), "topChange", event);
             }
+
             /**
              * 地图状态-变化中
              * @param status 当前地图状态
              */
-            public void onMapStatusChange(MapStatus status){
+            public void onMapStatusChange(MapStatus status) {
             }
+
             /**
              * 地图状态改变结束
              * @param status 地图状态改变结束后的地图状态
              */
-            public void onMapStatusChangeFinish(MapStatus status){
+            public void onMapStatusChangeFinish(MapStatus status) {
                 WritableMap event = Arguments.createMap();
                 event.putString("eventType", "onMapStatusChangeFinish");
                 event.putDouble("centerLat", status.target.latitude);
@@ -172,7 +173,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         });
 
         //标点marker监听
-        baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener(){
+        baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -183,11 +184,11 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
                 } catch (JSONException e) {
                     //非json格式直接出泡泡框来显示文字
                     mTv.setText(marker.getTitle());
-                    InfoWindow infoWindow = new InfoWindow(mInfoWindow, marker.getPosition(), -1*marker.getIcon().getBitmap().getHeight());
+                    InfoWindow infoWindow = new InfoWindow(mInfoWindow, marker.getPosition(), -1 * marker.getIcon().getBitmap().getHeight());
                     baiduMap.showInfoWindow(infoWindow);
-                    try{
+                    try {
                         mMapView.removeView(mInfoWindow);//RN的坑？ 会有个mInfoWindow显示在左上角  去掉
-                    }catch (Exception e1){
+                    } catch (Exception e1) {
 
                     }
 
@@ -201,7 +202,45 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             }
         });
 
-        baiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener(){
+        //地图长按回调
+        baiduMap.setOnMapLongClickListener(new BaiduMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                WritableMap event = Arguments.createMap();
+                event.putString("eventType", "onLongClick");
+                event.putDouble("lat", latLng.latitude);
+                event.putDouble("lng", latLng.longitude);
+
+                reactContext.getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(mMapView.getId(), "topChange", event);
+            }
+        });
+
+        //标点拖拽监听
+        baiduMap.setOnMarkerDragListener(new BaiduMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                WritableMap event = Arguments.createMap();
+                event.putString("eventType", "onMarkerDragFinish");
+                event.putDouble("lat", marker.getPosition().latitude);
+                event.putDouble("lng", marker.getPosition().longitude);
+
+                reactContext.getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(mMapView.getId(), "topChange", event);
+            }
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+        });
+
+        baiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
 
             @Override
             public void onMapClick(LatLng latLng) {
@@ -221,7 +260,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     @Override
     public void onMapLoaded() {
         WritableMap params = Arguments.createMap();
-        params.putString("result","OK");
+        params.putString("result", "OK");
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("MapLoaded", params);
     }
@@ -229,10 +268,11 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
 
     // 定位相关
     LocationClient mLocClient;
+
     public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
         MapView mMapView;
 
-        public MyLocationListener(MapView mapView){
+        public MyLocationListener(MapView mapView) {
             mMapView = mapView;
         }
 
@@ -242,7 +282,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             if (location == null || mMapView == null) {
                 return;
             }
-            Log.v("jackzhou", String.format("BaiduMapViewManager-onReceiveLocation-%s,%s",location.getLatitude(), location.getLongitude()));
+            Log.v("jackzhou", String.format("BaiduMapViewManager-onReceiveLocation-%s,%s", location.getLatitude(), location.getLongitude()));
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360
@@ -256,9 +296,9 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         }
     }
 
-    @ReactProp(name="isShowUserLocation", defaultBoolean = false)
+    @ReactProp(name = "isShowUserLocation", defaultBoolean = false)
     public void setIsShowUserLocation(MapView mapView, boolean isShowUserLocation) {
-        if(isShowUserLocation){
+        if (isShowUserLocation) {
             mapView.getMap().setMyLocationEnabled(true);//开启
             mLocClient = new LocationClient(reactContext);
             MyLocationListener myListener = new MyLocationListener(mapView);
@@ -269,12 +309,12 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             option.setScanSpan(1000);
             mLocClient.setLocOption(option);
             mLocClient.start();
-        }else{
+        } else {
             mapView.getMap().setMyLocationEnabled(false);
         }
     }
 
-    @ReactProp(name="showZoomControls", defaultBoolean = false)
+    @ReactProp(name = "showZoomControls", defaultBoolean = false)
     public void showZoomControls(MapView mapView, boolean showZoomControls) {
         mapView.showZoomControls(showZoomControls);
     }

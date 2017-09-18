@@ -46,7 +46,7 @@ import java.util.List;
 public class BaiduMapViewModule extends ReactContextBaseJavaModule implements OnGetSuggestionResultListener {
     public static final String TAG = "RCTBaiduMap";
     private Marker markerAnimation;
-//    private Marker tempMarker;
+    //    private Marker tempMarker;
 //    List<Marker> markerList = new ArrayList<>();
     private Marker markerPet;
     private Overlay mCircle;
@@ -69,7 +69,6 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     public String getName() {
         return "BaiduMapModuleManager";
     }
-
 
 
     /**
@@ -99,7 +98,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void animateMapStatus(int tag,final ReadableMap mLatLngParm){
+    public void animateMapStatus(int tag, final ReadableMap mLatLngParm) {
         Activity context = this.getCurrentActivity();
         final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
         LatLng mlatLng = new LatLng(mLatLngParm.getDouble("baidu_latitude"), mLatLngParm.getDouble("baidu_longitude"));
@@ -175,6 +174,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     /**
      * 画轨迹
+     *
      * @param tag
      * @param pointList
      */
@@ -256,11 +256,11 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         //设置按钮显示的数值
         final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
 
-        if(tempLatlng != null){
-            updateCircle(baiduMap,tempLatlng,mLatLngParm.getInt("range"));
-        }else {
+        if (tempLatlng != null) {
+            updateCircle(baiduMap, tempLatlng, mLatLngParm.getInt("range"));
+        } else {
             final LatLng mlatLng = new LatLng(mLatLngParm.getDouble("latitude"), mLatLngParm.getDouble("longitude"));
-            updateCircle(baiduMap,mlatLng,mLatLngParm.getInt("range"));
+            updateCircle(baiduMap, mlatLng, mLatLngParm.getInt("range"));
         }
 
         baiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
@@ -278,7 +278,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void seekAddress(String keyWord){
+    public void seekAddress(String keyWord) {
         mSuggestionSearch
                 .requestSuggestion((new SuggestionSearchOption())
                         .keyword(keyWord).city(""));
@@ -286,11 +286,12 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     /**
      * 更新圈圈
+     *
      * @param baiduMap
      * @param mlatLng
      * @param range
      */
-    private void updateCircle(BaiduMap baiduMap,LatLng mlatLng,int range){
+    private void updateCircle(BaiduMap baiduMap, LatLng mlatLng, int range) {
         Activity context = this.getCurrentActivity();
         if (mCircle != null) {
             mCircle.remove();
@@ -308,9 +309,10 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     /**
      * 根据经纬度获取地址名
+     *
      * @param mlatLng
      */
-    public void getAddres(LatLng mlatLng){
+    public void getAddres(LatLng mlatLng) {
         mSearch.setOnGetGeoCodeResultListener(new OnGetGeoCoderResultListener() {
             @Override
             public void onGetGeoCodeResult(GeoCodeResult result) {
@@ -341,8 +343,8 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     /**
      * 初始化搜索
      */
-    private void initSearch(){
-        Log.v("jackzhou","BaiduMapViewModule - initSearch");
+    private void initSearch() {
+        Log.v("jackzhou", "BaiduMapViewModule - initSearch");
         Handler uiHandler = new Handler(Looper.getMainLooper());
         uiHandler.post(new Runnable() {
             @Override
@@ -355,14 +357,13 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void onDestroyBDMap(int tag){
+    public void onDestroyBDMap(int tag) {
 
         MapView map = ((MapView) this.getCurrentActivity().findViewById(tag));
-        if(map != null){
+        if (map != null) {
             map.onDestroy();
         }
     }
-
 
 
     @Override
@@ -382,13 +383,13 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             cityArray.pushString(tip.key);
             latLngArray.pushArray(latLng);
         }
-        params.putArray("result_key",cityArray);
-        params.putArray("result_pt",latLngArray);
+        params.putArray("result_key", cityArray);
+        params.putArray("result_pt", latLngArray);
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("SearchResult", params);
     }
 
-    private MapView getMapView(int tag){
+    private MapView getMapView(int tag) {
         Activity context = this.getCurrentActivity();
         MapView mapView = (MapView) context.findViewById(tag);
         return mapView;
@@ -404,32 +405,32 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
-    public void move(int tag, double lat, double lng, float zoom, final boolean isAnimate){
+    public void move(int tag, double lat, double lng, float zoom, final boolean isAnimate) {
         final BaiduMap baiduMap = getMap(tag);
-        if(baiduMap == null){
+        if (baiduMap == null) {
             return;
         }
 
         final MapStatus.Builder builder = new MapStatus.Builder();
-        if(lat != -1 && lng != -1){
+        if (lat != -1 && lng != -1) {
             LatLng latLng = new LatLng(lat, lng);
             builder.target(latLng);
         }
-        if(zoom != -1){
+        if (zoom != -1) {
             builder.zoom(zoom);
         }
 
         getCurrentActivity().runOnUiThread(
-                    new Runnable() {
-                       @Override
-                       public void run() {
-                           if(isAnimate){
-                               baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-                           }else{
-                               baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-                           }
-                       }
-                   }
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAnimate) {
+                            baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        } else {
+                            baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        }
+                    }
+                }
         );
     }
 
@@ -442,7 +443,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         int mtag;
         float mZoom;
 
-        public MyLocationListener(int tag, float zoom, boolean isAnimate){
+        public MyLocationListener(int tag, float zoom, boolean isAnimate) {
             mMapView = getMapView(tag);
             mIsAnimate = isAnimate;
             mtag = tag;
@@ -455,7 +456,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             if (location == null || mMapView == null) {
                 return;
             }
-            Log.v("jackzhou", String.format("BaiduMapViewModule-onReceiveLocation-%s,%s",location.getLatitude(), location.getLongitude()));
+            Log.v("jackzhou", String.format("BaiduMapViewModule-onReceiveLocation-%s,%s", location.getLatitude(), location.getLongitude()));
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360
@@ -464,24 +465,26 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             mMapView.getMap().setMyLocationData(locData);
 
             BaiduMap baiduMap = getMap(mtag);
-            if(baiduMap == null){
+            if (baiduMap == null) {
                 return;
             }
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MapStatus.Builder builder = new MapStatus.Builder();
             builder.target(latLng).zoom(mZoom);
-            if(mIsAnimate){
+            if (mIsAnimate) {
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-            }else{
+            } else {
                 baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }
             mLocClient.stop();
         }
+
         public void onReceivePoi(BDLocation poiLocation) {
         }
     }
+
     @ReactMethod
-    public void moveToUserLocation(int tag, float zoom, boolean isAnimate){
+    public void moveToUserLocation(int tag, float zoom, boolean isAnimate) {
         mLocClient = new LocationClient(this.getCurrentActivity());
         MyLocationListener myListener = new MyLocationListener(tag, zoom, isAnimate);
         mLocClient.registerLocationListener(myListener);
@@ -527,10 +530,11 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             return getMarkView(mTitle, mBackgroundType);
         }
     }
-    private BitmapDescriptor getMarkView(String title, String mBackgroundType){//获取自定义的markview
-        if(title != null && title.length() > 0){
+
+    private BitmapDescriptor getMarkView(String title, String mBackgroundType) {//获取自定义的markview
+        if (title != null && title.length() > 0) {
             View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
-            TextView tv = (TextView)view.findViewById(R.id.tv_title);
+            TextView tv = (TextView) view.findViewById(R.id.tv_title);
             tv.setText(title);
             tv.setTextSize(13);
             //补丁start 百度地图sdk调用BitmapDescriptorFactory.fromView(view)在4.2.2上报null错误  5.0.0是ok的
@@ -539,84 +543,83 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             //补丁end
 
-            if(mBackgroundType.equalsIgnoreCase("MarkRed")){
+            if (mBackgroundType.equalsIgnoreCase("MarkRed")) {
                 view.setBackgroundResource(R.drawable.mark_red);
                 tv.setVisibility(View.GONE);
-            }else if(mBackgroundType.equalsIgnoreCase("MarkGreen")){
+            } else if (mBackgroundType.equalsIgnoreCase("MarkGreen")) {
                 view.setBackgroundResource(R.drawable.mark_green);
                 tv.setVisibility(View.GONE);
-            }else if(mBackgroundType.equalsIgnoreCase("MarkGray")){
+            } else if (mBackgroundType.equalsIgnoreCase("MarkGray")) {
                 view.setBackgroundResource(R.drawable.mark_gray);
                 tv.setVisibility(View.GONE);
-            }else if(mBackgroundType.equalsIgnoreCase("BubbleRed")){
+            } else if (mBackgroundType.equalsIgnoreCase("BubbleRed")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_red);
-            }else if(mBackgroundType.equalsIgnoreCase("BubbleYellow")){
+            } else if (mBackgroundType.equalsIgnoreCase("BubbleYellow")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_yellow);
-            }else if(mBackgroundType.equalsIgnoreCase("BubbleOrange")){
+            } else if (mBackgroundType.equalsIgnoreCase("BubbleOrange")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_orange);
-            }else if(mBackgroundType.equalsIgnoreCase("BubbleGreen")) {
+            } else if (mBackgroundType.equalsIgnoreCase("BubbleGreen")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_green);
-            }else if(mBackgroundType.equalsIgnoreCase("BubbleGray")){
+            } else if (mBackgroundType.equalsIgnoreCase("BubbleGray")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_gray);
-            }else if(mBackgroundType.startsWith("Bubble")){//剩下的用户自定义颜色情况  用户传入"Bubble#ff0000"来定义颜色
+            } else if (mBackgroundType.startsWith("Bubble")) {//剩下的用户自定义颜色情况  用户传入"Bubble#ff0000"来定义颜色
                 Drawable sourceDrawable = ContextCompat.getDrawable(reactContext, R.drawable.custom_maker_normal_white);
                 int changeColor;
                 String colorStr = "";
-                try{
-                    colorStr = mBackgroundType.replaceAll("Bubble","");
+                try {
+                    colorStr = mBackgroundType.replaceAll("Bubble", "");
                     changeColor = Color.parseColor(colorStr);
-                }catch (Exception e){
+                } catch (Exception e) {
                     throw new RuntimeException(colorStr + "：无效的颜色值");
                 }
                 sourceDrawable.setColorFilter(changeColor, PorterDuff.Mode.MULTIPLY);
                 view.setBackground(sourceDrawable);
-            }
-            else if(mBackgroundType.startsWith("Circle")){
-                if(mBackgroundType.equalsIgnoreCase("CircleRed")){
+            } else if (mBackgroundType.startsWith("Circle")) {
+                if (mBackgroundType.equalsIgnoreCase("CircleRed")) {
                     view.setBackgroundResource(R.drawable.circle_red);
-                }else if(mBackgroundType.equalsIgnoreCase("CircleOrange")){
+                } else if (mBackgroundType.equalsIgnoreCase("CircleOrange")) {
                     view.setBackgroundResource(R.drawable.circle_orange);
-                }else if(mBackgroundType.equalsIgnoreCase("CircleYellow")){
+                } else if (mBackgroundType.equalsIgnoreCase("CircleYellow")) {
                     view.setBackgroundResource(R.drawable.circle_yellow);
-                }else if(mBackgroundType.equalsIgnoreCase("CircleGray")){
+                } else if (mBackgroundType.equalsIgnoreCase("CircleGray")) {
                     view.setBackgroundResource(R.drawable.circle_gray);
                 }
 
                 UIUtil.measureView(view);
-                int max = Math.max(view.getMeasuredHeight(),view.getMeasuredWidth());
+                int max = Math.max(view.getMeasuredHeight(), view.getMeasuredWidth());
                 view.setLayoutParams(new ViewGroup.LayoutParams(max, max));
 
                 //textview居中
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 tv.setLayoutParams(params);
             }
             return BitmapDescriptorFactory.fromView(view);
-        }else{
+        } else {
             return BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
         }
     }
 
     @ReactMethod
-    public void cluster(int tag, ReadableArray data){
+    public void cluster(int tag, ReadableArray data) {
         MapView mapview = getMapView(tag);
         BaiduMap map = mapview.getMap();
         // 初始化点聚合管理类
         ClusterManager mClusterManager = new ClusterManager<>(getCurrentActivity(), map);
         // 向点聚合管理类中添加Marker实例
 
-        if(data == null || data.size() == 0){
+        if (data == null || data.size() == 0) {
             return;
         }
 
         for (int i = 0; i < data.size(); i++) {
             ReadableArray nodelist = data.getArray(i);
             List<MyItem> items = new ArrayList<>();
-            for(int j = 0; j < nodelist.size(); j++){
+            for (int j = 0; j < nodelist.size(); j++) {
                 ReadableMap node = nodelist.getMap(j);
                 items.add(
                         new MyItem(
-                                new LatLng(node.getDouble("lat"),node.getDouble("lng")),
+                                new LatLng(node.getDouble("lat"), node.getDouble("lng")),
                                 node.getString("title")
                         )
                 );
@@ -635,16 +638,16 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void replaceMark(int tag, double lat, double lng, String backgroundType) {
         final BaiduMap map = getMap(tag);
-        if(map == null){
+        if (map == null) {
             return;
         }
 
         List<Marker> markersList = map.getMarkersInBounds(map.getMapStatusLimit());
-        if(markersList != null && markersList.size() > 0){
-            for(Marker temp: markersList){
+        if (markersList != null && markersList.size() > 0) {
+            for (Marker temp : markersList) {
                 double lattemp = temp.getPosition().latitude;
                 double lngtemp = temp.getPosition().longitude;
-                if(lattemp == lat && lngtemp == lng){
+                if (lattemp == lat && lngtemp == lng) {
                     //移除标点
                     temp.remove();
 
@@ -658,9 +661,9 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
                     MyItem item = new MyItem(temp.getPosition(), justTitle, backgroundType);
                     OverlayOptions option = new MarkerOptions()
-                                        .position(temp.getPosition())
-                                        .icon(item.getBitmapDescriptor())
-                                        .title(temp.getTitle());//使用title字段传递  标点数据
+                            .position(temp.getPosition())
+                            .icon(item.getBitmapDescriptor())
+                            .title(temp.getTitle());//使用title字段传递  标点数据
                     map.addOverlay(option);
                 }
             }
@@ -669,16 +672,16 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     @ReactMethod
     public void addMarks(int tag, ReadableArray markslist, boolean isClearMap, ReadableArray backgroundType) {
-        if(markslist == null || markslist.size() == 0){
+        if (markslist == null || markslist.size() == 0) {
             return;
         }
 
         final BaiduMap map = getMap(tag);
-        if(map == null){
+        if (map == null) {
             return;
         }
 
-        if(isClearMap){
+        if (isClearMap) {
             getCurrentActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -691,14 +694,14 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
         for (int i = 0; i < markslist.size(); i++) {
             String backgroundTypeTemp;
-            if(backgroundType.size() == markslist.size()){
+            if (backgroundType.size() == markslist.size()) {
                 backgroundTypeTemp = backgroundType.getString(i);
-            }else{
+            } else {
                 backgroundTypeTemp = backgroundType.getString(0);
             }
 
             ReadableMap mark = markslist.getMap(i);
-            MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.getString("title"), backgroundTypeTemp);
+            MyItem item = new MyItem(new LatLng(mark.getDouble("lat"), mark.getDouble("lng")), mark.hasKey("title") ? mark.getString("title") : "", backgroundTypeTemp);
 
             String markData = null;
             try {
@@ -708,6 +711,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             }
 
             OverlayOptions option = new MarkerOptions()
+                    .draggable(mark.hasKey("draggable") ? mark.getBoolean("draggable") : false)//是否可以拖拽
                     .position(item.getPosition())
                     .icon(item.getBitmapDescriptor())
                     .title(markData);//使用title字段传递  标点数据
@@ -721,13 +725,13 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     @ReactMethod
     public void addNearPois(final int tag, final double lat, final double lng, final String keyword, final String iconUrl, boolean isClearMap, final String ak, final String mcode, int maxWidthDip, final int radius, int pageCapacity) {
-        Log.v("jackzhou",String.format("BaiduMapViewModule - addNearPois keyword="+keyword));
+        Log.v("jackzhou", String.format("BaiduMapViewModule - addNearPois keyword=" + keyword));
         final BaiduMap map = getMap(tag);
-        if(map == null){
+        if (map == null) {
             return;
         }
 
-        if(isClearMap){
+        if (isClearMap) {
             getCurrentActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -741,7 +745,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 .pageCapacity(pageCapacity)
                 .pageNum(0)
                 .keyword(keyword)
-                .location(new LatLng(lat,lng))
+                .location(new LatLng(lat, lng))
                 .radius(radius);
 //        mMaxWidthPx = UIUtil.dip2px(getCurrentActivity(), maxWidthDip);
 
@@ -761,18 +765,18 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
             @Override
             public void run() {
-                if(result != null){
+                if (result != null) {
                     try {
                         JSONObject resultJson = new JSONObject(result);
                         final JSONArray list = resultJson.getJSONArray("results");
                         //下载图片icon
-                        ImageUtil.load(getCurrentActivity(), iconUrl,new Target() {
+                        ImageUtil.load(getCurrentActivity(), iconUrl, new Target() {
                             @Override
                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
                                 //addmark
                                 ArrayList<OverlayOptions> optionList = new ArrayList<OverlayOptions>();
-                                for(int i=0; i<list.length(); i++){
+                                for (int i = 0; i < list.length(); i++) {
                                     JSONObject temp = null;
                                     try {
                                         temp = list.getJSONObject(i);
@@ -782,21 +786,21 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                                         String address = temp.getString("address");
 
                                         String title = name;
-                                        if(keyword.contains("公交站") || keyword.contains("地铁站")){
-                                            title = String.format("%s(%s)",name,address);
+                                        if (keyword.contains("公交站") || keyword.contains("地铁站")) {
+                                            title = String.format("%s(%s)", name, address);
                                         }
                                         OverlayOptions option = new MarkerOptions()
-                                                        .position(new LatLng(lat, lng))
-                                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                                                        .title(title);
-                                                optionList.add(option);
+                                                .position(new LatLng(lat, lng))
+                                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                                .title(title);
+                                        optionList.add(option);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 }
                                 //在地图上添加Marker，并显示
                                 BaiduMap baiduMap = getMap(tag);
-                                if(baiduMap != null){
+                                if (baiduMap != null) {
                                     baiduMap.addOverlays(optionList);
                                 }
                             }
@@ -856,24 +860,24 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         while (iterator.hasNextKey()) {
             String key = iterator.nextKey();
             switch (readableMap.getType(key)) {
-            case Null:
-                object.put(key, JSONObject.NULL);
-                break;
-            case Boolean:
-                object.put(key, readableMap.getBoolean(key));
-                break;
-            case Number:
-                object.put(key, readableMap.getDouble(key));
-                break;
-            case String:
-                object.put(key, readableMap.getString(key));
-                break;
-            case Map:
-                object.put(key, convertMapToJson(readableMap.getMap(key)));
-                break;
-            case Array:
-                object.put(key, convertArrayToJson(readableMap.getArray(key)));
-                break;
+                case Null:
+                    object.put(key, JSONObject.NULL);
+                    break;
+                case Boolean:
+                    object.put(key, readableMap.getBoolean(key));
+                    break;
+                case Number:
+                    object.put(key, readableMap.getDouble(key));
+                    break;
+                case String:
+                    object.put(key, readableMap.getString(key));
+                    break;
+                case Map:
+                    object.put(key, convertMapToJson(readableMap.getMap(key)));
+                    break;
+                case Array:
+                    object.put(key, convertArrayToJson(readableMap.getArray(key)));
+                    break;
             }
         }
         return object;
@@ -883,23 +887,23 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         JSONArray array = new JSONArray();
         for (int i = 0; i < readableArray.size(); i++) {
             switch (readableArray.getType(i)) {
-            case Null:
-                break;
-            case Boolean:
-                array.put(readableArray.getBoolean(i));
-                break;
-            case Number:
-                array.put(readableArray.getDouble(i));
-                break;
-            case String:
-                array.put(readableArray.getString(i));
-                break;
-            case Map:
-                array.put(convertMapToJson(readableArray.getMap(i)));
-                break;
-            case Array:
-                array.put(convertArrayToJson(readableArray.getArray(i)));
-                break;
+                case Null:
+                    break;
+                case Boolean:
+                    array.put(readableArray.getBoolean(i));
+                    break;
+                case Number:
+                    array.put(readableArray.getDouble(i));
+                    break;
+                case String:
+                    array.put(readableArray.getString(i));
+                    break;
+                case Map:
+                    array.put(convertMapToJson(readableArray.getMap(i)));
+                    break;
+                case Array:
+                    array.put(convertArrayToJson(readableArray.getArray(i)));
+                    break;
             }
         }
         return array;
@@ -908,55 +912,55 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void clearMap(int tag) {
         BaiduMap baidumap = getMap(tag);
-        if(baidumap == null){
+        if (baidumap == null) {
             return;
         }
 
-        if(baidumap != null){
+        if (baidumap != null) {
             baidumap.clear();
         }
 
-        if(mHeatmap != null){
+        if (mHeatmap != null) {
             mHeatmap.removeHeatMap();
         }
     }
 
     @ReactMethod
     public void addHeatMap(int tag, ReadableArray list, String colorStr1, String colorStr2, String colorStr3) {
-        if(list == null || list.size() == 0){
+        if (list == null || list.size() == 0) {
             return;
         }
 
         BaiduMap baiduMap = getMap(tag);
-        if(baiduMap != null){
+        if (baiduMap != null) {
             List<LatLng> heatPointList = new ArrayList<LatLng>();
             for (int i = 0; i < list.size(); i++) {
                 ReadableMap heatPointRNMap = list.getMap(i);
                 double lat = heatPointRNMap.getDouble("lat");
                 double lng = heatPointRNMap.getDouble("lng");
-                if(heatPointRNMap.hasKey("intensity")){
-                    for(int j=0; j < heatPointRNMap.getInt("intensity"); j++){
+                if (heatPointRNMap.hasKey("intensity")) {
+                    for (int j = 0; j < heatPointRNMap.getInt("intensity"); j++) {
                         heatPointList.add(new LatLng(lat, lng));
                     }
-                }else{
+                } else {
                     heatPointList.add(new LatLng(lat, lng));
                 }
             }
 
-            if(colorStr1 != null && colorStr2 != null && colorStr3 != null){
+            if (colorStr1 != null && colorStr2 != null && colorStr3 != null) {
                 //设置渐变颜色值
                 int[] DEFAULT_GRADIENT_COLORS = {
-                                Color.parseColor(colorStr1),
-                                Color.parseColor(colorStr2),
-                                Color.parseColor(colorStr3)
+                        Color.parseColor(colorStr1),
+                        Color.parseColor(colorStr2),
+                        Color.parseColor(colorStr3)
                 };
                 //设置渐变颜色起始值
-                float[] DEFAULT_GRADIENT_START_POINTS = { 0.08f, 0.4f, 1f };
+                float[] DEFAULT_GRADIENT_START_POINTS = {0.08f, 0.4f, 1f};
                 //构造颜色渐变对象
                 Gradient gradient = new Gradient(DEFAULT_GRADIENT_COLORS, DEFAULT_GRADIENT_START_POINTS);
 
                 mHeatmap = new HeatMap.Builder().data(heatPointList).gradient(gradient).build();
-            }else{
+            } else {
                 mHeatmap = new HeatMap.Builder().data(heatPointList).build();
             }
 
