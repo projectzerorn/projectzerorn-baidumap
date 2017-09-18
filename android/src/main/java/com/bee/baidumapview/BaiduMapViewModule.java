@@ -532,9 +532,12 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     private BitmapDescriptor getMarkView(String title, String mBackgroundType) {//获取自定义的markview
-        if (title != null && title.length() > 0) {
+        if (mBackgroundType != null && mBackgroundType.length() > 0) {
             View view = LayoutInflater.from(getCurrentActivity()).inflate(R.layout.custom_marker_text, null);
             TextView tv = (TextView) view.findViewById(R.id.tv_title);
+            if (title == null) {
+                title = "";
+            }
             tv.setText(title);
             tv.setTextSize(13);
             //补丁start 百度地图sdk调用BitmapDescriptorFactory.fromView(view)在4.2.2上报null错误  5.0.0是ok的
@@ -552,6 +555,18 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
             } else if (mBackgroundType.equalsIgnoreCase("MarkGray")) {
                 view.setBackgroundResource(R.drawable.mark_gray);
                 tv.setVisibility(View.GONE);
+            } else if (mBackgroundType.startsWith("Mark#")) {//用户传入"Mark#ff0000"来定义颜色
+                Drawable sourceDrawable = ContextCompat.getDrawable(reactContext, R.drawable.mark_white);
+                int changeColor;
+                String colorStr = "";
+                try {
+                    colorStr = mBackgroundType.replaceAll("Mark", "");
+                    changeColor = Color.parseColor(colorStr);
+                } catch (Exception e) {
+                    throw new RuntimeException(colorStr + "：无效的颜色值");
+                }
+                sourceDrawable.setColorFilter(changeColor, PorterDuff.Mode.MULTIPLY);
+                view.setBackground(sourceDrawable);
             } else if (mBackgroundType.equalsIgnoreCase("BubbleRed")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_red);
             } else if (mBackgroundType.equalsIgnoreCase("BubbleYellow")) {
@@ -562,7 +577,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 view.setBackgroundResource(R.drawable.custom_maker_normal_green);
             } else if (mBackgroundType.equalsIgnoreCase("BubbleGray")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_gray);
-            } else if (mBackgroundType.startsWith("Bubble")) {//剩下的用户自定义颜色情况  用户传入"Bubble#ff0000"来定义颜色
+            } else if (mBackgroundType.startsWith("Bubble#")) {//剩下的用户自定义颜色情况  用户传入"Bubble#ff0000"来定义颜色
                 Drawable sourceDrawable = ContextCompat.getDrawable(reactContext, R.drawable.custom_maker_normal_white);
                 int changeColor;
                 String colorStr = "";
