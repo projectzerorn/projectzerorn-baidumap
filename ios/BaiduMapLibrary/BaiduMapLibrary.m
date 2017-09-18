@@ -652,16 +652,16 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
 }
 
 #pragma mark -------------------------------------------------- 长按拖动大头针的事件
-- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotationViewDragState)oldState{
+- (void)mapView:(MyBMKMapView *)mapView annotationView:(MKAnnotationView *)view didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotationViewDragState)oldState{
     
     switch (newState) {
         case MKAnnotationViewDragStateStarting: {
-            NSLog(@"拿起");
+//            NSLog(@"拿起");
             return;
         }
             
         case MKAnnotationViewDragStateDragging: {
-            NSLog(@"开始拖拽");
+//            NSLog(@"开始拖拽");
             return;
         }
             
@@ -669,7 +669,11 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
             CLLocationCoordinate2D destCoordinate = view.annotation.coordinate;
             float lat = destCoordinate.latitude;
             float lng = destCoordinate.longitude;
-            NSLog(@"放下,并将大头针%f", destCoordinate.latitude);
+//            NSLog(@"放下,并将大头针%f", destCoordinate.latitude);
+            mapView.onChange(@{
+                               @"eventType": @"onMarkerDragFinish",
+                               @"lat": @(lat),
+                               @"lng": @(lng)});
             return;
         }
         default:

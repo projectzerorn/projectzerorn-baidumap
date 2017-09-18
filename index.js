@@ -17,10 +17,11 @@ class BDMapView extends Component {
     static defaultProps = {
         mode: 1,
         isShowUserLocation: false,
-        onMapStatusChangeFinish: () => {},
-        onMapStartMove: () => {},
-        onMarkerClick: () => {},
-        onLongClick: () => {},
+        onMapStatusChangeFinish: () => {},//地图移动结束事件
+        onMapStartMove: () => {},//地图开始移动事件
+        onMarkerClick: () => {},//标点点击事件
+        onLongClick: () => {},//地图空白处长按事件
+        onMarkerDragFinish: () => {},//标点拖拽完成后事件
     };
 
     constructor(props) {
@@ -51,6 +52,8 @@ class BDMapView extends Component {
             this.props.onMapStartMove(event.nativeEvent);
         } else if (eventType && eventType == 'onLongClick') {
             this.props.onLongClick(event.nativeEvent);
+        } else if (eventType && eventType == 'onMarkerDragFinish') {
+            this.props.onMarkerDragFinish(event.nativeEvent);
         }
     };
 }
@@ -66,6 +69,7 @@ BDMapView.propTypes = {
     onMapStatusChangeFinish: React.PropTypes.func,
     onMarkerClick: React.PropTypes.func,
     onLongClick: React.PropTypes.func,
+    onMarkerDragFinish: React.PropTypes.func,
 };
 
 export default BDMapView;
