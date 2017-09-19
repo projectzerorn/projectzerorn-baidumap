@@ -556,6 +556,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 view.setBackgroundResource(R.drawable.mark_gray);
                 tv.setVisibility(View.GONE);
             } else if (mBackgroundType.startsWith("Mark#")) {//用户传入"Mark#ff0000"来定义颜色
+                view = new RelativeLayout(this.getCurrentActivity());
                 Drawable sourceDrawable = ContextCompat.getDrawable(reactContext, R.drawable.mark_white);
                 int changeColor;
                 String colorStr = "";
