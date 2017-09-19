@@ -568,6 +568,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 }
                 sourceDrawable.setColorFilter(changeColor, PorterDuff.Mode.MULTIPLY);
                 view.setBackground(sourceDrawable);
+                view.setLayoutParams(new RelativeLayout.LayoutParams(UIUtil.dip2px(this.getCurrentActivity(), 33), UIUtil.dip2px(this.getCurrentActivity(), 48)));//适配4.2.2低版本
             } else if (mBackgroundType.equalsIgnoreCase("BubbleRed")) {
                 view.setBackgroundResource(R.drawable.custom_maker_normal_red);
             } else if (mBackgroundType.equalsIgnoreCase("BubbleYellow")) {
