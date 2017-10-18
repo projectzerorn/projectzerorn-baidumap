@@ -157,8 +157,8 @@
     CGContextFillPath(ctx);
     CGContextClosePath(ctx);
     
-    [[UIColor clearColor] setStroke];//[UIColor colorFromHexRGB:@"cccccc"]
-    CGContextSetLineWidth(ctx, 0.7);
+    [[UIColor whiteColor] setStroke];//[UIColor colorFromHexRGB:@"cccccc"]
+    CGContextSetLineWidth(ctx, 0.4);
     CGContextAddPath(ctx, clippath);
     CGContextStrokePath(ctx);
     CGContextClosePath(ctx);
@@ -191,13 +191,13 @@
     [pathLine moveToPoint:startPoint];
     [pathLine addLineToPoint:thirdPoint];
     [pathLine addLineToPoint:endPoint];
-    pathLine.lineWidth = 0.7;
+    pathLine.lineWidth = 0.4;
     
     
     [pathLine applyTransform:rot];
     [pathLine applyTransform:trans];
     
-    [[UIColor clearColor] setStroke];// [UIColor colorFromHexRGB:@"cccccc"]
+    [[UIColor whiteColor] setStroke];// [UIColor colorFromHexRGB:@"cccccc"]
     [pathLine stroke]; // ...if you want to draw the outline.
     
     CGContextRestoreGState(ctx);
@@ -210,12 +210,12 @@
 //    UIBezierPath * shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(self.width/3. - 2, self.height + 8, self.width/3. + 4, 3)];
 //    self.layer.shadowPath = shadowPath.CGPath;
     
-    //替换为整体阴影
-    self.layer.shadowColor = [[UIColor blackColor] CGColor];//阴影的颜色
-    self.layer.shadowOpacity =1.0f;   // 阴影透明度
-    self.layer.shadowOffset = CGSizeMake(2.0,2.0f); // 阴影的范围
-    self.layer.shadowRadius = 3;  // 阴影扩散的范围控制
-    self.layer.cornerRadius = 10;
+//    //替换为整体阴影
+//    self.layer.shadowColor = [[UIColor blackColor] CGColor];//阴影的颜色
+//    self.layer.shadowOpacity =1.0f;   // 阴影透明度
+//    self.layer.shadowOffset = CGSizeMake(2.0,2.0f); // 阴影的范围
+//    self.layer.shadowRadius = 3;  // 阴影扩散的范围控制
+//    self.layer.cornerRadius = 10;
 }
 
 
