@@ -33,8 +33,8 @@
     self.frame              = ANNOTATION_FRAME;
     
     _oneLineLabel                 = [[UILabel alloc] init];
-    _oneLineLabel.lineBreakMode   = UILineBreakModeWordWrap;
-    _oneLineLabel.numberOfLines   = 0;
+    _oneLineLabel.lineBreakMode   = NSLineBreakByTruncatingTail;
+    _oneLineLabel.numberOfLines   = 1;
     _oneLineLabel.frame           = CGRectMake(kSpacing, kSpacing+1, 100, 15);
     _oneLineLabel.font            = [UIFont systemFontOfSize:12];
     _oneLineLabel.textAlignment   = NSTextAlignmentCenter;
@@ -83,7 +83,7 @@
         NSString* title = [dic objectForKey:@"title"];
         _oneLineLabel.text = title;
         
-        CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:12]} context:nil];
+        CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingTruncatesLastVisibleLine attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:12]} context:nil];
         CGFloat width = rect.size.width;
         CGFloat height = rect.size.height;
         
