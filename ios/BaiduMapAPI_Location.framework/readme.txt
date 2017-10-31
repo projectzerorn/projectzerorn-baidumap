@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------------
 
-iOS 地图 SDK v3.3.4是适用于iOS系统移动设备的矢量地图开发包
+iOS 地图 SDK v3.4.2是适用于iOS系统移动设备的矢量地图开发包
 
 --------------------------------------------------------------------------------------
 
@@ -46,13 +46,13 @@ LBS云检索：支持查询存储在LBS云内的自有数据；
  pod setup //更新CocoPods的本地库
  pod search BaiduMapKit  //查看最新地图SDK
  
- 【 新 增 】
- 1.BMKLocationViewDisplayParam类中增加 canShowCallOut 属性，用于设定用户点击定位图标时，是否弹出paopaoView。
- 2.BMKLocationViewDisplayParam类中增加 locationViewHierarchy 属性，用于设定locationView始终处于视图层级的最下层或最上层。
-
- 【 优 化 】
- 1.修复添加Annotation时，Overlay偶尔绘制不完整的BUG。
- 2.修复Swift调用SDK时，cityCode countryCode等字段类型不兼容的问题。
- 3.保证新添加的Annotation会在mapView的视图层级的上层。
- 4.DEMO中绘制路径规划结果时，修复计算显示区域的BUG。
+ 【修复】
+ 1.修复多页面多地图场景下，切换页面导致的crash问题。
+ 2.修复检索对象对delegate的强引用问题。
+ 3.修复在一些罕见场景下，Bugly报告的crash问题。
+ 4.修复第一次通过setBuildingsEnabled接口设置不显示3D楼块效果失效的BUG。
+ 
+ 【优化】
+ 1.删除annotation后，不再删除其对应的annotationView的subView。开发者dequeue出可重用的annotationView后，为了避免内容堆叠问题，可以自行去避免，如remove subview或者使用不同的reuseIdentifier等。
+ 2.每个reuseIdentifier可缓存多个annotationView，当开发者removeAnnotation时，SDK会将对应的annotationView加入缓存队列。
 
