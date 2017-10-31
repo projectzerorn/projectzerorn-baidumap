@@ -184,6 +184,11 @@ public class ClusterManager<T extends ClusterItem> implements
     }
 
     @Override
+    public void onMapStatusChangeStart(MapStatus mapStatus, int i) {
+
+    }
+
+    @Override
     public void onMapStatusChangeFinish(MapStatus mapStatus) {
 
     }

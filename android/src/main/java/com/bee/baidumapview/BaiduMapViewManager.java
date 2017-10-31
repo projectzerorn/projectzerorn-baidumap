@@ -145,6 +145,10 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
                         .receiveEvent(mMapView.getId(), "topChange", event);
             }
 
+            public void onMapStatusChangeStart(MapStatus status, int reason) {
+
+            }
+
             /**
              * 地图状态-变化中
              * @param status 当前地图状态
