@@ -22,6 +22,7 @@ class BDMapView extends Component {
         onMarkerClick: () => {},//标点点击事件
         onLongClick: () => {},//地图空白处长按事件
         onMarkerDragFinish: () => {},//标点拖拽完成后事件
+        initCenter: {lat: 0, lng: 0, zoom: 17},
     };
 
     constructor(props) {
@@ -70,6 +71,7 @@ BDMapView.propTypes = {
     onMarkerClick: React.PropTypes.func,
     onLongClick: React.PropTypes.func,
     onMarkerDragFinish: React.PropTypes.func,
+    initCenter: React.PropTypes.object,
 };
 
 export default BDMapView;
