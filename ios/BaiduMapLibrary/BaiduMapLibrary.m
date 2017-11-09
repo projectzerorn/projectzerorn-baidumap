@@ -71,6 +71,16 @@ RCT_CUSTOM_VIEW_PROPERTY(zoom, int, BaiduMapLibrary){
     mapView_mk.zoomLevel = [json intValue];
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(initCenter, NSDictionary*, BaiduMapLibrary){
+    float lat = [json[@"lat"] floatValue];
+    float lng = [json[@"lng"] floatValue];
+    float zoom = [json[@"zoom"] floatValue];
+
+    mapView_mk.zoomLevel = zoom;
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(lat, lng);
+    [mapView_mk setCenterCoordinate:center];
+}
+
 #pragma mark -------------------------------------------------- 是否显示用户位置标点
 RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     Boolean isShowUserLocation = [json boolValue];
@@ -1086,15 +1096,17 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
     CGFloat southwestLat = lat - (latitudeDelta / 2.0);//southwestLat  minlat
     CGFloat southwestLng = lng - (longitudeDelta / 2.0);//southwestLng  minlng
     
-    mapView.onChange(@{
-                       @"eventType": @"onMapStatusChangeFinish",
-                       @"centerLat": @(lat),
-                       @"centerLng": @(lng),
-                       @"zoom": @(zoom),
-                       @"northeastLat": @(northeastLat),
-                       @"northeastLng": @(northeastLng),
-                       @"southwestLat": @(southwestLat),
-                       @"southwestLng": @(southwestLng)});
+    if(mapView.onChange != nil){
+        mapView.onChange(@{
+                           @"eventType": @"onMapStatusChangeFinish",
+                           @"centerLat": @(lat),
+                           @"centerLng": @(lng),
+                           @"zoom": @(zoom),
+                           @"northeastLat": @(northeastLat),
+                           @"northeastLng": @(northeastLng),
+                           @"southwestLat": @(southwestLat),
+                           @"southwestLng": @(southwestLng)});
+    }
 }
 
 

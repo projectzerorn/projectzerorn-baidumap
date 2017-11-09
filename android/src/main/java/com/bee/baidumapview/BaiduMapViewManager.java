@@ -21,6 +21,7 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.facebook.react.bridge.*;
 
 public class BaiduMapViewManager extends SimpleViewManager<MapView> implements BaiduMap.OnMapLoadedCallback {
     public static final String RCT_CLASS = "RCTBaiduMap";
@@ -321,5 +322,19 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     @ReactProp(name = "showZoomControls", defaultBoolean = false)
     public void showZoomControls(MapView mapView, boolean showZoomControls) {
         mapView.showZoomControls(showZoomControls);
+    }
+
+    @ReactProp(name = "initCenter")
+    public void showZoomControls(MapView mapView, ReadableMap json) {
+        float lat = (float) json.getDouble("lat");
+        float lng = (float) json.getDouble("lng");
+        float zoom = (float) json.getDouble("zoom");
+
+        final MapStatus.Builder builder = new MapStatus.Builder();
+        LatLng latLng = new LatLng(lat, lng);
+        builder.target(latLng);
+        builder.zoom(zoom);
+
+        mapView.getMap().setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
     }
 }
