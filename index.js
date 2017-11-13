@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import {requireNativeComponent, View, Platform} from 'react-native';
 
 if (Platform.OS === 'ios') {
@@ -66,12 +67,12 @@ BDMapView.propTypes = {
     heatMapEnabled: PropTypes.bool,
     marker: PropTypes.array,
     isShowUserLocation: PropTypes.bool,
-    onMapStartMove: React.PropTypes.func,
-    onMapStatusChangeFinish: React.PropTypes.func,
-    onMarkerClick: React.PropTypes.func,
-    onLongClick: React.PropTypes.func,
-    onMarkerDragFinish: React.PropTypes.func,
-    initCenter: React.PropTypes.object,
+    onMapStartMove: PropTypes.func,
+    onMapStatusChangeFinish: PropTypes.func,
+    onMarkerClick: PropTypes.func,
+    onLongClick: PropTypes.func,
+    onMarkerDragFinish: PropTypes.func,
+    initCenter: PropTypes.object,
 };
 
 export default BDMapView;
