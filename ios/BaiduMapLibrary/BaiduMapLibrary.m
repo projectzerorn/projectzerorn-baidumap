@@ -849,6 +849,42 @@ RCT_EXPORT_METHOD(move:(nonnull NSNumber *)reactTag lat:(float)lat lng:(float)ln
     });
 }
 
+#pragma mark -------------------------------------------------- BDMapModule zoom++
+RCT_EXPORT_METHOD(zoomAdd:(nonnull NSNumber *)reactTag isAnimate:(BOOL)isAnimate){
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            MyBMKMapView *bk = (MyBMKMapView *)view;
+            BMKMapStatus* mapStatus = [bk getMapStatus];
+            mapStatus.fLevel = mapStatus.fLevel + 1.0f;
+            if(mapStatus.fLevel > 19){
+                mapStatus.fLevel = 19;
+            }
+            
+            [bk setMapStatus:mapStatus withAnimation:isAnimate];
+        }];
+    });
+}
+
+#pragma mark -------------------------------------------------- BDMapModule zoom--
+RCT_EXPORT_METHOD(zoomSub:(nonnull NSNumber *)reactTag isAnimate:(BOOL)isAnimate){
+    dispatch_async(self.bridge.uiManager.methodQueue,^{
+        [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+            id view = viewRegistry[reactTag];
+            MyBMKMapView *bk = (MyBMKMapView *)view;
+            BMKMapStatus* mapStatus = [bk getMapStatus];
+            mapStatus.fLevel = mapStatus.fLevel - 1.0f;
+            if(mapStatus.fLevel < 3){
+                mapStatus.fLevel = 3;
+            }
+            
+            [bk setMapStatus:mapStatus withAnimation:isAnimate];
+        }];
+    });
+}
+
+
+
 #pragma mark -------------------------------------------------- BDMapModule添加标点
 RCT_EXPORT_METHOD(addMarks:(nonnull NSNumber *)reactTag data:(NSArray*)data isClearMap:(BOOL)isClearMap backgroundTypeArray:(NSArray*)backgroundTypeArray){
     dispatch_async(self.bridge.uiManager.methodQueue,^{
