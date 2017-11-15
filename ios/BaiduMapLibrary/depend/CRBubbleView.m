@@ -4,7 +4,7 @@
 #import "UIView+Category.h"
 
 #define CR_ARROW_SPACE 8
-#define CR_ARROW_SIZE 5
+#define CR_ARROW_SIZE 10
 
 #define CR_PADDING 8
 #define CR_RADIUS 17
@@ -166,7 +166,7 @@
     [self.color set];
     
     CGPoint startPoint = CGPointMake(0, CR_ARROW_SIZE);
-    CGPoint thirdPoint = CGPointMake(CR_ARROW_SIZE/2, 0);
+    CGPoint thirdPoint = CGPointMake(CR_ARROW_SIZE/2, 5);
     CGPoint endPoint = CGPointMake(CR_ARROW_SIZE, CR_ARROW_SIZE);
     
     //小三角
