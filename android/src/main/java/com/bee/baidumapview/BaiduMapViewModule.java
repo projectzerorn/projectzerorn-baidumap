@@ -434,6 +434,65 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
         );
     }
 
+    @ReactMethod
+    public void zoomAdd(int tag, final boolean isAnimate) {
+        final BaiduMap baiduMap = getMap(tag);
+        if (baiduMap == null) {
+            return;
+        }
+
+        final MapStatus.Builder builder = new MapStatus.Builder();
+        float zoom = baiduMap.getMapStatus().zoom;
+        zoom = zoom + 1;
+        if (zoom > 19) {
+            zoom = 19;
+        }
+        builder.zoom(zoom);
+
+        getCurrentActivity().runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAnimate) {
+                            baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        } else {
+                            baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        }
+                    }
+                }
+        );
+    }
+
+    @ReactMethod
+    public void zoomSub(int tag, final boolean isAnimate) {
+        final BaiduMap baiduMap = getMap(tag);
+        if (baiduMap == null) {
+            return;
+        }
+
+        final MapStatus.Builder builder = new MapStatus.Builder();
+        float zoom = baiduMap.getMapStatus().zoom;
+        zoom = zoom - 1;
+        if (zoom < 3) {
+            zoom = 3;
+        }
+        builder.zoom(zoom);
+
+        getCurrentActivity().runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAnimate) {
+                            baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        } else {
+                            baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        }
+                    }
+                }
+        );
+    }
+
+
     // 定位相关
     LocationClient mLocClient;
 
