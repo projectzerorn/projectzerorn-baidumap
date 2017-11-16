@@ -162,18 +162,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
              * @param status 地图状态改变结束后的地图状态
              */
             public void onMapStatusChangeFinish(MapStatus status) {
-                WritableMap event = Arguments.createMap();
-                event.putString("eventType", "onMapStatusChangeFinish");
-                event.putDouble("centerLat", status.target.latitude);
-                event.putDouble("centerLng", status.target.longitude);
-                event.putDouble("zoom", status.zoom);
-                event.putDouble("northeastLat", status.bound.northeast.latitude);
-                event.putDouble("northeastLng", status.bound.northeast.longitude);
-                event.putDouble("southwestLat", status.bound.southwest.latitude);
-                event.putDouble("southwestLng", status.bound.southwest.longitude);
-
-                reactContext.getJSModule(RCTEventEmitter.class)
-                        .receiveEvent(mMapView.getId(), "topChange", event);
+                BaiduMapViewManager.this.onMapStatusChangeFinish(mMapView, status);
             }
         });
 
@@ -336,5 +325,21 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         builder.zoom(zoom);
 
         mapView.getMap().setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+        BaiduMapViewManager.this.onMapStatusChangeFinish(mapView, mapView.getMap().getMapStatus());
+    }
+
+    private void onMapStatusChangeFinish(MapView mapView, MapStatus status) {
+        WritableMap event = Arguments.createMap();
+        event.putString("eventType", "onMapStatusChangeFinish");
+        event.putDouble("centerLat", status.target.latitude);
+        event.putDouble("centerLng", status.target.longitude);
+        event.putDouble("zoom", status.zoom);
+        event.putDouble("northeastLat", status.bound.northeast.latitude);
+        event.putDouble("northeastLng", status.bound.northeast.longitude);
+        event.putDouble("southwestLat", status.bound.southwest.latitude);
+        event.putDouble("southwestLng", status.bound.southwest.longitude);
+
+        reactContext.getJSModule(RCTEventEmitter.class)
+                .receiveEvent(mapView.getId(), "topChange", event);
     }
 }
