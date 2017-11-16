@@ -103,11 +103,11 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
 - (UIView *)view{
     MyBMKMapView *map = [[MyBMKMapView alloc] init];
     mapView_mk = map;
-    map.delegate = self;
-    [map setMapType:BMKMapTypeStandard];
-    map.userTrackingMode = BMKUserTrackingModeFollow;
-    map.zoomLevel = 17;//5;
-    map.zoomEnabledWithTap = true;
+    mapView_mk.delegate = self;
+    [mapView_mk setMapType:BMKMapTypeStandard];
+    mapView_mk.userTrackingMode = BMKUserTrackingModeFollow;
+    mapView_mk.zoomLevel = 17;//5;
+    mapView_mk.zoomEnabledWithTap = true;
     self.geoSearcher = [[BMKGeoCodeSearch alloc]init];
     self.geoSearcher.delegate = self;
     self.sugestionSearch = [[BMKSuggestionSearch alloc]init];
@@ -126,7 +126,7 @@ RCT_CUSTOM_VIEW_PROPERTY(isShowUserLocation, BOOL, BaiduMapLibrary){
     //打开个性化地图
     [MyBMKMapView enableCustomMapStyle:YES];
     
-    return map;
+    return mapView_mk;
 }
 
 #pragma mark -------------------------------------------------- 地图上画圆
@@ -1119,12 +1119,12 @@ RCT_EXPORT_METHOD(clearMap:(nonnull NSNumber *)reactTag){
 #pragma mark BMKMapViewDelegate-------------------------------------------------- 地图区域改变完成后会调用此接口
 - (void)mapView:(MyBMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
     
-    float zoom = mapView_mk.getMapStatus.fLevel;
-    float lat = mapView_mk.getMapStatus.targetGeoPt.latitude;
-    float lng = mapView_mk.getMapStatus.targetGeoPt.longitude;
+    float zoom = mapView.getMapStatus.fLevel;
+    float lat = mapView.getMapStatus.targetGeoPt.latitude;
+    float lng = mapView.getMapStatus.targetGeoPt.longitude;
 
-    CGFloat latitudeDelta = mapView_mk.region.span.latitudeDelta;
-    CGFloat longitudeDelta = mapView_mk.region.span.longitudeDelta;
+    CGFloat latitudeDelta = mapView.region.span.latitudeDelta;
+    CGFloat longitudeDelta = mapView.region.span.longitudeDelta;
     
     CGFloat northeastLat = lat + (latitudeDelta / 2.0);//northeastLat  maxlat
     CGFloat northeastLng = lng + (longitudeDelta / 2.0);//northeastLng  maxlng
