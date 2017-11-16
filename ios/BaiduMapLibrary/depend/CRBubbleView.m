@@ -4,14 +4,16 @@
 #import "UIView+Category.h"
 
 #define CR_ARROW_SPACE 8
-#define CR_ARROW_SIZE 10
+#define CR_ARROW_SIZE 14
 
 #define CR_PADDING 8
-#define CR_RADIUS 17
+#define CR_RADIUS 22
 #define COLOR_GLUE_BLUE [UIColor colorWithRed:0.0 green:0.48 blue:1.0 alpha:1.0]
 #define COLOR_DARK_GRAY [UIColor colorWithWhite:0.13 alpha:1.0]
 #define CR_TITLE_FONT_SIZE 17
 #define CR_DESCRIPTION_FONT_SIZE 14
+
+#define LINE_SIZE 0.6
 
 @interface CRBubbleView () {
     NSArray     *stringArray;
@@ -158,7 +160,7 @@
     CGContextClosePath(ctx);
     
     [[UIColor whiteColor] setStroke];//[UIColor colorFromHexRGB:@"cccccc"]
-    CGContextSetLineWidth(ctx, 0.4);
+    CGContextSetLineWidth(ctx, LINE_SIZE);
     CGContextAddPath(ctx, clippath);
     CGContextStrokePath(ctx);
     CGContextClosePath(ctx);
@@ -166,7 +168,7 @@
     [self.color set];
     
     CGPoint startPoint = CGPointMake(0, CR_ARROW_SIZE);
-    CGPoint thirdPoint = CGPointMake(CR_ARROW_SIZE/2, 5);
+    CGPoint thirdPoint = CGPointMake(CR_ARROW_SIZE/2, 7);
     CGPoint endPoint = CGPointMake(CR_ARROW_SIZE, CR_ARROW_SIZE);
     
     //小三角
@@ -191,7 +193,7 @@
     [pathLine moveToPoint:startPoint];
     [pathLine addLineToPoint:thirdPoint];
     [pathLine addLineToPoint:endPoint];
-    pathLine.lineWidth = 0.4;
+    pathLine.lineWidth = LINE_SIZE;
     
     
     [pathLine applyTransform:rot];

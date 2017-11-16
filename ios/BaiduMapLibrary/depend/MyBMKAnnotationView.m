@@ -82,17 +82,19 @@
         NSDictionary* dic = [JsonUtil dictionaryWithJsonString:annotation.title];//annotation.title传递的是整个节点所有数据
         NSString* title = [dic objectForKey:@"title"];
         _oneLineLabel.text = title;
+        UIFont* font = [UIFont fontWithName:@"Helvetica-Bold" size:12];
+        [_oneLineLabel setFont:font];
         
-        CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingTruncatesLastVisibleLine attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:12]} context:nil];
+        CGRect rect = [[NSString stringWithFormat:@"%@", _oneLineLabel.text] boundingRectWithSize:CGSizeMake(_oneLineLabel.width, MAXFLOAT) options:NSStringDrawingTruncatesLastVisibleLine attributes:@{NSFontAttributeName: font} context:nil];
         CGFloat width = rect.size.width;
         CGFloat height = rect.size.height;
         
-        bubbleView.viewWidth     = width? (width + 28) :60;
-        bubbleView.viewHeight    = height? (height + 25) : 60;
+        bubbleView.viewWidth     = width? (width + 34) :60;
+        bubbleView.viewHeight    = height? (height + 30) : 60;
         bubbleView.frame         = CGRectMake(0, 0, bubbleView.viewWidth, bubbleView.viewHeight);
         
-        _oneLineLabel.width       = width? (width + 28) :60;
-        _oneLineLabel.height      = height? (height + 25) : 60;
+        _oneLineLabel.width       = width? (width + 34) :60;
+        _oneLineLabel.height      = height? (height + 30) : 60;
         _oneLineLabel.frame       = CGRectMake(0, -7, _oneLineLabel.width, _oneLineLabel.height);
         
         self.frame = CGRectMake(0, 0, bubbleView.viewWidth, bubbleView.viewHeight);
