@@ -766,6 +766,24 @@ RCT_EXPORT_METHOD(ReSetMapview_ios){
     }
 }
 
+/**
+ *点中底图空白处会回调此接口
+ *@param mapView 地图View
+ *@param coordinate 空白处坐标点的经纬度
+ */
+-(void)mapView:(MyBMKMapView *)mapView onClickedMapBlank:(CLLocationCoordinate2D)coordinate
+{
+    if(mapView.onChange != nil){
+        float lat = coordinate.latitude;
+        float lng = coordinate.longitude;
+        
+        mapView.onChange(@{
+                           @"eventType": @"onBlankClick",
+                           @"lat": @(lat),
+                           @"lng": @(lng)});
+    }
+}
+
 
 - (void)mapView:(MyBMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated{
     

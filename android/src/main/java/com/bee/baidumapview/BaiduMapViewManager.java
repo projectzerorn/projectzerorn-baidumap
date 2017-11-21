@@ -239,6 +239,14 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
             @Override
             public void onMapClick(LatLng latLng) {
                 baiduMap.hideInfoWindow();
+
+                WritableMap event = Arguments.createMap();
+                event.putString("eventType", "onBlankClick");
+                event.putDouble("lat", latLng.latitude);
+                event.putDouble("lng", latLng.longitude);
+
+                reactContext.getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(mMapView.getId(), "topChange", event);
             }
 
             @Override
