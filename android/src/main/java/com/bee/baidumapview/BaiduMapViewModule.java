@@ -80,7 +80,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void setLocation(int tag, final ReadableMap mLatLngParm) {
         Activity context = this.getCurrentActivity();
-        final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+        final BaiduMap baiduMap = ((TextureMapView) context.findViewById(tag)).getMap();
         baiduMap.clear();
 
         MapUtils.getViewBitmap(context, mLatLngParm.getString("avatar"), new MapUtils.GetViewBitmapCallback() {
@@ -100,7 +100,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void animateMapStatus(int tag, final ReadableMap mLatLngParm) {
         Activity context = this.getCurrentActivity();
-        final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+        final BaiduMap baiduMap = ((TextureMapView) context.findViewById(tag)).getMap();
         LatLng mlatLng = new LatLng(mLatLngParm.getDouble("baidu_latitude"), mLatLngParm.getDouble("baidu_longitude"));
         baiduMap.animateMapStatus(MapStatusUpdateFactory.newLatLng(mlatLng), 1 * 1000);
     }
@@ -114,7 +114,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void setLocationAnimation(int tag, ReadableMap mLatLngParm) {
         Activity context = this.getCurrentActivity();
-        BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+        BaiduMap baiduMap = ((TextureMapView) context.findViewById(tag)).getMap();
 
         LatLng mlatLng = new LatLng(mLatLngParm.getDouble("baidu_latitude"), mLatLngParm.getDouble("baidu_longitude"));
 
@@ -140,7 +140,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 //        markerList.clear();
 //
 //        if (pointList != null || pointList.size() == 0) {
-//            final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+//            final BaiduMap baiduMap = ((TextureMapView) context.findViewById(tag)).getMap();
 //            baiduMap.clear();
 //            for (int i = 0; i < pointList.size(); i++) {
 //                if (i == pointList.size() - 1) {
@@ -181,7 +181,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void setDrewLine(int tag, ReadableArray pointList) {
         Activity context = this.getCurrentActivity();
-        BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+        BaiduMap baiduMap = ((TextureMapView) context.findViewById(tag)).getMap();
         baiduMap.clear();
 
         if (baiduMap == null || pointList == null || pointList.size() == 0)
@@ -243,7 +243,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 //    @ReactMethod
 //    public void setRuler(int tag,int ruler){
 //        Activity context = this.getCurrentActivity();
-//        BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+//        BaiduMap baiduMap = ((TextureMapView) context.findViewById(tag)).getMap();
 //        baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler));
 //    }
 
@@ -254,7 +254,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     public void addGeoFenceCircle(int tag, final ReadableMap mLatLngParm) {
         Activity context = this.getCurrentActivity();
         //设置按钮显示的数值
-        final BaiduMap baiduMap = ((MapView) context.findViewById(tag)).getMap();
+        final BaiduMap baiduMap = ((TextureMapView) context.findViewById(tag)).getMap();
 
         if (tempLatlng != null) {
             updateCircle(baiduMap, tempLatlng, mLatLngParm.getInt("range"));
@@ -359,7 +359,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void onDestroyBDMap(int tag) {
 
-        MapView map = ((MapView) this.getCurrentActivity().findViewById(tag));
+        TextureMapView map = ((TextureMapView) this.getCurrentActivity().findViewById(tag));
         if (map != null) {
             map.onDestroy();
         }
@@ -389,15 +389,15 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
                 .emit("SearchResult", params);
     }
 
-    private MapView getMapView(int tag) {
+    private TextureMapView getMapView(int tag) {
         Activity context = this.getCurrentActivity();
-        MapView mapView = (MapView) context.findViewById(tag);
+        TextureMapView mapView = (TextureMapView) context.findViewById(tag);
         return mapView;
     }
 
     private BaiduMap getMap(int tag) {
         BaiduMap baiduMap = null;
-        MapView mapView = getMapView(tag);
+        TextureMapView mapView = getMapView(tag);
         if (mapView != null) {
             baiduMap = mapView.getMap();
         }
@@ -497,7 +497,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     LocationClient mLocClient;
 
     public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
-        MapView mMapView;
+        TextureMapView mMapView;
         boolean mIsAnimate;
         int mtag;
         float mZoom;
@@ -684,7 +684,7 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
 
     @ReactMethod
     public void cluster(int tag, ReadableArray data) {
-        MapView mapview = getMapView(tag);
+        TextureMapView mapview = getMapView(tag);
         BaiduMap map = mapview.getMap();
         // 初始化点聚合管理类
         ClusterManager mClusterManager = new ClusterManager<>(getCurrentActivity(), map);

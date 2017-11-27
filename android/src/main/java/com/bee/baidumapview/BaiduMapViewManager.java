@@ -23,7 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.facebook.react.bridge.*;
 
-public class BaiduMapViewManager extends SimpleViewManager<MapView> implements BaiduMap.OnMapLoadedCallback {
+public class BaiduMapViewManager extends SimpleViewManager<TextureMapView> implements BaiduMap.OnMapLoadedCallback {
     public static final String RCT_CLASS = "RCTBaiduMap";
     public static final String TAG = "RCTBaiduMap";
 
@@ -39,7 +39,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     }
 
     @Override
-    protected MapView createViewInstance(ThemedReactContext reactContext) {
+    protected TextureMapView createViewInstance(ThemedReactContext reactContext) {
         this.reactContext = reactContext;
         return getMap();
     }
@@ -58,7 +58,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      *                2.卫星
      */
     @ReactProp(name = "mode", defaultInt = 1)
-    public void setMode(MapView mapView, int type) {
+    public void setMode(TextureMapView mapView, int type) {
         Log.i(TAG, "mode:" + type);
         mapView.getMap().setMapType(type);
     }
@@ -70,7 +70,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * @param isEnabled
      */
     @ReactProp(name = "trafficEnabled", defaultBoolean = false)
-    public void setTrafficEnabled(MapView mapView, boolean isEnabled) {
+    public void setTrafficEnabled(TextureMapView mapView, boolean isEnabled) {
         Log.d(TAG, "trafficEnabled:" + isEnabled);
         mapView.getMap().setTrafficEnabled(isEnabled);
     }
@@ -82,7 +82,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * @param isEnabled
      */
     @ReactProp(name = "heatMapEnabled", defaultBoolean = false)
-    public void setHeatMapEnabled(MapView mapView, boolean isEnabled) {
+    public void setHeatMapEnabled(TextureMapView mapView, boolean isEnabled) {
         Log.d(TAG, "heatMapEnabled" + isEnabled);
         mapView.getMap().setBaiduHeatMapEnabled(isEnabled);
     }
@@ -95,7 +95,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
      * @param array
      */
     @ReactProp(name = "marker")
-    public void setMarker(MapView mapView, ReadableArray array) {
+    public void setMarker(TextureMapView mapView, ReadableArray array) {
         Log.d(TAG, "marker:" + array);
         if (array != null) {
             for (int i = 0; i < array.size(); i++) {
@@ -118,8 +118,8 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     /**
      * 设置一些amap的属性
      */
-    private MapView getMap() {
-        final MapView mMapView = new MapView(reactContext);
+    private TextureMapView getMap() {
+        final TextureMapView mMapView = new TextureMapView(reactContext);
         mMapView.showZoomControls(false);
         final BaiduMap baiduMap = mMapView.getMap();
         baiduMap.animateMapStatus(MapStatusUpdateFactory.zoomTo(ruler), 1 * 1000);
@@ -272,9 +272,9 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     LocationClient mLocClient;
 
     public class MyLocationListener implements BDLocationListener {//定位SDK监听函数
-        MapView mMapView;
+        TextureMapView mMapView;
 
-        public MyLocationListener(MapView mapView) {
+        public MyLocationListener(TextureMapView mapView) {
             mMapView = mapView;
         }
 
@@ -299,7 +299,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     }
 
     @ReactProp(name = "isShowUserLocation", defaultBoolean = false)
-    public void setIsShowUserLocation(MapView mapView, boolean isShowUserLocation) {
+    public void setIsShowUserLocation(TextureMapView mapView, boolean isShowUserLocation) {
         if (isShowUserLocation) {
             mapView.getMap().setMyLocationEnabled(true);//开启
             mLocClient = new LocationClient(reactContext);
@@ -317,12 +317,12 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
     }
 
     @ReactProp(name = "showZoomControls", defaultBoolean = false)
-    public void showZoomControls(MapView mapView, boolean showZoomControls) {
+    public void showZoomControls(TextureMapView mapView, boolean showZoomControls) {
         mapView.showZoomControls(showZoomControls);
     }
 
     @ReactProp(name = "initCenter")
-    public void showZoomControls(MapView mapView, ReadableMap json) {
+    public void showZoomControls(TextureMapView mapView, ReadableMap json) {
         float lat = (float) json.getDouble("lat");
         float lng = (float) json.getDouble("lng");
         float zoom = (float) json.getDouble("zoom");
@@ -336,7 +336,7 @@ public class BaiduMapViewManager extends SimpleViewManager<MapView> implements B
         BaiduMapViewManager.this.onMapStatusChangeFinish(mapView, mapView.getMap().getMapStatus());
     }
 
-    private void onMapStatusChangeFinish(MapView mapView, MapStatus status) {
+    private void onMapStatusChangeFinish(TextureMapView mapView, MapStatus status) {
         WritableMap event = Arguments.createMap();
         event.putString("eventType", "onMapStatusChangeFinish");
         event.putDouble("centerLat", status.target.latitude);
