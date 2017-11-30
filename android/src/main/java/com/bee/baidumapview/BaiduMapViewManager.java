@@ -322,10 +322,12 @@ public class BaiduMapViewManager extends SimpleViewManager<TextureMapView> imple
     }
 
     @ReactProp(name = "initCenter")
-    public void showZoomControls(TextureMapView mapView, ReadableMap json) {
-        float lat = (float) json.getDouble("lat");
-        float lng = (float) json.getDouble("lng");
-        float zoom = (float) json.getDouble("zoom");
+    public void initCenter(TextureMapView mapView, ReadableMap json) {
+        float lat = json.hasKey("lat") ? (float) json.getDouble("lat") : 0;
+        float lng = json.hasKey("lng") ? (float) json.getDouble("lng") : 0;
+        float zoom = json.hasKey("zoom") ? (float) json.getDouble("zoom") : 17;
+        float maxZoom = json.hasKey("maxZoom") ? (float) json.getDouble("maxZoom") : 21;
+        float minZoom = json.hasKey("minZoom") ? (float) json.getDouble("minZoom") : 3;
 
         final MapStatus.Builder builder = new MapStatus.Builder();
         LatLng latLng = new LatLng(lat, lng);
@@ -334,6 +336,9 @@ public class BaiduMapViewManager extends SimpleViewManager<TextureMapView> imple
 
         mapView.getMap().setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         BaiduMapViewManager.this.onMapStatusChangeFinish(mapView, mapView.getMap().getMapStatus());
+
+        //设置最大最小zoom
+        mapView.getMap().setMaxAndMinZoomLevel(maxZoom, minZoom);
     }
 
     private void onMapStatusChangeFinish(TextureMapView mapView, MapStatus status) {

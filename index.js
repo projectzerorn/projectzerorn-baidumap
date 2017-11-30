@@ -31,7 +31,7 @@ class BDMapView extends Component {
         onLongClick: () => {},//地图空白处长按事件
         onBlankClick: () => {},//地图空白处点击
         onMarkerDragFinish: () => {},//标点拖拽完成后事件
-        initCenter: {lat: 0, lng: 0, zoom: 17},
+        initCenter: {lat: 0, lng: 0, zoom: 17, minZoom: 3, maxZoom: 21},
     };
 
     constructor(props) {

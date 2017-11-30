@@ -75,10 +75,14 @@ RCT_CUSTOM_VIEW_PROPERTY(initCenter, NSDictionary*, BaiduMapLibrary){
     float lat = [json[@"lat"] floatValue];
     float lng = [json[@"lng"] floatValue];
     float zoom = [json[@"zoom"] floatValue];
+    float minZoom = [json[@"minZoom"] floatValue] == 0 ? 3 : [json[@"minZoom"] floatValue];
+    float maxZoom = [json[@"maxZoom"] floatValue] == 0 ? 21 : [json[@"maxZoom"] floatValue];
 
     mapView_mk.zoomLevel = zoom;
     CLLocationCoordinate2D center = CLLocationCoordinate2DMake(lat, lng);
     [mapView_mk setCenterCoordinate:center];
+    [mapView_mk setMinZoomLevel:minZoom];
+    [mapView_mk setMaxZoomLevel:maxZoom];
 }
 
 #pragma mark -------------------------------------------------- 是否显示用户位置标点
