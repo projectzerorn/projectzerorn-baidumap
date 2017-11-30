@@ -753,6 +753,12 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
+    public void textureMapViewOnResume(int tag) {
+        TextureMapView textureMapView = getMapView(tag);
+        textureMapView.onResume();
+    }
+
+    @ReactMethod
     public void addMarks(int tag, ReadableArray markslist, boolean isClearMap, ReadableArray backgroundType) {
         if (markslist == null || markslist.size() == 0) {
             return;

@@ -1,6 +1,12 @@
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import {requireNativeComponent, View, Platform} from 'react-native';
+import ReactNative, {
+    requireNativeComponent,
+    View,
+    Platform,
+    AppState,
+} from 'react-native';
+import BDMapModule from './BDMapModule.js';
 
 if (Platform.OS === 'ios') {
     var LibBaiduMapView = requireNativeComponent('BaiduMapLibrary', BDMapView);
@@ -30,14 +36,45 @@ class BDMapView extends Component {
 
     constructor(props) {
         super(props);
+        this.isAppInBackgroundFlag = false;//app是否按了home键到后台了 用于解决TextureMapView黑线的问题 http://bbs.lbsyun.baidu.com/forum.php?mod=viewthread&tid=126125
+    }
+
+    componentWillMount() {
+        if (Platform.OS === 'android') {
+            //监听状态改变事件
+            AppState.addEventListener('change', this._handleAppStateChange);
+        }
     }
 
     render() {
-
         return (
-            <LibBaiduMapView {...this.props} onChange={this._onChange}/>
+            <LibBaiduMapView
+                ref={'locationMap'}
+                {...this.props}
+                onChange={this._onChange}/>
         );
     }
+
+    componentWillUnmount() {
+        if (Platform.OS === 'android') {
+            //删除状态改变事件监听
+            AppState.removeEventListener('change', this._handleAppStateChange);
+        }
+    }
+
+    _handleAppStateChange = (nextAppState) => {
+        if (nextAppState != null && nextAppState === 'active') {
+
+            if (this.isAppInBackgroundFlag) {//从后台进入了前台
+                BDMapModule.textureMapViewOnResume(
+                    ReactNative.findNodeHandle(this.refs.locationMap));
+            }
+
+            this.isAppInBackgroundFlag = false;
+        } else if (nextAppState != null && nextAppState === 'background') {
+            this.isAppInBackgroundFlag = true;
+        }
+    };
 
     _onChange = (event: Event) => {
         let eventType = event.nativeEvent.eventType;

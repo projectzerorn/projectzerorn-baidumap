@@ -121,6 +121,10 @@ let BDMapModule = {
         MyMapModule.cluster(ref, data);
     },
 
+    textureMapViewOnResume(ref) {
+        MyMapModule.textureMapViewOnResume(ref);
+    },
+
     /**
      *
      * @param ref
