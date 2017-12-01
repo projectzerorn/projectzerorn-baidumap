@@ -55,6 +55,15 @@ class BDMapView extends Component {
         );
     }
 
+    componentDidMount() {
+        if (Platform.OS === 'android') {//仅andorid才处理
+            setTimeout(() => {
+                BDMapModule.textureMapViewOnResume(
+                    ReactNative.findNodeHandle(this.refs.locationMap));//防止地图显示黑线 - -！
+            }, 1000);
+        }
+    }
+
     componentWillUnmount() {
         if (Platform.OS === 'android') {
             //删除状态改变事件监听
