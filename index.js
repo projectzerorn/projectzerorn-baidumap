@@ -82,6 +82,8 @@ class BDMapView extends Component {
             this.isAppInBackgroundFlag = false;
         } else if (nextAppState != null && nextAppState === 'background') {
             this.isAppInBackgroundFlag = true;
+            BDMapModule.textureMapViewOnPause(
+                ReactNative.findNodeHandle(this.refs.locationMap));
         }
     };
 

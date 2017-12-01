@@ -124,6 +124,12 @@ let BDMapModule = {
     textureMapViewOnResume(ref) {
         MyMapModule.textureMapViewOnResume(ref);
     },
+    textureMapViewOnPause(ref) {
+        MyMapModule.textureMapViewOnPause(ref);
+    },
+    textureMapViewOnDestroy(ref) {
+        MyMapModule.textureMapViewOnDestroy(ref);
+    },
 
     /**
      *

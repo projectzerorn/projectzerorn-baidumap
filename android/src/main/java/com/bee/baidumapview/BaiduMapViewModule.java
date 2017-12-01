@@ -755,7 +755,25 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     @ReactMethod
     public void textureMapViewOnResume(int tag) {
         TextureMapView textureMapView = getMapView(tag);
-        textureMapView.onResume();
+        if (textureMapView != null) {
+            textureMapView.onResume();
+        }
+    }
+
+    @ReactMethod
+    public void textureMapViewOnPause(int tag) {
+        TextureMapView textureMapView = getMapView(tag);
+        if (textureMapView != null) {
+            textureMapView.onPause();
+        }
+    }
+
+    @ReactMethod
+    public void textureMapViewOnDestroy(int tag) {
+        TextureMapView textureMapView = getMapView(tag);
+        if (textureMapView != null) {
+            textureMapView.onDestroy();
+        }
     }
 
     @ReactMethod
