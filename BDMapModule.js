@@ -130,6 +130,9 @@ let BDMapModule = {
     textureMapViewOnDestroy(ref) {
         MyMapModule.textureMapViewOnDestroy(ref);
     },
+    killApp() {
+        MyMapModule.killApp();
+    },
 
     /**
      *

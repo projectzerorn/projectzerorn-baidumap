@@ -22,6 +22,8 @@ if (Platform.OS === 'ios') {
 }
 
 class BDMapView extends Component {
+    static mapCount = 0;//计数 看app中使用了多少个地图
+
     static defaultProps = {
         mode: 1,
         isShowUserLocation: false,
@@ -36,6 +38,9 @@ class BDMapView extends Component {
 
     constructor(props) {
         super(props);
+        BDMapView.mapCount = BDMapView.mapCount + 1;
+        console.log('mapCount=' + BDMapView.mapCount);
+
         this.isAppInBackgroundFlag = false;//app是否按了home键到后台了 用于解决TextureMapView黑线的问题 http://bbs.lbsyun.baidu.com/forum.php?mod=viewthread&tid=126125
     }
 
@@ -65,6 +70,9 @@ class BDMapView extends Component {
     }
 
     componentWillUnmount() {
+        BDMapView.mapCount = BDMapView.mapCount - 1;
+        console.log('mapCount=' + BDMapView.mapCount);
+
         if (Platform.OS === 'android') {
             //删除状态改变事件监听
             AppState.removeEventListener('change', this._handleAppStateChange);
@@ -82,8 +90,10 @@ class BDMapView extends Component {
             this.isAppInBackgroundFlag = false;
         } else if (nextAppState != null && nextAppState === 'background') {
             this.isAppInBackgroundFlag = true;
-            BDMapModule.textureMapViewOnPause(
-                ReactNative.findNodeHandle(this.refs.locationMap));
+
+            if (BDMapView.mapCount >= 2) {
+                BDMapView.killApp();
+            }
         }
     };
 

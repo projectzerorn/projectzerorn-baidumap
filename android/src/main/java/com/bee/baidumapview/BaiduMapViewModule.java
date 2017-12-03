@@ -777,6 +777,11 @@ public class BaiduMapViewModule extends ReactContextBaseJavaModule implements On
     }
 
     @ReactMethod
+    public void killApp() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    @ReactMethod
     public void addMarks(int tag, ReadableArray markslist, boolean isClearMap, ReadableArray backgroundType) {
         if (markslist == null || markslist.size() == 0) {
             return;
