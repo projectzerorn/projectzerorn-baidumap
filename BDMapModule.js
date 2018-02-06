@@ -4,12 +4,8 @@
  */
 'use strict';
 
-import React, {Component} from 'react';
-import {
-    NativeModules,
-    Platform,
-    requireNativeComponent,
-} from 'react-native';
+import React from 'react';
+import {NativeModules, Platform,} from 'react-native';
 
 let MyMapModule = undefined;
 let plat = Platform.OS;
@@ -25,6 +21,9 @@ let BDMapModule = {
      */
     onDestroyBDMap(ref) {
         if (ref == undefined) {
+            return;
+        }
+        if (ref == null) {//异常处理
             return;
         }
         MyMapModule.onDestroyBDMap(ref);
@@ -68,10 +67,16 @@ let BDMapModule = {
     },
 
     setLocation(ref, value) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.setLocation(ref, value);
     },
 
     setLocationAnimation(ref, value) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.setLocationAnimation(ref, value);
     },
 
@@ -88,10 +93,16 @@ let BDMapModule = {
     },
 
     move(ref, lat, lng, zoom, isAnimate) {//lat,lng,zoom传入-1 为不改变
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.move(ref, lat, lng, zoom, isAnimate);
     },
 
     zoom(ref, zoom, isAnimate = false) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.move(ref, -1, -1, zoom, isAnimate);
     },
 
@@ -101,6 +112,9 @@ let BDMapModule = {
      * @param isAnimate
      */
     zoomAdd(ref, isAnimate = true) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.zoomAdd(ref, isAnimate);
     },
 
@@ -110,24 +124,42 @@ let BDMapModule = {
      * @param isAnimate
      */
     zoomSub(ref, isAnimate = true) {//zoom--
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.zoomSub(ref, isAnimate);
     },
 
     moveToUserLocation(ref, zoom, isAnimate) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.moveToUserLocation(ref, zoom, isAnimate);
     },
 
     cluster(ref, data) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.cluster(ref, data);
     },
 
     textureMapViewOnResume(ref) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.textureMapViewOnResume(ref);
     },
     textureMapViewOnPause(ref) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.textureMapViewOnPause(ref);
     },
     textureMapViewOnDestroy(ref) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.textureMapViewOnDestroy(ref);
     },
     killApp() {
@@ -143,6 +175,10 @@ let BDMapModule = {
      */
     addMarks(
         ref, data, isClearMap = true, backgroundTypeArray = ['BubbleRed']) {
+        if (ref == null) {//异常处理
+            return;
+        }
+
         if (!(backgroundTypeArray instanceof Array)) {//兼容以前代码，若为string则将其转化为array
             backgroundTypeArray = [backgroundTypeArray];
         }
@@ -150,6 +186,9 @@ let BDMapModule = {
     },
 
     replaceMark(ref, lat, lng, backgroundType) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.replaceMark(ref, lat, lng, backgroundType);
     },
 
@@ -161,11 +200,18 @@ let BDMapModule = {
     addNearPois(
         ref, lat, lng, keyword, iconUrl, isClearMap = true, ak = '', mcode = '',
         maxWidthDip = 30, radius = 1000, pageCapacity = 50) {
+
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.addNearPois(ref, lat, lng, keyword, iconUrl, isClearMap, ak,
             mcode, maxWidthDip, radius, pageCapacity);
     },
 
     clearMap(ref) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.clearMap(ref);
     },
 
@@ -178,6 +224,9 @@ let BDMapModule = {
      * @param color3    自定义热力图渐变色
      */
     addHeatMap(ref, datalist, color1, color2, color3) {
+        if (ref == null) {//异常处理
+            return;
+        }
         MyMapModule.addHeatMap(ref, datalist, color1, color2, color3);
     },
 };
