@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
-import React, {Component} from 'react';
+import React, {
+    Component
+} from 'react';
 import ReactNative, {
     requireNativeComponent,
     View,
     Platform,
     AppState,
+    ViewPropTypes
 } from 'react-native';
 import BDMapModule from './BDMapModule.js';
 
@@ -22,18 +25,24 @@ if (Platform.OS === 'ios') {
 }
 
 class BDMapView extends Component {
-    static mapCount = 0;//计数 看app中使用了多少个地图
+    static mapCount = 0; //计数 看app中使用了多少个地图
 
     static defaultProps = {
         mode: 1,
         isShowUserLocation: false,
-        onMapStatusChangeFinish: () => {},//地图移动结束事件
-        onMapStartMove: () => {},//地图开始移动事件
-        onMarkerClick: () => {},//标点点击事件
-        onLongClick: () => {},//地图空白处长按事件
-        onBlankClick: () => {},//地图空白处点击
-        onMarkerDragFinish: () => {},//标点拖拽完成后事件
-        initCenter: {lat: 0, lng: 0, zoom: 17, minZoom: 3, maxZoom: 21},
+        onMapStatusChangeFinish: () => {}, //地图移动结束事件
+        onMapStartMove: () => {}, //地图开始移动事件
+        onMarkerClick: () => {}, //标点点击事件
+        onLongClick: () => {}, //地图空白处长按事件
+        onBlankClick: () => {}, //地图空白处点击
+        onMarkerDragFinish: () => {}, //标点拖拽完成后事件
+        initCenter: {
+            lat: 0,
+            lng: 0,
+            zoom: 17,
+            minZoom: 3,
+            maxZoom: 21
+        },
     };
 
     constructor(props) {
@@ -41,7 +50,7 @@ class BDMapView extends Component {
         BDMapView.mapCount = BDMapView.mapCount + 1;
         console.log('mapCount=' + BDMapView.mapCount);
 
-        this.isAppInBackgroundFlag = false;//app是否按了home键到后台了 用于解决TextureMapView黑线的问题 http://bbs.lbsyun.baidu.com/forum.php?mod=viewthread&tid=126125
+        this.isAppInBackgroundFlag = false; //app是否按了home键到后台了 用于解决TextureMapView黑线的问题 http://bbs.lbsyun.baidu.com/forum.php?mod=viewthread&tid=126125
     }
 
     componentWillMount() {
@@ -61,10 +70,10 @@ class BDMapView extends Component {
     }
 
     componentDidMount() {
-        if (Platform.OS === 'android') {//仅andorid才处理
+        if (Platform.OS === 'android') { //仅andorid才处理
             setTimeout(() => {
                 BDMapModule.textureMapViewOnResume(
-                    ReactNative.findNodeHandle(this.refs.locationMap));//防止地图显示黑线 - -！
+                    ReactNative.findNodeHandle(this.refs.locationMap)); //防止地图显示黑线 - -！
             }, 1000);
         }
     }
@@ -82,7 +91,7 @@ class BDMapView extends Component {
     _handleAppStateChange = (nextAppState) => {
         if (nextAppState != null && nextAppState === 'active') {
 
-            if (this.isAppInBackgroundFlag) {//从后台进入了前台
+            if (this.isAppInBackgroundFlag) { //从后台进入了前台
                 BDMapModule.textureMapViewOnResume(
                     ReactNative.findNodeHandle(this.refs.locationMap));
             }
@@ -103,7 +112,7 @@ class BDMapView extends Component {
             let dataStr = event.nativeEvent.title;
             let dataJson;
             try {
-                dataJson = JSON.parse(dataStr);//通过title来传递 mark数据 数据结构为json
+                dataJson = JSON.parse(dataStr); //通过title来传递 mark数据 数据结构为json
             } catch (e) {
                 dataJson = dataStr;
             }
@@ -123,7 +132,7 @@ class BDMapView extends Component {
 }
 
 BDMapView.propTypes = {
-    ...View.propTypes,
+    ...ViewPropTypes,
     mode: PropTypes.number,
     trafficEnabled: PropTypes.bool,
     heatMapEnabled: PropTypes.bool,
