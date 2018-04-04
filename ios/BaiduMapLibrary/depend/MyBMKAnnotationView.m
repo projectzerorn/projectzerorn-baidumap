@@ -129,6 +129,8 @@
         self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_wx.png"];
     }else if([annotation.backgroundType rangeOfString:@"MarkYX"].location != NSNotFound){
         self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_yx.png"];
+    }else if([annotation.backgroundType rangeOfString:@"MarkSELF"].location != NSNotFound){
+        self.image = [UIImage imageNamed:@"mapapi.bundle/images/mark_self.png"];
     }else if([annotation.backgroundType rangeOfString:@"Mark#"].location != NSNotFound){
         UIImage *image = [UIImage imageNamed:@"mapapi.bundle/images/mark_red.png"];
         NSString* replacedStr = [annotation.backgroundType stringByReplacingOccurrencesOfString:@"Mark"withString:@""];
